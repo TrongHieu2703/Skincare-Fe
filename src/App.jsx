@@ -9,6 +9,7 @@ import Cart from "./components/Cart";
 import FeaturedNews from "./components/FeaturedNews";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
+import Register from "./components/Register";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/san-pham" element={<FeaturedNews />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </div>
       <Footer />
