@@ -1,0 +1,114 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px;
+    /* Increased padding for height */
+
+    /* Reduced padding */
+
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    /* Added to keep the navbar at the top */
+    top: 0;
+    /* Ensures it is at the very top */
+    width: 100%;
+    /* Ensures it spans the full width */
+    z-index: 1000;
+    /* Ensures it stays above other content */
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #007B55;
+}
+
+.logo {
+    height: 90px;
+    margin-right: 30px;
+}
+
+.navbar-search {
+    position: relative;
+    flex-grow: 1;
+    max-width: 500px;
+}
+
+.navbar-search input {
+    width: 100%;
+    padding: 12px 18px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    padding-right: 50px;
+    font-size: 1rem;
+    background-color: #f4f4f4;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #007B55;
+    cursor: pointer;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 25px;
+    font-size: 1rem;
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #007B55;
+    font-weight: 600;
+    transition: color 0.3s;
+    padding: 8px 12px;
+}
+
+.navbar-links a:hover {
+    color: #005F40;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.navbar-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.register {
+    padding: 10px 18px;
+    border: 1px solid #007B55;
+    border-radius: 5px;
+    background: none;
+    color: #007B55;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.register:hover {
+    background-color: #007B55;
+    color: white;
+}
+
+.login {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007B55;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login:hover {
+    background-color: #005F40;
+}

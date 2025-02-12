@@ -1,0 +1,153 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.carousel-container {
+    width: 100vw;
+    height: 70vh;
+    /* Increased height for better visibility */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    /* Set z-index to ensure it is below the navbar */
+}
+
+.carousel img {
+    width: 80vw;
+    height: 60vh;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    margin: auto;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007B55;
+}
+
+.logo {
+    height: 50px;
+    margin-right: 10px;
+}
+
+.navbar-search {
+    position: relative;
+    flex-grow: 1;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.navbar-search input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding-right: 40px;
+    font-size: 1rem;
+    background-color: #f4f4f4;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: #007B55;
+    cursor: pointer;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 20px;
+    font-size: 1rem;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #007B55;
+    font-weight: 600;
+    transition: color 0.3s;
+    padding: 6px 10px;
+}
+
+.navbar-links a:hover {
+    color: #005F40;
+    background-color: #e9ecef;
+    border-radius: 5px;
+}
+
+.navbar-buttons {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.register {
+    padding: 8px 16px;
+    border: 1px solid #007B55;
+    border-radius: 5px;
+    background: none;
+    color: #007B55;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.register:hover {
+    background-color: #007B55;
+    color: white;
+}
+
+.login {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007B55;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login:hover {
+    background-color: #005F40;
+}

@@ -1,0 +1,69 @@
+.featured-news {
+    padding: 20px;
+    background-color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    /* Matching font family */
+}
+
+.featured-news h2 {
+    font-size: 1.8rem;
+    /* Keep the title size consistent */
+    font-weight: 600;
+    /* Match the font weight */
+    margin-bottom: 20px;
+    color: #333;
+    /* Make the color a bit darker for better contrast */
+}
+
+.news-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.news-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Arial', sans-serif;
+    /* Matching font family */
+}
+
+.news-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.news-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.news-info h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    /* Adjusted to match shopping cart font weight */
+    color: #333;
+    /* Dark color for better visibility */
+}
+
+.news-info p {
+    font-size: 1rem;
+    color: #666;
+    /* Soft gray for the text */
+}
+
+.read-more {
+    color: #007b55;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}
