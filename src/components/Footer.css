@@ -1,14 +1,26 @@
 .footer {
-    background-color: #f4f4f4;
+    background-color: #d2e9df;
     padding: 20px 0;
-
+    width: 100vw;
+    position: relative;
+    left: 0;
     text-align: center;
 }
+
+
+.footer h3 {
+    border-bottom: none !important;
+    text-decoration: none !important;
+    padding-bottom: 0;
+    color: #062813;
+}
+
 
 .footer-container {
     display: flex;
     justify-content: space-between;
-    padding: 0 10%;
+    padding: 0;
+    /* Removed padding to allow full width */
 }
 
 .footer-logo-social {
@@ -50,7 +62,7 @@
 
 .footer-section ul li {
     font-size: 1rem;
-    color: #333;
+    color: #2e9356;
     margin: 5px 0;
 }
 

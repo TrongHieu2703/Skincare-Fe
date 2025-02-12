@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import logo from "/src/images/logo.png"; 
+import logo from "/src/images/logo.png";
 import googleIcon from "/src/images/googleicon.png";
 import loginImage from "/src/images/loginlogo.jpg";
 
@@ -12,7 +12,13 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Email:", email, "Password:", password);
+    // Implement authentication logic here
+    // Example: Call an API to verify credentials
+    if (email === "test@example.com" && password === "password") {
+      navigate("/dashboard"); // Navigate to dashboard on successful login
+    } else {
+      alert("Invalid credentials, please try again."); // Alert for invalid login
+    }
   };
 
   return (
@@ -23,10 +29,10 @@ const Login = () => {
         <p>We're glad to see you again!</p>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label>Username</label>
+            <label>Email</label>
             <input
               type="email"
-              placeholder="Enter your username"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
