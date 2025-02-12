@@ -1,5 +1,6 @@
 /* Tổng thể layout */
 .register-container {
+  margin-top: -600px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,20 +12,22 @@
 
 /* Hình ảnh bên trái */
 .register-image {
+  margin-top: -250px;
   flex: 1;
-  max-width: 500px;
+  height: 500px;
+  max-width: 700px;
 }
 
 .register-image img {
   width: 100%;
   height: auto;
-  border-radius: 10px;
+  border-radius: 20px;
 }
 
 /* Hộp đăng ký */
 .register-box {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   background: white;
   padding: 2rem;
   border-radius: 10px;

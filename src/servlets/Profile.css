@@ -1,7 +1,7 @@
 /* Profile Container */
 .profile-container {
     max-width: 800px;
-    margin: auto;
+    margin-top: -400px;
     font-family: "Poppins", sans-serif;
     background: #ffffff;
     padding: 20px;
@@ -61,7 +61,7 @@
     margin-top: 20px;
 }
 
-.connect-btn, 
+.connect-btn,
 .message-btn {
     border: none;
     padding: 10px 20px;
@@ -156,7 +156,7 @@ h3 {
 .save-btn {
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #28a745, #218838);
+    background: linear-gradient(135deg, #005f40, #005f40);
     color: white;
     border: none;
     border-radius: 8px;
@@ -168,6 +168,6 @@ h3 {
 }
 
 .save-btn:hover {
-    background: linear-gradient(135deg, #218838, #1c6d32);
+    background: linear-gradient(135deg, #3eb78f, #3eb78f);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }

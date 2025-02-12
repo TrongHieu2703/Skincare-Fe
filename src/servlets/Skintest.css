@@ -1,46 +1,52 @@
-/* Đảm bảo navbar có z-index thấp hơn để tránh che nội dung */
+/* Đảm bảo navbar không che phủ nội dung */
 nav {
     position: relative;
     z-index: 10;
 }
 
+/* Định dạng full màn hình, tránh tràn bố cục */
 .skincare-test-container {
-    margin-top: 100px;
-    /* Khoảng cách từ navbar */
-    padding: 20px;
+    margin-top: 500px;
+    width: 100vw;
+    min-height: 100vh;
+    padding: 40px;
     font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    border-radius: 10px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: relative;
-    /* Đảm bảo không bị che khuất */
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
+/* Tiêu đề */
 h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: #007B55;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
+/* Căn chỉnh form */
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    width: 80%;
+    max-width: 800px;
+    gap: 20px;
 }
 
+/* Câu hỏi */
 .question {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    font-weight: bold;
     margin-bottom: 10px;
 }
 
+/* Căn chỉnh radio button và văn bản thẳng hàng */
 .options {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
 }
 
 .options label {
@@ -48,35 +54,71 @@ form {
     align-items: center;
     font-size: 1rem;
     cursor: pointer;
+    background: rgb(255, 255, 255);
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    width: fit-content;
 }
 
+/* Hiệu ứng hover */
+.options label:hover {
+    background: #99d3be;
+}
+
+/* Căn chỉnh radio button đẹp hơn */
 input[type="radio"] {
-    margin-right: 8px;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #007B55;
+    border-radius: 50%;
+    margin-right: 10px;
+    position: relative;
+    cursor: pointer;
 }
 
+/* Hiệu ứng khi chọn */
+input[type="radio"]:checked {
+    background-color: #007B55;
+    border: 5px solid white;
+    box-shadow: 0 0 0 2px #007B55;
+}
+
+/* Button Submit căn giữa */
 button {
     background-color: #007B55;
     color: white;
-    font-size: 1.1rem;
-    padding: 10px 20px;
+    font-size: 1.2rem;
+    padding: 12px 24px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
     margin-top: 20px;
+    align-self: center;
+    /* Căn giữa nút */
 }
 
+/* Hiệu ứng hover */
 button:hover {
     background-color: #005f40;
 }
 
+/* Responsive cho mobile */
 @media (max-width: 768px) {
     .skincare-test-container {
-        padding: 10px;
-        max-width: 90%;
+        padding: 20px;
+        width: 95%;
+        height: auto;
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 2rem;
+    }
+
+    .options label {
+        font-size: 0.9rem;
+        padding: 8px;
     }
 }

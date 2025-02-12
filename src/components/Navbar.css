@@ -1,41 +1,26 @@
+/* Ensure the navbar stays fixed at the top */
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 20px;
-    padding: 15px 20px;
-
-    /* Increased padding for height */
-
-    /* Reduced padding */
-
+    padding: 10px 20px;
     background-color: #ffffff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: fixed;
-    /* Added to keep the navbar at the top */
     top: 0;
-    /* Ensures it is at the very top */
     width: 100%;
-    /* Ensures it spans the full width */
     z-index: 1000;
-    /* Ensures it stays above other content */
+    height: 70px;
+    /* Ensure a fixed height */
 }
 
-/* Đảm bảo navbar luôn cố định ở trên cùng */
-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    /* Đảm bảo navbar ở trên cùng */
-    background-color: white;
-    /* Thêm màu nền để tránh bị mờ */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* Thêm bóng đổ */
+/* Push the content down to prevent it from being overlapped */
+body {
+    padding-top: 1000px;
+    /* Adjust based on navbar height */
 }
 
-
+/* Navbar logo */
 .navbar-logo {
     display: flex;
     align-items: center;
@@ -45,22 +30,23 @@ nav {
 }
 
 .logo {
-    height: 90px;
-    margin-right: 30px;
+    height: 50px;
+    margin-right: 20px;
 }
 
+/* Navbar search */
 .navbar-search {
     position: relative;
     flex-grow: 1;
-    max-width: 500px;
+    max-width: 400px;
 }
 
 .navbar-search input {
     width: 100%;
-    padding: 12px 18px;
+    padding: 10px 16px;
     border: 1px solid #ccc;
-    border-radius: 25px;
-    padding-right: 50px;
+    border-radius: 20px;
+    padding-right: 40px;
     font-size: 1rem;
     background-color: #f4f4f4;
 }
@@ -68,15 +54,16 @@ nav {
 .search-icon {
     position: absolute;
     top: 50%;
-    right: 15px;
+    right: 12px;
     transform: translateY(-50%);
     color: #007B55;
     cursor: pointer;
 }
 
+/* Navbar links */
 .navbar-links {
     display: flex;
-    gap: 25px;
+    gap: 20px;
     font-size: 1rem;
 }
 
@@ -94,6 +81,7 @@ nav {
     border-radius: 5px;
 }
 
+/* Navbar buttons */
 .navbar-buttons {
     display: flex;
     gap: 12px;
