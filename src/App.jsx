@@ -1,5 +1,8 @@
 import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import Route and Routes
+import SkinTest from "./servlets/SkinTest"; // Import SkinTest component
+
+
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -13,6 +16,17 @@ function App() {
     <Router>
       <Navbar />
       <div style={{ marginTop: "80px" }}> {/* Increased margin to ensure carousel is visible */}
+        <Routes>
+          <Route path="/" element={<Carousel />} />
+          <Route path="/test-loai-da" element={<SkinTest />} /> {/* Add route for skin test */}
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/san-pham" element={<FeaturedNews />} />
+
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/san-pham" element={<FeaturedNews />} />
+          {/* Add other routes as necessary */}
+        </Routes>
+
 
 
         <Carousel />

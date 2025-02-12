@@ -1,3 +1,4 @@
+// Navbar.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaSearch, FaShoppingCart } from "react-icons/fa"; // Import shopping cart icon
@@ -13,7 +14,6 @@ const Navbar = () => {
                     alt="Skincare Logo"
                     className="logo"
                 />
-
             </div>
 
             {/* Search Bar */}
@@ -28,7 +28,7 @@ const Navbar = () => {
             {/* Navigation Links */}
             <div className="navbar-links">
                 <Link to="/">Homepage</Link>
-                <Link to="/test-loai-da">Bài test loại da</Link>
+                <Link to="/test-loai-da">Skin Type Test</Link> {/* Link to the skin test */}
                 <Link to="/san-pham">Skincare Products</Link>
                 <Link to="/blog">Blog</Link>
                 <Link to="/faq">FAQs</Link>
