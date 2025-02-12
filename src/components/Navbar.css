@@ -19,6 +19,21 @@
     /* Ensures it stays above other content */
 }
 
+/* Đảm bảo navbar luôn cố định ở trên cùng */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    /* Đảm bảo navbar ở trên cùng */
+    background-color: white;
+    /* Thêm màu nền để tránh bị mờ */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Thêm bóng đổ */
+}
+
+
 .navbar-logo {
     display: flex;
     align-items: center;

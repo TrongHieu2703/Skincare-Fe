@@ -1,10 +1,22 @@
+/* Đảm bảo navbar có z-index thấp hơn để tránh che nội dung */
+nav {
+    position: relative;
+    z-index: 10;
+}
+
 .skincare-test-container {
-    margin-top: 80px;
-    /* Add margin to avoid overlap with navbar */
+    margin-top: 100px;
+    /* Khoảng cách từ navbar */
     padding: 20px;
     font-family: Arial, sans-serif;
     background-color: #f8f8f8;
     border-radius: 10px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    /* Đảm bảo không bị che khuất */
 }
 
 h1 {
@@ -25,13 +37,21 @@ form {
     margin-bottom: 10px;
 }
 
-.question label {
-    display: block;
-    margin-bottom: 10px;
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.options label {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    cursor: pointer;
 }
 
 input[type="radio"] {
-    margin-right: 5px;
+    margin-right: 8px;
 }
 
 button {
@@ -53,6 +73,7 @@ button:hover {
 @media (max-width: 768px) {
     .skincare-test-container {
         padding: 10px;
+        max-width: 90%;
     }
 
     h1 {
