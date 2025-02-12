@@ -1,42 +1,43 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import Route and Routes
-import SkinTest from "./servlets/SkinTest"; // Import SkinTest component
-
-
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import SkinTest from "./servlets/SkinTest";
 import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import Carousel from "./components/Carousel"; // Import Carousel component
-import Cart from "./components/Cart"; // Import Cart component
-import FeaturedNews from "./components/FeaturedNews"; // Import FeaturedNews component
+import Carousel from "./components/Carousel";
+import Cart from "./components/Cart";
+import FeaturedNews from "./components/FeaturedNews";
 import Footer from "./components/Footer";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 function App() {
   return (
     <Router>
       <Navbar />
-      <div style={{ marginTop: "80px" }}> {/* Increased margin to ensure carousel is visible */}
+      <div style={{ marginTop: "80px" }}>
         <Routes>
-          <Route path="/" element={<Carousel />} />
-          <Route path="/test-loai-da" element={<SkinTest />} /> {/* Add route for skin test */}
+          {/* Route trang chủ */}
+          <Route
+            path="/"
+            element={
+              <>
+                <Carousel />
+                <Cart />
+                <FeaturedNews />
+              </>
+            }
+          />
+          <Route path="/test-loai-da" element={<SkinTest />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/san-pham" element={<FeaturedNews />} />
-
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/san-pham" element={<FeaturedNews />} />
-          {/* Add other routes as necessary */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
-
-
-
-        <Carousel />
-        <Cart /> {/* Hiển thị giỏ hàng ngay dưới carousel */}
-        <FeaturedNews /> {/* Thêm phần Tin tức nổi bật dưới giỏ hàng */}
       </div>
       <Footer />
     </Router>
   );
 }
 
-// Đảm bảo export nằm ngoài hàm
 export default App;

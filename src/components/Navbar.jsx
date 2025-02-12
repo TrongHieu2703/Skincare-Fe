@@ -1,4 +1,3 @@
-// Navbar.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaSearch, FaShoppingCart } from "react-icons/fa"; // Import shopping cart icon
@@ -18,10 +17,7 @@ const Navbar = () => {
 
             {/* Search Bar */}
             <div className="navbar-search">
-                <input
-                    type="text"
-                    placeholder="Search for products..."
-                />
+                <input type="text" placeholder="Search for products..." />
                 <FaSearch className="search-icon" />
             </div>
 
@@ -40,8 +36,12 @@ const Navbar = () => {
 
             {/* Buttons */}
             <div className="navbar-buttons">
-                <button className="register">Sign up</button>
-                <button className="login">Login</button>
+                <Link to="/register">
+                    <button className="register">Sign up</button>
+                </Link>
+                <Link to="/login">
+                    <button className="login">Login</button>
+                </Link>
             </div>
         </nav>
     );
