@@ -5,6 +5,8 @@
     justify-content: center;
     height: 100vh;
     background-color: #f4f4f4;
+    gap: 40px;
+    padding: 20px;
 }
 
 /* Hộp chứa form đăng nhập */
@@ -16,6 +18,12 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+}
+
+/* Logo */
+.logo {
+    max-width: 120px;
+    margin-bottom: 15px;
 }
 
 /* Tiêu đề */
@@ -51,7 +59,7 @@
 .login-button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #005f40;
     color: white;
     border: none;
     border-radius: 5px;
@@ -62,5 +70,59 @@
 }
 
 .login-button:hover {
-    background-color: #0056b3;
+    background-color: #005f40;
+}
+
+/* Nút đăng nhập với Google */
+.google-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    background-color: #005f40;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.google-button img {
+    width: 20px;
+    height: 20px;
+}
+
+.google-button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Link đăng ký */
+.register-link {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.signup-link {
+    color: green;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.signup-link:hover {
+    text-decoration: underline;
+}
+
+/* Căn chỉnh ảnh bên phải */
+.login-image {
+    flex: 1;
+    max-width: 500px;
+}
+
+.login-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
 }
