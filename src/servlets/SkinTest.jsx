@@ -14,6 +14,8 @@ const SkinTest = () => {
     q9: "",
   });
 
+  const [submitted, setSubmitted] = useState(false); // Thêm trạng thái để hiển thị thông báo
+
   // Xử lý thay đổi radio button
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,6 +25,7 @@ const SkinTest = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Kết quả bài test:", answers);
+    setSubmitted(true); // Khi submit, đặt trạng thái submitted thành true
   };
 
   return (
@@ -202,6 +205,9 @@ const SkinTest = () => {
 
         <button type="submit">Submit Answer</button>
       </form>
+
+      {/* Hiển thị thông báo thành công nếu submitted === true */}
+      {submitted && <div className="success-message">✔️ Submit Successed!</div>}
     </div>
   );
 };
