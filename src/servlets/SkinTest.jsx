@@ -207,7 +207,7 @@ const SkinTest = () => {
       </form>
 
       {/* Hiển thị thông báo thành công nếu submitted === true */}
-      {submitted && <div className="success-message">✔️ Submit thành công!</div>}
+      {submitted && <div className="success-message">✔️ Submit Successed!</div>}
     </div>
   );
 };
