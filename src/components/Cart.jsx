@@ -8,7 +8,7 @@ const Cart = () => {
             id: 1,
             name: "Product 1",
             price: 450000,
-            image: "./src/images/sampham1.jpg",
+            image: "./src/images/SP1.jpg",
             quantity: 1,
         },
         {
