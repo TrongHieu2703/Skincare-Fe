@@ -122,3 +122,29 @@ button:hover {
         padding: 8px;
     }
 }
+
+.success-message {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background-color: #28a745;
+    border-radius: 5px;
+    text-align: center;
+    width: fit-content;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Hiệu ứng mượt khi hiện lên */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
