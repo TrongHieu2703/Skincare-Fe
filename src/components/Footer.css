@@ -1,6 +1,6 @@
 .footer {
-    background-color: #d2e9df;
-    padding: 20px 0;
+    background: linear-gradient(to right, #d2e9df, #e6f3ef);
+    padding: 50px 0;
     width: 100vw;
     position: relative;
     left: 0;
@@ -50,9 +50,19 @@
 }
 
 .footer-section h3 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 10px;
+    position: relative;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.footer-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #007B55;
 }
 
 .footer-section ul {
@@ -61,12 +71,11 @@
 }
 
 .footer-section ul li {
-    font-size: 1rem;
-    color: #2e9356;
-    margin: 5px 0;
+    transition: all 0.3s ease;
+    padding: 5px 0;
 }
 
 .footer-section ul li:hover {
+    transform: translateX(10px);
     color: #007B55;
-    cursor: pointer;
 }
