@@ -34,6 +34,8 @@ body {
 }
 
 .carousel-container {
+    margin-top: 800px;
+    padding: 0 40px;
     width: 100vw;
     height: 70vh;
     /* Increased height for better visibility */
@@ -48,9 +50,23 @@ body {
     width: 80vw;
     height: 60vh;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
     display: block;
     margin: auto;
+}
+
+.carousel img:hover {
+    transform: scale(1.02);
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #007B55;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 25px;
+    border-radius: 50%;
 }
 
 .navbar-logo {

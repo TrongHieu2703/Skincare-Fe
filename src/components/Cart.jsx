@@ -1,115 +1,149 @@
 import React, { useState } from "react";
 import "./Cart.css";
+import { FaShoppingCart, FaMinus, FaPlus, FaTimes } from 'react-icons/fa';
 
 const Cart = () => {
-    // Example cart data with initial items
+    const [notification, setNotification] = useState(false);
     const [cartItems, setCartItems] = useState([
         {
             id: 1,
             name: "Product 1",
             price: 450000,
+<<<<<<< HEAD
+            image: "/src/images/sanpham1.jpg",
+            quantity: 1
+=======
             image: "./src/images/SP1.jpg",
             quantity: 1,
+>>>>>>> e9e70cf4536335aba2a964f8247bb4b2f2c06c6a
         },
         {
             id: 2,
             name: "Product 2",
-            price: 380000,
-            image: "./src/images/sampham2.jpg",
-            quantity: 1,
+            price: 450000,
+            image: "/src/images/sanpham2.jpg",
+            quantity: 1
         },
         {
             id: 3,
             name: "Product 3",
-            price: 250000,
-            image: "./src/images/sampham3.jpg",
-            quantity: 1,
+            price: 450000,
+            image: "/src/images/sanpham3.jpg",
+            quantity: 1
         },
         {
             id: 4,
             name: "Product 4",
-            price: 250000,
-            image: "./src/images/sampham4.jpg",
-            quantity: 1,
+            price: 450000,
+            image: "/src/images/sanpham4.jpg",
+            quantity: 1
         },
         {
             id: 5,
             name: "Product 5",
-            price: 250000,
-            image: "./src/images/sampham4.jpg",
-            quantity: 1,
+            price: 450000,
+            image: "/src/images/sanpham5.jpg",
+            quantity: 1
         },
         {
             id: 6,
             name: "Product 6",
-            price: 250000,
-            image: "./src/images/sampham4.jpg",
-            quantity: 1,
+            price: 450000,
+            image: "/src/images/sanpham6.jpeg",
+            quantity: 1
         },
         {
             id: 7,
             name: "Product 7",
-            price: 250000,
-            image: "./src/images/sampham4.jpg",
-            quantity: 1,
+            price: 450000,
+            image: "/src/images/sanpham7.jpg",
+            quantity: 1
         },
         {
             id: 8,
             name: "Product 8",
-            price: 250000,
-            image: "./src/images/sampham4.jpg",
-            quantity: 1,
+            price: 450000,
+            image: "/src/images/sanpham8.jpg",
+            quantity: 1
         },
     ]);
 
-    // Function to add a product to the cart
-    const addToCart = (item) => {
-        const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+    const handleQuantity = (id, action) => {
+        setCartItems(items =>
+            items.map(item => {
+                if (item.id === id) {
+                    const newQuantity = action === 'increase'
+                        ? item.quantity + 1
+                        : Math.max(1, item.quantity - 1);
+                    return {
+                        ...item,
+                        quantity: newQuantity
+                    };
+                }
+                return item;
+            })
+        );
+    };
 
-        if (existingItem) {
-            // If item exists, increase quantity
-            setCartItems(
-                cartItems.map((cartItem) =>
-                    cartItem.id === item.id
-                        ? { ...cartItem, quantity: cartItem.quantity + 1 }
-                        : cartItem
-                )
-            );
-        } else {
-            // If item doesn't exist, add a new entry with quantity = 1
-            setCartItems([...cartItems, { ...item, quantity: 1 }]);
-        }
+    const handleAddToCart = () => {
+        setNotification(true);
+        setTimeout(() => setNotification(false), 3000);
     };
 
     return (
         <div className="cart-container">
-            <h2>Shopping Cart</h2>
-            {cartItems.length === 0 ? (
-                <p className="empty-cart">Your cart is empty.</p>
-            ) : (
-                <ul className="cart-list">
-                    {cartItems.map((item) => (
-                        <li key={item.id} className="cart-item">
-                            <img
-                                src={item.image}
-                                alt={item.name}
-                                className="cart-item-image"
-                            />
-                            <div className="cart-item-info">
-                                <h3>{item.name}</h3>
-                                <p>{item.price.toLocaleString()} VND</p>
-                                <p>Quantity: {item.quantity}</p>
-                            </div>
-                            <button
-                                className="add-btn"
-                                onClick={() => addToCart(item)}
-                            >
-                                Add to Cart
+            <h2 className="cart-title">Shopping Cart</h2>
+
+            <div className="cart-grid">
+                {cartItems.map(item => (
+                    <div key={item.id} className="cart-item">
+                        <div className="item-image">
+                            <img src={item.image} alt={item.name} />
+                            <button className="remove-btn">
+                                <FaTimes />
                             </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                        </div>
+
+                        <div className="item-details">
+                            <h3 className="item-name">{item.name}</h3>
+                            <p className="item-price">{item.price}</p>
+
+                            <div className="quantity-control">
+                                <span>Quantity:</span>
+                                <div className="quantity-buttons">
+                                    <button
+                                        className="qty-btn minus"
+                                        onClick={() => handleQuantity(item.id, 'decrease')}
+                                        disabled={item.quantity <= 1}
+                                    >
+                                        <span className="qty-symbol">−</span>
+                                    </button>
+                                    <span className="qty-value">{item.quantity}</span>
+                                    <button
+                                        className="qty-btn plus"
+                                        onClick={() => handleQuantity(item.id, 'increase')}
+                                    >
+                                        <span className="qty-symbol">+</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                className="add-to-cart-btn"
+                                onClick={handleAddToCart}
+                            >
+                                <FaShoppingCart /> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Notification */}
+            <div className={`cart-notification ${notification ? 'show' : ''}`}>
+                <FaShoppingCart />
+                <p>Product added to cart successfully!</p>
+            </div>
         </div>
     );
 };

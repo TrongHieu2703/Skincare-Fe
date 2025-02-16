@@ -8,16 +8,31 @@ import loginImage from "/src/images/loginlogo.jpg";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // Danh sách tài khoản mẫu (giữ lại để xử lý đăng nhập nhưng không hiển thị)
+  const accounts = [
+    { email: "admin@gmail.com", password: "admin123", role: "admin" },
+    { email: "user@gmail.com", password: "user123", role: "user" },
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Implement authentication logic here
-    // Example: Call an API to verify credentials
-    if (email === "test@example.com" && password === "password") {
-      navigate("/dashboard"); // Navigate to dashboard on successful login
+
+    // Kiểm tra tài khoản
+    const account = accounts.find(
+      acc => acc.email === email && acc.password === password
+    );
+
+    if (account) {
+      localStorage.setItem('user', JSON.stringify({
+        email: account.email,
+        role: account.role
+      }));
+      navigate('/san-pham');
     } else {
-      alert("Invalid credentials, please try again."); // Alert for invalid login
+      setError("Email hoặc mật khẩu không đúng!");
     }
   };
 
@@ -27,6 +42,9 @@ const Login = () => {
         <img src={logo} alt="Skincare Logo" className="logo" />
         <h2>WELCOME BACK</h2>
         <p>We're glad to see you again!</p>
+
+        {error && <div className="error-message">{error}</div>}
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Email</label>

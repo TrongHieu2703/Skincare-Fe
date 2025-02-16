@@ -1,9 +1,25 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart } from "react-icons/fa"; // Import shopping cart icon
 import "../components/Navbar.css";
 
 const Navbar = () => {
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const loggedUser = localStorage.getItem('user');
+        if (loggedUser) {
+            setUser(JSON.parse(loggedUser));
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setUser(null);
+        navigate('/');
+    };
+
     return (
         <nav className="navbar">
             {/* Logo */}
@@ -17,31 +33,39 @@ const Navbar = () => {
 
             {/* Search Bar */}
             <div className="navbar-search">
-                <input type="text" placeholder="Search for products..." />
+                <input type="text" placeholder="Search products..." />
                 <FaSearch className="search-icon" />
             </div>
 
             {/* Navigation Links */}
             <div className="navbar-links">
-                <Link to="/">Homepage</Link>
-                <Link to="/test-loai-da">Skin Type Test</Link> {/* Link to the skin test */}
-                <Link to="/san-pham">Skincare Products</Link>
+                <Link to="/">Home</Link>
+                <Link to="/test-loai-da">Skin Test</Link>
+                <Link to="/san-pham">Products</Link>
                 <Link to="/blog">Blog</Link>
-                <Link to="/faq">FAQs</Link>
-                <Link to="/ho-so">Profile</Link>
-                <Link to="/cart" className="hover:text-green-700">
-                    <FaShoppingCart /> {/* Shopping cart icon */}
+                {user && <Link to="/ho-so">Profile</Link>}
+                <Link to="/cart" className="cart-icon">
+                    <FaShoppingCart />
                 </Link>
             </div>
 
             {/* Buttons */}
             <div className="navbar-buttons">
-                <Link to="/register">
-                    <button className="register">Sign up</button>
-                </Link>
-                <Link to="/login">
-                    <button className="login">Login</button>
-                </Link>
+                {user ? (
+                    <>
+                        <span className="user-email">{user.email}</span>
+                        <button onClick={handleLogout} className="login">Logout</button>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/register">
+                            <button className="register">Sign Up</button>
+                        </Link>
+                        <Link to="/login">
+                            <button className="login">Login</button>
+                        </Link>
+                    </>
+                )}
             </div>
         </nav>
     );
