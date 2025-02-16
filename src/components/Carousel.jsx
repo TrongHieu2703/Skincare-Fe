@@ -4,7 +4,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import "../components/Carouse.css"// Import file CSS để tùy chỉnh giao diện
+import "../components/Carousel.css"// Import file CSS để tùy chỉnh giao diện
 
 const images = [
     "./src/images/anh1.jpg",

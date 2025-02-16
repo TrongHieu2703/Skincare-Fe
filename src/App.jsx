@@ -11,6 +11,8 @@ import Footer from "./components/Footer";
 import Login from "./servlets/Login";
 import Register from "./servlets/Register";
 import Profile from "./servlets/Profile";
+import Contact from "./components/Blog";
+import Blog from "./components/Blog";
 
 function App() {
   return (
@@ -37,6 +39,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/ho-so" element={<Profile />} />
+          <Route path="/blog" element={<Blog />} />
         </Routes>
       </div>
       <Footer />
