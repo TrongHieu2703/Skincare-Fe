@@ -191,6 +191,7 @@
 /* Notification */
 .cart-notification {
     position: fixed;
+    margin-top: 80px;
     top: 20px;
     right: 20px;
     background: #007B55;
