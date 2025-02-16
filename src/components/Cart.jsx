@@ -9,13 +9,8 @@ const Cart = () => {
             id: 1,
             name: "Product 1",
             price: 450000,
-<<<<<<< HEAD
             image: "/src/images/sanpham1.jpg",
             quantity: 1
-=======
-            image: "./src/images/SP1.jpg",
-            quantity: 1,
->>>>>>> e9e70cf4536335aba2a964f8247bb4b2f2c06c6a
         },
         {
             id: 2,
