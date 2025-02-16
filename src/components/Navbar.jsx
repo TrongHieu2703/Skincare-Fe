@@ -1,9 +1,25 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart } from "react-icons/fa"; // Import shopping cart icon
 import "../components/Navbar.css";
 
 const Navbar = () => {
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const loggedUser = localStorage.getItem('user');
+        if (loggedUser) {
+            setUser(JSON.parse(loggedUser));
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setUser(null);
+        navigate('/');
+    };
+
     return (
         <nav className="navbar">
             {/* Logo */}
@@ -27,7 +43,7 @@ const Navbar = () => {
                 <Link to="/test-loai-da">Skin Test</Link>
                 <Link to="/san-pham">Products</Link>
                 <Link to="/blog">Blog</Link>
-                <Link to="/ho-so">Profile</Link>
+                {user && <Link to="/ho-so">Profile</Link>}
                 <Link to="/cart" className="cart-icon">
                     <FaShoppingCart />
                 </Link>
@@ -35,12 +51,21 @@ const Navbar = () => {
 
             {/* Buttons */}
             <div className="navbar-buttons">
-                <Link to="/register">
-                    <button className="register">Sign Up</button>
-                </Link>
-                <Link to="/login">
-                    <button className="login">Login</button>
-                </Link>
+                {user ? (
+                    <>
+                        <span className="user-email">{user.email}</span>
+                        <button onClick={handleLogout} className="login">Logout</button>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/register">
+                            <button className="register">Sign Up</button>
+                        </Link>
+                        <Link to="/login">
+                            <button className="login">Login</button>
+                        </Link>
+                    </>
+                )}
             </div>
         </nav>
     );
