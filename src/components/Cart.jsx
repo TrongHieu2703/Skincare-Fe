@@ -8,56 +8,56 @@ const Cart = () => {
         {
             id: 1,
             name: "Product 1",
-            price: 450.000,
+            price: 450000,
             image: "/src/images/sanpham1.jpg",
             quantity: 1
         },
         {
             id: 2,
             name: "Product 2",
-            price: "380.000 VND",
+            price: 450000,
             image: "/src/images/sanpham2.jpg",
             quantity: 1
         },
         {
             id: 3,
             name: "Product 3",
-            price: "250.000 VND",
+            price: 450000,
             image: "/src/images/sanpham3.jpg",
             quantity: 1
         },
         {
             id: 4,
             name: "Product 4",
-            price: "250.000 VND",
+            price: 450000,
             image: "/src/images/sanpham4.jpg",
             quantity: 1
         },
         {
             id: 5,
             name: "Product 5",
-            price: "250.000 VND",
+            price: 450000,
             image: "/src/images/sanpham5.jpg",
             quantity: 1
         },
         {
             id: 6,
             name: "Product 6",
-            price: "250.000 VND",
+            price: 450000,
             image: "/src/images/sanpham6.jpeg",
             quantity: 1
         },
         {
             id: 7,
             name: "Product 7",
-            price: "250.000 VND",
+            price: 450000,
             image: "/src/images/sanpham7.jpg",
             quantity: 1
         },
         {
             id: 8,
             name: "Product 8",
-            price: "250.000 VND",
+            price: 450000,
             image: "/src/images/sanpham8.jpg",
             quantity: 1
         },
