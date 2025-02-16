@@ -1,7 +1,8 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./Profile.css";
-import profilePic from "/src/images/profile-pic.png"; 
-import coverImage from "/src/images/cover-image.png"; 
+import profilePic from "/src/images/profile-pic.png";
+import coverImage from "/src/images/cover-image.png";
 
 const Profile = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +19,14 @@ const Profile = () => {
     zip: "",
     profilePhoto: profilePic,
   });
+  
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios.get("https://localhost:5001/api/users")
+      .then(res => setUsers(res.data))
+      .catch(err => console.error(err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,6 +98,16 @@ const Profile = () => {
         </div>
 
         <button className="save-btn">Save All</button>
+      </div>
+
+      {/* User List Section */}
+      <div className="user-list">
+        <h2>User List</h2>
+        <ul>
+          {users.map(user => (
+            <li key={user.id}>{user.firstName} {user.lastName} - {user.email}</li>
+          ))}
+        </ul>
       </div>
     </div>
   );
