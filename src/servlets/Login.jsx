@@ -30,7 +30,7 @@ const Login = () => {
         email: account.email,
         role: account.role
       }));
-      navigate('/san-pham');
+      navigate('/blog');
     } else {
       setError("Email hoặc mật khẩu không đúng!");
     }
