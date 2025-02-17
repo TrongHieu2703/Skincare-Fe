@@ -11,7 +11,6 @@ const Cart = () => {
             price: 450000,
             image: "/src/images/sanpham1.jpg",
             quantity: 1
-
         },
         {
             id: 2,
