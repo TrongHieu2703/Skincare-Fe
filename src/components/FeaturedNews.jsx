@@ -1,3 +1,4 @@
+
 import React from "react";
 import "./FeaturedNews.css";
 import { FaArrowRight } from 'react-icons/fa';
