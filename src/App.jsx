@@ -36,15 +36,18 @@ function App() {
           <Route path="/test-loai-da" element={<SkinTest />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/san-pham" element={<FeaturedNews />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/ho-so" element={<Profile />} />
+          
+          {/* Route đăng nhập và đăng ký */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/ho-so" element={<Profile />} />
-          <Route path="/blog" element={<Blog />} />
         </Routes>
       </div>
       <Footer />
     </Router>
   );
 }
+
 
 export default App;

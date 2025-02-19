@@ -1,38 +1,28 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/api";
 import "./Login.css";
 import logo from "/src/images/logo.png";
 import googleIcon from "/src/images/googleicon.png";
 import loginImage from "/src/images/loginlogo.jpg";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  // Danh sách tài khoản mẫu (giữ lại để xử lý đăng nhập nhưng không hiển thị)
-  const accounts = [
-    { email: "admin@gmail.com", password: "admin123", role: "admin" },
-    { email: "user@gmail.com", password: "user123", role: "user" },
-  ];
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Kiểm tra tài khoản
-    const account = accounts.find(
-      acc => acc.email === email && acc.password === password
-    );
-
-    if (account) {
-      localStorage.setItem('user', JSON.stringify({
-        email: account.email,
-        role: account.role
-      }));
-      navigate('/blog');
-    } else {
-      setError("Email hoặc mật khẩu không đúng!");
+    try {
+      const response = await loginUser(formData);
+      setMessage("Đăng nhập thành công!");
+      setTimeout(() => navigate("/dashboard"), 2000); // Điều hướng sau 2s
+    } catch (error) {
+      setMessage(error.message || "Đăng nhập thất bại!");
     }
   };
 
@@ -43,35 +33,11 @@ const Login = () => {
         <h2>WELCOME BACK</h2>
         <p>We're glad to see you again!</p>
 
-        {error && <div className="error-message">{error}</div>}
+        {message && <p className="error-message">{message}</p>}
 
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Email</label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label>Password</label>
-            <input
-              type="password"
-              placeholder="********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="options">
-            <label>
-              <input type="checkbox" /> Remember me
-            </label>
-            <a href="#">Forgot password?</a>
-          </div>
+          <input type="email" name="email" placeholder="Enter your email" onChange={handleChange} required />
+          <input type="password" name="password" placeholder="********" onChange={handleChange} required />
           <button type="submit" className="login-button">Sign in</button>
           <button className="google-button">
             <img src={googleIcon} alt="Google Icon" /> Sign in with Google
