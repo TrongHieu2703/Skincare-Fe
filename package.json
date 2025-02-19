@@ -1,6 +1,7 @@
 {
   "name": "skincare",
   "private": true,
+  "proxy": "https://localhost:7290",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
