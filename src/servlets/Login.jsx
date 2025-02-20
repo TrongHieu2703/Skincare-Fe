@@ -20,7 +20,7 @@ const Login = () => {
     try {
       const response = await loginUser(formData);
       setMessage("Đăng nhập thành công!");
-      setTimeout(() => navigate("/dashboard"), 2000); // Điều hướng sau 2s
+      setTimeout(() => navigate("/"), 2000); 
     } catch (error) {
       setMessage(error.message || "Đăng nhập thất bại!");
     }
