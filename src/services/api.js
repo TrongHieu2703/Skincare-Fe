@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:7290/api"; 
+const API_URL = "https://localhost:7290/api"; 
 
 // Đăng ký người dùng
 export const registerUser = async (userData) => {
