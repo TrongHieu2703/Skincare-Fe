@@ -43,8 +43,7 @@ const Navbar = () => {
                 <Link to="/test-loai-da">Skin Test</Link>
                 <Link to="/san-pham">Products</Link>
                 <Link to="/blog">Blog</Link>
-                {user && <Link to="/ho-so">Profile</Link>}
-                <Link to="/cart" className="cart-icon">
+                <Link to="/cart">
                     <FaShoppingCart />
                 </Link>
             </div>
@@ -53,16 +52,16 @@ const Navbar = () => {
             <div className="navbar-buttons">
                 {user ? (
                     <>
-                        <span className="user-email">{user.email}</span>
+                        <Link to="/ho-so" className="profile-link">Profile</Link>
                         <button onClick={handleLogout} className="login">Logout</button>
                     </>
                 ) : (
                     <>
                         <Link to="/register">
-                            <button className="register">Sign Up</button>
+                            <button className="register">SIGN UP</button>
                         </Link>
                         <Link to="/login">
-                            <button className="login">Login</button>
+                            <button className="login">LOGIN</button>
                         </Link>
                     </>
                 )}

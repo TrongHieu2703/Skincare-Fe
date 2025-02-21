@@ -11,28 +11,38 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Danh sách tài khoản mẫu (giữ lại để xử lý đăng nhập nhưng không hiển thị)
-  const accounts = [
-    { email: "admin@gmail.com", password: "admin123", role: "admin" },
-    { email: "user@gmail.com", password: "user123", role: "user" },
-  ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const response = await fetch('https://localhost:7290/api/Account/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          passwordHash: password
+        })
+      });
 
-    // Kiểm tra tài khoản
-    const account = accounts.find(
-      acc => acc.email === email && acc.password === password
-    );
-
-    if (account) {
-      localStorage.setItem('user', JSON.stringify({
-        email: account.email,
-        role: account.role
-      }));
-      navigate('/blog');
-    } else {
-      setError("Email hoặc mật khẩu không đúng!");
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('user', JSON.stringify({
+          email: data.email,
+          username: data.username,
+          role: data.role,
+          avatar: data.avatar,
+          phoneNumber: data.phoneNumber,
+          address: data.address
+        }));
+        navigate('/blog');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Đăng nhập thất bại!");
+      }
+    } catch (err) {
+      setError("Lỗi kết nối đến server!");
     }
   };
 
