@@ -1,8 +1,13 @@
-/* Thêm CSS variables */
+/* CSS Variables */
 :root {
     --primary-green: #007B55;
     --primary-green-dark: #005c3f;
     --primary-green-light: rgba(0, 123, 85, 0.1);
+    --white: #ffffff;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
 }
 
 /* Reset CSS */
@@ -17,9 +22,10 @@
 
 /* Navbar styles */
 .navbar {
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 0.5rem 2rem;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--gray-200);
     position: fixed;
     top: 0;
     left: 0;
@@ -33,13 +39,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1rem;
     min-height: 60px;
 }
 
 .navbar-brand img {
-    height: 65px;
+    height: 45px;
     width: auto;
 }
 
@@ -56,56 +63,81 @@
 }
 
 .nav-link {
-    color: var(--primary-green);
-    text-decoration: none;
-    font-size: 1rem;
+    color: var(--primary-green) !important;
+    font-size: 0.95rem;
     font-weight: 500;
-    letter-spacing: 0.4px;
-    padding: 0.4rem 0;
-    transition: all 0.2s ease;
+    padding: 0.4rem 1rem;
+    margin: 0 0.2rem;
+    border-radius: 6px;
+    transition: var(--transition);
+    position: relative;
 }
 
 .nav-link:hover {
-    color: var(--primary-green-dark);
+    color: var(--primary-green-dark) !important;
+    background-color: var(--primary-green-light);
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    color: var(--primary-green-dark) !important;
+    font-weight: 600;
+    background-color: var(--primary-green-light);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background-color: var(--primary-green);
+    border-radius: 2px;
 }
 
 .search-container {
-    position: relative;
-    width: 400px;
-    margin: 0 2rem;
+    flex: 1;
+    max-width: 400px;
+    margin: 0 1.5rem;
 }
 
-.search-input {
-    width: 100%;
-    padding: 0.75rem 3rem 0.75rem 1.5rem;
-    border: 2px solid #e0e0e0;
+.search-container .form-control {
     border-radius: 25px;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
+    padding: 0.5rem 1.2rem;
+    border: 2px solid var(--gray-200);
+    transition: var(--transition);
+    font-size: 0.9rem;
 }
 
-.search-button {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--primary-green);
-    border: none;
-    height: 35px;
-    width: 35px;
+.search-container .form-control:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 0.2rem var(--primary-green-light);
+}
+
+.search-container .btn-success {
     border-radius: 50%;
-    color: white;
-    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-left: -50px;
 }
 
 .cart-link {
     color: var(--primary-green);
-    font-size: 1.4rem;
-    padding: 0.5rem;
+    font-size: 1.2rem;
+    padding: 0.4rem;
     position: relative;
+    transition: var(--transition);
+}
+
+.cart-link:hover {
+    color: var(--primary-green-dark);
+    transform: scale(1.1);
 }
 
 .cart-badge {
@@ -113,7 +145,7 @@
     top: -8px;
     right: -8px;
     background: var(--primary-green);
-    color: white;
+    color: var(--white);
     font-size: 0.75rem;
     font-weight: 600;
     padding: 0.2rem 0.5rem;
@@ -128,48 +160,47 @@
     gap: 1rem;
 }
 
-.btn-success {
-    background: var(--primary-green);
-    color: white;
-    padding: 0.6rem 1.25rem;
+.auth-buttons .btn-success {
+    padding: 0.4rem 1.2rem;
     border-radius: 25px;
-    text-decoration: none;
-    font-size: 0.95rem;
     font-weight: 500;
-    transition: all 0.2s ease;
+    transition: var(--transition);
+    margin-left: 0.8rem;
+    font-size: 0.9rem;
 }
 
-.btn-success:hover {
-    background: var(--primary-green-dark);
+.auth-buttons .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 85, 0.2);
 }
 
 @media (max-width: 992px) {
-    .navbar {
-        padding: 0.5rem 1rem;
+    .navbar-container {
+        padding: 0 1rem;
     }
 
     .search-container {
-        width: 300px;
+        max-width: 300px;
+        margin: 0 1rem;
     }
 
-    .nav-links {
-        gap: 1.5rem;
+    .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 768px) {
     .navbar-container {
-        flex-wrap: wrap;
+        flex-direction: column;
     }
 
     .search-container {
-        width: 100%;
+        max-width: 100%;
         margin: 1rem 0;
     }
 
-    .navbar-right-section {
-        width: 100%;
-        justify-content: center;
-        gap: 1rem;
+    .auth-buttons {
+        margin-top: 1rem;
     }
 }
