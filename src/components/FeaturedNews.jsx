@@ -21,7 +21,7 @@ const FeaturedNews = () => {
         {
             id: 3,
             title: "SVR-KHUYẾN MÃI",
-            description: "KHI MUA BẤT KỲ SẢN PHẨM CỦA SVR VỚI HÓA ĐƠN 350K - TẶNG GEL LAVANT 50ML",
+            description: "KHI MUA BẤT KỲ SẢN PHẨM CỦA SVR VỚI HÓA ĐƠN  - TẶNG GEL LAVANT 50ML",
             image: "/src/images/svr3.jpg",
             tag: "Special Offer"
         }
