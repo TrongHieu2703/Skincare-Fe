@@ -1,6 +1,4 @@
 .cart-container {
-    padding-top: -200px;
-
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
@@ -26,9 +24,11 @@
     background: #007B55;
 }
 
+/* Hiển thị mỗi hàng 4 sản phẩm */
 .cart-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 cột mỗi hàng */
     gap: 25px;
 }
 
@@ -188,7 +188,7 @@
     background: #005f40;
 }
 
-/* Notification */
+/* Thông báo giỏ hàng */
 .cart-notification {
     position: fixed;
     margin-top: 80px;
@@ -211,35 +211,25 @@
     transform: translateX(0);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .cart-title {
-        font-size: 1.75rem;
-    }
+/* RESPONSIVE DESIGN */
 
+/* Tablet: 3 sản phẩm mỗi hàng */
+@media (max-width: 1024px) {
     .cart-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-    }
-
-    .item-details {
-        padding: 15px;
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
+/* Điện thoại lớn: 2 sản phẩm mỗi hàng */
+@media (max-width: 768px) {
+    .cart-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Điện thoại nhỏ: 1 sản phẩm mỗi hàng */
 @media (max-width: 480px) {
-    .cart-title {
-        font-size: 1.5rem;
-    }
-
-    .quantity-control {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .quantity-buttons {
-        width: 100%;
-        justify-content: space-between;
+    .cart-grid {
+        grid-template-columns: repeat(1, 1fr);
     }
 }

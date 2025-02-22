@@ -1,73 +1,64 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaSearch, FaShoppingCart } from "react-icons/fa"; // Import shopping cart icon
-import "../components/Navbar.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { FaSearch, FaShoppingCart } from 'react-icons/fa';
+import './Navbar.css';
 
-const Navbar = () => {
-    const [user, setUser] = useState(null);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const loggedUser = localStorage.getItem('user');
-        if (loggedUser) {
-            setUser(JSON.parse(loggedUser));
-        }
-    }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        setUser(null);
-        navigate('/');
-    };
-
+function Navbar() {
     return (
-        <nav className="navbar">
-            {/* Logo */}
-            <div className="navbar-logo">
-                <img
-                    src="/src/images/logo.png" // Update to the actual path of the logo
-                    alt="Skincare Logo"
-                    className="logo"
-                />
-            </div>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div className="container flex-column">
+                {/* Top Row */}
+                <div className="w-100 d-flex justify-content-between align-items-center mb-3">
+                    {/* Logo */}
+                    <Link className="navbar-brand" to="/">
+                        <img src="./src/images/logo.png" alt="Skincare" height="50" />
+                    </Link>
 
-            {/* Search Bar */}
-            <div className="navbar-search">
-                <input type="text" placeholder="Search products..." />
-                <FaSearch className="search-icon" />
-            </div>
+                    {/* Search Bar */}
+                    <div className="search-container d-flex">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Search products..."
+                            />
+                            <button className="btn btn-success" type="button">
+                                <FaSearch />
+                            </button>
+                        </div>
+                    </div>
 
-            {/* Navigation Links */}
-            <div className="navbar-links">
-                <Link to="/">Home</Link>
-                <Link to="/test-loai-da">Skin Test</Link>
-                <Link to="/san-pham">Products</Link>
-                <Link to="/blog">Blog</Link>
-                <Link to="/cart">
-                    <FaShoppingCart />
-                </Link>
-            </div>
-
-            {/* Buttons */}
-            <div className="navbar-buttons">
-                {user ? (
-                    <>
-                        <Link to="/ho-so" className="profile-link">Profile</Link>
-                        <button onClick={handleLogout} className="login">Logout</button>
-                    </>
-                ) : (
-                    <>
-                        <Link to="/register">
-                            <button className="register">SIGN UP</button>
+                    {/* Cart and Auth Buttons */}
+                    <div className="d-flex align-items-center gap-3">
+                        <Link to="/cart" className="cart-link">
+                            <FaShoppingCart size={20} />
+                            <span className="cart-badge">2</span>
                         </Link>
-                        <Link to="/login">
-                            <button className="login">LOGIN</button>
-                        </Link>
-                    </>
-                )}
+                        <Link to="/login" className="btn btn-success">Login</Link>
+                        <Link to="/register" className="btn btn-success">Register</Link>
+                    </div>
+                </div>
+
+                {/* Bottom Row - Navigation */}
+                <div className="w-100 navigation-row">
+                    <ul className="nav justify-content-center">
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/">Home</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/products">Products</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/skin-test">Skin Test</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/blog">Blog</Link>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
     );
-};
+}
 
 export default Navbar;

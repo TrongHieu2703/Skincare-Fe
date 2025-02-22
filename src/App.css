@@ -36,6 +36,16 @@
 
   gap: 20px;
   padding: 20px;
+  padding-top: 140px;
+  /* Điều chỉnh theo chiều cao của navbar (2 hàng) */
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 1;
+  /* Đảm bảo content nằm dưới navbar */
 }
 
 /* Card sản phẩm */
@@ -109,5 +119,34 @@ button:hover {
 
   .main-content {
     grid-template-columns: 1fr;
+    padding-top: 180px;
+    /* Tăng padding cho mobile view */
   }
+
+  .app-wrapper {
+    padding-top: 140px;
+    /* Tăng padding cho mobile view */
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 120px;
+  /* Điều chỉnh theo chiều cao của navbar */
+}
+
+main {
+  flex: 1;
+  padding-top: 76px;
+}
+
+.container {
+  padding: 20px;
 }
