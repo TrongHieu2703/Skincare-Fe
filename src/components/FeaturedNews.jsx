@@ -1,5 +1,5 @@
 import React from "react";
-import "./FeaturedNews.css";
+import "./styles/FeaturedNews.css";
 import { FaArrowRight } from 'react-icons/fa';
 
 const FeaturedNews = () => {

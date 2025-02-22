@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Cart.css";
+import "./styles/Cart.css";
 import { FaShoppingCart, FaMinus, FaPlus, FaTimes } from 'react-icons/fa';
 
 const Cart = () => {
