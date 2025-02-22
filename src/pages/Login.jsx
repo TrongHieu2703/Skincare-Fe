@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/api";
+import { loginUser } from "../api/api";
 import "./Login.css";
 import logo from "/src/images/logo.png";
 import googleIcon from "/src/images/googleicon.png";
 import loginImage from "/src/images/loginlogo.jpg";
 
+ 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
