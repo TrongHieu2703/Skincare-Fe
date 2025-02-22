@@ -4,11 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5173,
-    open: true,
-    fs: {
-      strict: false,
-    },
-    historyApiFallback: true, // Giúp xử lý refresh khi dùng React Router
+    port: 3000,
   },
+  
 });
