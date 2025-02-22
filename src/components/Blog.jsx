@@ -1,5 +1,5 @@
 import React from "react";
-import "./Blog.css";
+import "./styles/Blog.css";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaTwitter, FaYoutube, FaPinterest, FaInstagram } from 'react-icons/fa';
 
