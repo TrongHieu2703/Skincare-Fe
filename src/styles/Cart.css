@@ -25,19 +25,11 @@
     background: #007B55;
 }
 
-<<<<<<< Updated upstream
-/* Hiển thị mỗi hàng 4 sản phẩm */
-.cart-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    /* 4 cột mỗi hàng */
-=======
 /* 🛒 Hiển thị mỗi hàng 4 sản phẩm */
 .cart-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     /* 4 sản phẩm mỗi hàng */
->>>>>>> Stashed changes
     gap: 25px;
 }
 
@@ -200,11 +192,7 @@
     background: #005f40;
 }
 
-<<<<<<< Updated upstream
-/* Thông báo giỏ hàng */
-=======
 /* 🔔 Thông báo */
->>>>>>> Stashed changes
 .cart-notification {
     position: fixed;
     margin-top: 80px;
@@ -227,14 +215,6 @@
     transform: translateX(0);
 }
 
-<<<<<<< Updated upstream
-/* RESPONSIVE DESIGN */
-
-/* Tablet: 3 sản phẩm mỗi hàng */
-@media (max-width: 1024px) {
-    .cart-grid {
-        grid-template-columns: repeat(3, 1fr);
-=======
 /* 📱 Responsive */
 @media (max-width: 1024px) {
     .cart-grid {
@@ -247,23 +227,12 @@
     .cart-grid {
         grid-template-columns: repeat(2, 1fr);
         /* 2 cột trên điện thoại */
->>>>>>> Stashed changes
     }
 }
 
-/* Điện thoại lớn: 2 sản phẩm mỗi hàng */
-@media (max-width: 768px) {
-    .cart-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Điện thoại nhỏ: 1 sản phẩm mỗi hàng */
 @media (max-width: 480px) {
     .cart-grid {
         grid-template-columns: repeat(1, 1fr);
-<<<<<<< Updated upstream
-=======
         /* 1 cột trên màn hình nhỏ */
     }
 
@@ -280,6 +249,5 @@
     .quantity-buttons {
         width: 100%;
         justify-content: space-between;
->>>>>>> Stashed changes
     }
 }

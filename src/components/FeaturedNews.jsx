@@ -22,13 +22,9 @@ const FeaturedNews = () => {
         {
             id: 3,
             title: "SVR-KHUYẾN MÃI",
-<<<<<<< Updated upstream
-            description: "KHI MUA BẤT KỲ SẢN PHẨM CỦA SVR VỚI HÓA ĐƠN  - TẶNG GEL LAVANT 50ML",
-            image: "/src/images/svr3.jpg",
-=======
+
             description: "KHI MUA BẤT KỲ SẢN PHẨM CỦA SVR VỚI HÓA ĐƠN 350K - TẶNG GEL LAVANT 50ML",
             image: "/src/assets/images/svr3.jpg",
->>>>>>> Stashed changes
             tag: "Special Offer"
         }
     ];
