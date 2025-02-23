@@ -4,7 +4,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 15px 30px;
-    background: linear-gradient(to right, #ffffff, #e6f3ef);
+    background: linear-gradient(to right, #ddf3e5, #d1ecd6);
+    padding: 40px 0 0;
     box-shadow: 0 2px 15px rgba(0, 123, 85, 0.1);
     position: fixed;
     top: 0;
@@ -44,7 +45,7 @@ body {
 .navbar-search input {
     width: 100%;
     padding: 10px 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #41b543;
     border-radius: 20px;
     padding-right: 40px;
     font-size: 1rem;
@@ -56,6 +57,7 @@ body {
     border-color: #007B55;
     outline: none;
 }
+
 
 .search-icon {
     position: absolute;
@@ -208,6 +210,7 @@ body {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -231,7 +234,7 @@ body {
 }
 
 /* Divider Between Items */
-.dropdown-item + .dropdown-item {
+.dropdown-item+.dropdown-item {
     border-top: 1px solid #e0e0e0;
 }
 

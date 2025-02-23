@@ -1,54 +1,80 @@
-/* Tổng thể layout */
+/* Apply full-screen gradient background only to the signup page */
+body.signup-page,
+html.signup-page {
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #287c6a, #ffffff);
+  /* Same as Login */
+  background-size: cover;
+  background-position: center;
+}
+
+/* Centering the Register Container */
 .register-container {
-  margin-top: -600px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-color: #fff;
+  width: 80%;
+  max-width: 1000px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  /* Light transparency for depth */
   gap: 40px;
-  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* Hình ảnh bên trái */
+/* Signup Box */
+.register-box {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.register-box:hover {
+  transform: scale(1.02);
+}
+
+/* Image Section */
 .register-image {
-  margin-top: -250px;
   flex: 1;
-  height: 500px;
-  max-width: 700px;
+  max-width: 500px;
 }
 
 .register-image img {
   width: 100%;
   height: auto;
-  border-radius: 20px;
-}
-
-/* Hộp đăng ký */
-.register-box {
-  width: 100%;
-  max-width: 500px;
-  background: white;
-  padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Logo */
 .logo {
-  max-width: 120px;
+  max-width: 100px;
   margin-bottom: 15px;
 }
 
-/* Tiêu đề */
+/* Signup Form Heading */
 .register-box h2 {
   margin-bottom: 1rem;
-  font-size: 24px;
-  color: #333;
+  font-size: 28px;
+  color: #2c3e50;
+  font-weight: bold;
 }
 
-/* Nhóm input */
+/* Input Fields */
 .input-group {
   margin-bottom: 15px;
   text-align: left;
@@ -58,48 +84,70 @@
   display: block;
   font-weight: bold;
   margin-bottom: 5px;
-  color: #555;
+  color: #34495e;
 }
 
-/* Ô nhập liệu */
+/* Input Styling */
 .input-group input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
+  transition: border 0.3s;
 }
 
-/* Nút đăng ký */
+.input-group input:focus {
+  border: 1px solid #005f40;
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 95, 64, 0.3);
+}
+
+/* Signup Button */
 .register-button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background: linear-gradient(to right, #007a50, #005f40);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   margin-top: 10px;
   transition: 0.3s;
 }
 
 .register-button:hover {
   background: linear-gradient(to right, #007a50, #005f40);
+  transform: scale(1.05);
 }
 
-/* Link chuyển hướng */
+/* Switch Text */
 .switch-text {
   margin-top: 10px;
   font-size: 14px;
 }
 
 .switch-text a {
-  color: #005f40;
+  color: #007a50;
   cursor: pointer;
   font-weight: bold;
 }
 
 .switch-text a:hover {
   text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .register-container {
+    flex-direction: column;
+    text-align: center;
+    width: 90%;
+  }
+
+  .register-image {
+    order: -1;
+    max-width: 80%;
+  }
 }

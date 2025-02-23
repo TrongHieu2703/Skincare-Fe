@@ -1,0 +1,90 @@
+/* PaymentPage.css */
+.payment-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #21ceab, #08311d);
+}
+
+.payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.payment-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+}
+
+.payment-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #1c6758;
+}
+
+.payment-success {
+    font-size: 22px;
+    font-weight: bold;
+    color: #5ddb78;
+}
+
+.payment-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.payment-amount {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.payment-method label {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+select,
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.card-info {
+    display: flex;
+    gap: 10px;
+}
+
+.expiry,
+.cvv {
+    width: 48%;
+}
+
+.payment-button {
+    background-color: #1c6758;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.3s ease;
+}
+
+.payment-button:hover {
+    background-color: #145a32;
+}
