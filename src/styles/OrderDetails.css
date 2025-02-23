@@ -5,6 +5,7 @@
 }
 
 .order-detail-container {
+    padding-top: 300px;
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
