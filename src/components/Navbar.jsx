@@ -42,7 +42,7 @@ const Navbar = () => {
             <div className="navbar-links">
                 <Link to="/">Home</Link>
                 <Link to="/test-loai-da">Skin Test</Link>
-                <Link to="/san-pham">Products</Link>
+                <Link to="/products">Products</Link>
                 <Link to="/blog">Blog</Link>
                 {user && <Link to="/ho-so">Profile</Link>}
                 <Link to="/cartitems">

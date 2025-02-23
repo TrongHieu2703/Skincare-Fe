@@ -22,6 +22,8 @@ const Cart = () => {
         { id: 8, name: "Product 8", price: 450000, image: "/src/assets/images/sanpham8.jpg", quantity: 1 },
     ]);
 
+    const [successMessage, setSuccessMessage] = useState("");
+
     const handleQuantity = (id, action) => {
         setCartItems(items =>
             items.map(item => {
@@ -36,15 +38,22 @@ const Cart = () => {
         );
     };
 
+    const handleAddToCart = () => {
+        setSuccessMessage("✅ Added to cart successfully!");
+        setTimeout(() => setSuccessMessage(""), 2000); // Ẩn sau 2 giây
+    };
+
     return (
         <div className="cart-page">
             <div className="cart-section">
                 <h2 className="member-privileges-title">FEATURED PRODUCTS🔥</h2>
 
+                {successMessage && <div className="success-message">{successMessage}</div>}
+
                 <Swiper
                     modules={[Navigation, Pagination, Autoplay]}
                     spaceBetween={10}
-                    slidesPerView={5}
+                    slidesPerView={4}
                     autoplay={{ delay: 5000, disableOnInteraction: false }}
                     navigation
                     pagination={{ clickable: true }}
@@ -81,7 +90,7 @@ const Cart = () => {
                                         </div>
                                     </div>
 
-                                    <button className="add-cart-btn">
+                                    <button className="add-cart-btn" onClick={handleAddToCart}>
                                         <FaShoppingCart /> Add to Cart
                                     </button>
                                 </div>

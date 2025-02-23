@@ -17,8 +17,8 @@ const OrderDetail = () => {
 
     // Mock cart data (will be replaced with global state or context)
     const cartItems = [
-        { id: 1, name: 'Product 1', price: 450000, quantity: 1, image: '/path-to-image-1.jpg' },
-        { id: 2, name: 'Product 2', price: 450000, quantity: 1, image: '/path-to-image-2.jpg' },
+        { id: 1, name: 'Product 1', price: 450000, quantity: 1, image: '/src/assets/images/sanpham1.jpg' },
+        { id: 2, name: 'Product 2', price: 450000, quantity: 1, image: '/src/assets/images/sanpham2.jpg' },
     ];
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
