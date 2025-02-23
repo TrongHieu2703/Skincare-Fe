@@ -120,7 +120,7 @@ const Cart = () => {
                             <h3>WELCOME OFFER</h3>
                         </div>
                         <div className="offer-content">
-                            <div className="code-text">Code WELCOME – 12% OFF</div>
+                            <div className="code-text">Code WELCOME to get 12% OFF</div>
                             <div className="limit-text">(Up to 200k for first order)</div>
                         </div>
                     </div>
@@ -135,7 +135,7 @@ const Cart = () => {
                             <h3>SPECIAL OFFER</h3>
                         </div>
                         <div className="offer-content">
-                            <div className="code-text">Code WELCOME15 – 15% OFF</div>
+                            <div className="code-text">Code WELCOME to get 15% OFF</div>
                             <div className="limit-text">(Up to 300k for orders over 2M)</div>
                         </div>
                     </div>

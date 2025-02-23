@@ -1,5 +1,5 @@
 .cart-page {
-    padding-top: 600px;
+    padding-top: 5px;
     background-color: #f8f9fa;
     min-height: 100vh;
 }
@@ -7,7 +7,7 @@
 .cart-container {
     max-width: 90%;
     /* Make the cart container take up more space */
-    padding: 0 20px;
+    padding-top: 1px;
     margin: auto;
 }
 
