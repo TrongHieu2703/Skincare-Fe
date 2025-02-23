@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart } from "react-icons/fa"; // Import shopping cart icon
-import "../components/Navbar.css";
+import "/src/styles/Navbar.css";
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
@@ -9,6 +9,7 @@ const Navbar = () => {
 
     useEffect(() => {
         const loggedUser = localStorage.getItem('user');
+        console.log('Logged user:', loggedUser);
         if (loggedUser) {
             setUser(JSON.parse(loggedUser));
         }
@@ -25,7 +26,7 @@ const Navbar = () => {
             {/* Logo */}
             <div className="navbar-logo">
                 <img
-                    src="/src/images/logo.png" // Update to the actual path of the logo
+                    src="/src/assets/images/logo.png" // Update to the actual path of the logo
                     alt="Skincare Logo"
                     className="logo"
                 />
@@ -44,7 +45,7 @@ const Navbar = () => {
                 <Link to="/san-pham">Products</Link>
                 <Link to="/blog">Blog</Link>
                 {user && <Link to="/ho-so">Profile</Link>}
-                <Link to="/cart" className="cart-icon">
+                <Link to="/cart">
                     <FaShoppingCart />
                 </Link>
             </div>
@@ -53,16 +54,16 @@ const Navbar = () => {
             <div className="navbar-buttons">
                 {user ? (
                     <>
-                        <span className="user-email">{user.email}</span>
+                        <Link to="/ho-so" className="profile-link">Profile</Link>
                         <button onClick={handleLogout} className="login">Logout</button>
                     </>
                 ) : (
                     <>
                         <Link to="/register">
-                            <button className="register">Sign Up</button>
+                            <button className="register">SIGN UP</button>
                         </Link>
                         <Link to="/login">
-                            <button className="login">Login</button>
+                            <button className="login">LOGIN</button>
                         </Link>
                     </>
                 )}

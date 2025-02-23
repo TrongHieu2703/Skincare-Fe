@@ -4,12 +4,12 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import "../components/Carousel.css"// Import file CSS để tùy chỉnh giao diện
+import "/src/styles/Carousel.css";
 
 const images = [
-    "./src/images/anh1.jpg",
-    "./src/images/anh2.jpg",
-    "./src/images/anh3.png",
+    "./src/assets/images/anh1.jpg",
+    "./src/assets/images/anh2.jpg",
+    "./src/assets/images/anh3.png",
 
 ];
 

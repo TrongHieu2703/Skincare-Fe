@@ -1,13 +1,44 @@
 /* Tổng thể trang đăng nhập */
+body,
+html {
+    background-color: #ffffff;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title-container {
+    margin-top: 20px;
+    /* Giảm giá trị này để thu hẹp khoảng cách */
+}
+
+.subtitle-container {
+    margin-bottom: 10px;
+    /* Giảm khoảng cách dưới tiêu đề */
+}
+
+.image-container {
+    margin-top: 10px;
+    /* Giảm khoảng cách trên ảnh */
+}
+
 .login-container {
-    margin-top: -600px;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: #f4f4f4;
+    border-radius: 15px;
+    background: linear-gradient(to right, #287c6a, #ffffff);
     gap: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 100%;
 }
 
 /* Hộp chứa form đăng nhập */
@@ -16,22 +47,28 @@
     max-width: 400px;
     background: white;
     padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.login-box:hover {
+    transform: scale(1.02);
 }
 
 /* Logo */
 .logo {
-    max-width: 120px;
+    max-width: 100px;
     margin-bottom: 15px;
 }
 
 /* Tiêu đề */
 .login-box h2 {
     margin-bottom: 1rem;
-    font-size: 24px;
-    color: #333;
+    font-size: 26px;
+    color: #2c3e50;
+    font-weight: bold;
 }
 
 /* Nhóm input */
@@ -44,34 +81,42 @@
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
-    color: #555;
+    color: #34495e;
 }
 
 /* Ô nhập liệu */
 .input-group input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 16px;
+    transition: border 0.3s;
+}
+
+.input-group input:focus {
+    border: 1px solid #005f40;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 95, 64, 0.3);
 }
 
 /* Nút đăng nhập */
 .login-button {
     width: 100%;
-    padding: 10px;
-    background-color: #005f40;
+    padding: 12px;
+    background: linear-gradient(to right, #007a50, #005f40);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     margin-top: 10px;
     transition: 0.3s;
 }
 
 .login-button:hover {
-    background-color: #005f40;
+    background: linear-gradient(to right, #007a50, #005f40);
+    transform: scale(1.05);
 }
 
 /* Nút đăng nhập với Google */
@@ -81,10 +126,10 @@
     justify-content: center;
     gap: 10px;
     width: 100%;
-    padding: 10px;
-    background-color: #005f40;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 12px;
+    background: linear-gradient(to right, #007a50, #005f40);
+    border: 2px solid #ccc;
+    border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
     margin-top: 10px;
@@ -97,7 +142,8 @@
 }
 
 .google-button:hover {
-    background-color: #f0f0f0;
+    border-color: #005f40;
+    background: rgb(16, 78, 44);
 }
 
 /* Link đăng ký */
@@ -107,7 +153,7 @@
 }
 
 .signup-link {
-    color: green;
+    color: #007a50;
     cursor: pointer;
     font-weight: bold;
 }
@@ -126,4 +172,5 @@
     width: 100%;
     height: auto;
     border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }

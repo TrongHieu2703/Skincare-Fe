@@ -34,6 +34,7 @@ body {
 }
 
 .carousel-container {
+    padding-top: 1500px;
     margin-top: 800px;
     padding: 0 40px;
     width: 100vw;
@@ -93,11 +94,12 @@ body {
 .navbar-search input {
     width: 100%;
     padding: 10px 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #ffffff;
     border-radius: 20px;
     padding-right: 40px;
     font-size: 1rem;
-    background-color: #f4f4f4;
+
+    background-color: #ffffff
 }
 
 .search-icon {
@@ -127,7 +129,7 @@ body {
 
 .navbar-links a:hover {
     color: #005F40;
-    background-color: #e9ecef;
+    background-color: #ffffff;
     border-radius: 5px;
 }
 

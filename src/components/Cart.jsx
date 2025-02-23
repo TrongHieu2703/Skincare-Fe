@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./styles/Cart.css";
+import "/src/styles/Cart.css";
 import { FaShoppingCart, FaMinus, FaPlus, FaTimes } from 'react-icons/fa';
 
 const Cart = () => {
@@ -9,56 +9,56 @@ const Cart = () => {
             id: 1,
             name: "Product 1",
             price: 450000,
-            image: "/src/images/sanpham1.jpg",
+            image: "/src/assets/images/sanpham1.jpg",
             quantity: 1
         },
         {
             id: 2,
             name: "Product 2",
             price: 450000,
-            image: "/src/images/sanpham2.jpg",
+            image: "/src/assets/images/sanpham2.jpg",
             quantity: 1
         },
         {
             id: 3,
             name: "Product 3",
             price: 450000,
-            image: "/src/images/sanpham3.jpg",
+            image: "/src/assets/images/sanpham3.jpg",
             quantity: 1
         },
         {
             id: 4,
             name: "Product 4",
             price: 450000,
-            image: "/src/images/sanpham4.jpg",
+            image: "/src/assets/images/sanpham4.jpg",
             quantity: 1
         },
         {
             id: 5,
             name: "Product 5",
             price: 450000,
-            image: "/src/images/sanpham5.jpg",
+            image: "/src/assets/images/sanpham5.jpg",
             quantity: 1
         },
         {
             id: 6,
             name: "Product 6",
             price: 450000,
-            image: "/src/images/sanpham6.jpeg",
+            image: "/src/assets/images/sanpham6.jpeg",
             quantity: 1
         },
         {
             id: 7,
             name: "Product 7",
             price: 450000,
-            image: "/src/images/sanpham7.jpg",
+            image: "/src/assets/images/sanpham7.jpg",
             quantity: 1
         },
         {
             id: 8,
             name: "Product 8",
             price: 450000,
-            image: "/src/images/sanpham8.jpg",
+            image: "/src/assets/images/sanpham8.jpg",
             quantity: 1
         },
     ]);

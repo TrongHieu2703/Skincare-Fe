@@ -5,13 +5,12 @@ nav {
 }
 
 /* Container chính */
-.skincare-test-container {
-
+.skin-test-container {
+    padding-top: 1800px;
     width: 100%;
     max-width: 1200px;
     min-height: 100vh;
     margin: 0 auto;
-    padding-top: 1800px;
     font-family: 'Inter', sans-serif;
     background-color: #ffffff;
     display: flex;
@@ -22,22 +21,21 @@ nav {
 
 /* Tiêu đề */
 h1 {
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     color: #007B55;
-    text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     font-weight: 700;
-    line-height: 1.2;
 }
 
 /* Form container */
-form {
+.test-form {
     width: 100%;
     max-width: 800px;
     background: white;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     padding: 40px;
+    margin-top: 20px;
 }
 
 /* Câu hỏi */
@@ -171,16 +169,17 @@ button:hover {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .skincare-test-container {
-        padding: 20px;
+    .skin-test-container {
+        padding-top: 100px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 
     h1 {
-        font-size: 2.2rem;
-        margin-bottom: 30px;
+        font-size: 2rem;
     }
 
-    form {
+    .test-form {
         padding: 20px;
     }
 

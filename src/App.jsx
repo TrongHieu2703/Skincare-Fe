@@ -1,41 +1,57 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home"; // Thêm Home.jsx
-import SkinTest from "./servlets/SkinTest";
-import Navbar from "./components/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import Carousel from "./components/Carousel";
-import Cart from "./components/Cart";
-import FeaturedNews from "./components/FeaturedNews";
-import Footer from "./components/Footer";
-import Login from "./servlets/Login";
-import Register from "./servlets/Register";
-import Profile from "./servlets/Profile";
-import Blog from "./components/Blog";
+import "./App.css";
+import Navbar from "/src/components/Navbar";
+import Footer from "/src/components/Footer";
+import Carousel from "/src/components/Carousel";
+import FeaturedNews from "/src/components/FeaturedNews";
+import Blog from "/src/components/Blog";
+import SkinTest from "/src/pages/SkinTest";
+import Login from "/src/pages/Login";
+import Register from "/src/pages/Register";
+import Profile from "/src/pages/Profile";
+import Cart from "/src/components/Cart";
+
 
 function App() {
   return (
     <Router>
-      <Navbar />
-      <div className="container mt-4">
-        <Routes>
-          {/* Route trang chủ dùng Home.jsx */}
-          <Route path="/" element={<Home />} />
-          
-          <Route path="/test-loai-da" element={<SkinTest />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/san-pham" element={<FeaturedNews />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/ho-so" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <div className="app-container">
+        <Navbar />
+        <div className="content-wrapper">
+          {/* Hero Section */}
+          <div className="hero-section">
+            <div className="container">
+              <h1>Chăm sóc da của bạn</h1>
+              <p>Khám phá các sản phẩm chăm sóc da tốt nhất</p>
+            </div>
+          </div>
 
-          {/* Route bắt lỗi 404 */}
-          <Route path="*" element={<h1>404 - Page Not Found</h1>} />
-        </Routes>
+          {/* Main Content */}
+          <div className="container mt-4">
+            <Routes>
+              <Route path="/" element={
+                <>
+                  <Carousel />
+                  <Cart />
+                  <FeaturedNews />
+                </>
+              } />
+              <Route path="/test-loai-da" element={<SkinTest />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/san-pham" element={<FeaturedNews />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/ho-so" element={<Profile />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
+            </Routes>
+          </div>
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </Router>
   );
 }

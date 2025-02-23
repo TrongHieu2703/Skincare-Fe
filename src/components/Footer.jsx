@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles/Footer.css";
+import "/src/styles/Footer.css";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
 const Footer = () => {
@@ -8,7 +8,7 @@ const Footer = () => {
             <div className="footer-content">
                 {/* Brand Section */}
                 <div className="footer-brand">
-                    <img src="/src/images/logo.png" alt="Skincare Logo" className="footer-logo" />
+                    <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="footer-logo" />
                     <p>Your trusted destination for premium skincare products and beauty solutions.</p>
                     <div className="social-links">
                         <a href="#" aria-label="Facebook"><FaFacebookF /></a>

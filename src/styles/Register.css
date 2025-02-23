@@ -74,7 +74,7 @@
 .register-button {
   width: 100%;
   padding: 10px;
-  background-color: #00994c;
+  background: linear-gradient(to right, #007a50, #005f40);
   color: white;
   border: none;
   border-radius: 5px;
@@ -85,7 +85,7 @@
 }
 
 .register-button:hover {
-  background-color: #007a3d;
+  background: linear-gradient(to right, #007a50, #005f40);
 }
 
 /* Link chuyển hướng */
@@ -95,7 +95,7 @@
 }
 
 .switch-text a {
-  color: #00994c;
+  color: #005f40;
   cursor: pointer;
   font-weight: bold;
 }

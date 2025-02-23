@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api/api";
-import "./Login.css";
-import logo from "/src/images/logo.png";
-import googleIcon from "/src/images/googleicon.png";
-import loginImage from "/src/images/loginlogo.jpg";
+import { loginUser } from "../api/authApi";
+import "/src/styles/Login.css";
+import logo from "/src/assets/images/logo.png";
+import googleIcon from "/src/assets/images/googleicon.png";
+import loginImage from "/src/assets/images/loginlogo.jpg";
 
- 
+
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -21,7 +21,7 @@ const Login = () => {
     try {
       const response = await loginUser(formData);
       setMessage("Đăng nhập thành công!");
-      setTimeout(() => navigate("/"), 2000); 
+      setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       setMessage(error.message || "Đăng nhập thất bại!");
     }
