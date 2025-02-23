@@ -45,7 +45,7 @@ const Navbar = () => {
                 <Link to="/san-pham">Products</Link>
                 <Link to="/blog">Blog</Link>
                 {user && <Link to="/ho-so">Profile</Link>}
-                <Link to="/cart">
+                <Link to="/cartitems">
                     <FaShoppingCart />
                 </Link>
             </div>

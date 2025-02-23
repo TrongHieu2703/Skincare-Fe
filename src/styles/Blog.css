@@ -1,7 +1,8 @@
 .blog-container {
+    padding-top: 100px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 150px 20px;
+    padding: 100px 10px;
 }
 
 .blog-content {

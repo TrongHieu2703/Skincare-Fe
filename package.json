@@ -19,11 +19,11 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
-    "swiper": "^11.2.2",
     "react-router-dom": "^7.2.0",
     "rollup": "^4.34.8",
     "serialize-javascript": "^6.0.2",
     "stable": "^0.1.8",
+    "swiper": "^11.2.4",
     "terser": "^5.39.0"
   },
   "devDependencies": {

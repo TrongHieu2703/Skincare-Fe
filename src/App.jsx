@@ -13,6 +13,9 @@ import Login from "/src/pages/Login";
 import Register from "/src/pages/Register";
 import Profile from "/src/pages/Profile";
 import Cart from "/src/components/Cart";
+import CartItems from "/src/pages/CartItems";
+import OrderDetail from "./pages/OrderDetails";
+
 
 
 function App() {
@@ -24,8 +27,7 @@ function App() {
           {/* Hero Section */}
           <div className="hero-section">
             <div className="container">
-              <h1>Chăm sóc da của bạn</h1>
-              <p>Khám phá các sản phẩm chăm sóc da tốt nhất</p>
+
             </div>
           </div>
 
@@ -40,7 +42,8 @@ function App() {
                 </>
               } />
               <Route path="/test-loai-da" element={<SkinTest />} />
-              <Route path="/cart" element={<Cart />} />
+              <Route path="/cartitems" element={<CartItems />} />
+              <Route path="/order-detail" element={<OrderDetail />} />
               <Route path="/san-pham" element={<FeaturedNews />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/ho-so" element={<Profile />} />
