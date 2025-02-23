@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./SkinTest.css";
+import "/src/styles/SkinTest.css";
 import { FaCheck } from 'react-icons/fa';
 
 const SkinTest = () => {

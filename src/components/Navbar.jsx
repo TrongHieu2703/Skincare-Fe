@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart } from "react-icons/fa"; // Import shopping cart icon
-import "../components/Navbar.css";
+import "/src/styles/Navbar.css";
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
@@ -26,7 +26,7 @@ const Navbar = () => {
             {/* Logo */}
             <div className="navbar-logo">
                 <img
-                    src="/src/images/logo.png" // Update to the actual path of the logo
+                    src="/src/assets/images/logo.png" // Update to the actual path of the logo
                     alt="Skincare Logo"
                     className="logo"
                 />

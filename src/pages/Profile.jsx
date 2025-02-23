@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Profile.css";
-import profilePic from "/src/images/profile-pic.png";
-import coverImage from "/src/images/cover-image.png";
+import profilePic from "/src/assets/images/profile-pic.png";
+import coverImage from "/src/assets/images/cover-image.png";
+
+import "/src/styles/Profile.css";
 
 const Profile = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +20,7 @@ const Profile = () => {
     zip: "",
     profilePhoto: profilePic,
   });
-  
+
   const [users, setUsers] = useState([]);
 
   useEffect(() => {

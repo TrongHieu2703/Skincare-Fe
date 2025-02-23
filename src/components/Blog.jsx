@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles/Blog.css";
+import "/src/styles/Blog.css";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaTwitter, FaYoutube, FaPinterest, FaInstagram } from 'react-icons/fa';
 
@@ -9,35 +9,35 @@ const Blog = () => {
             id: 1,
             title: "Drs. Joel and Daniel Schlessinger's top 10 best eye creams",
             description: "Diminish crow's feet and dark under-eye circles with these dermatologist-recommended eye creams.",
-            image: "/src/images/blog1.jpg",
+            image: "/src/assets/images/blog1.jpg",
             category: "Skin Care",
             date: "Feb 14, 2025"
         },
         {
             id: 2,
             title: "5 skin care resolutions from a SkinCeuticals aesthetician",
-            image: "/src/images/blog2.png",
+            image: "/src/assets/images/blog2.png",
             category: "Skin Care",
             date: "Feb 10, 2025"
         },
         {
             id: 3,
             title: "Soothe winter skin with La Roche-Posay Cicaplast B5 Spray",
-            image: "/src/images/blog3.avif",
+            image: "/src/assets/images/blog3.avif",
             category: "Skin Care",
             date: "Feb 07, 2025"
         },
         {
             id: 4,
             title: "A minimalist routine for sensitive skin with ISDIN",
-            image: "/src/images/blog4.webp",
+            image: "/src/assets/images/blog4.webp",
             category: "Skin Care",
             date: "Feb 07, 2025"
         },
         {
             id: 5,
             title: "A minimalist routine for sensitive skin with ISDIN",
-            image: "/src/images/blog5.png",
+            image: "/src/assets/images/blog5.png",
             category: "Skin Care",
             date: "Feb 07, 2025"
         }

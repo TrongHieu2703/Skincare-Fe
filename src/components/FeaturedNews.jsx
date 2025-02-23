@@ -1,5 +1,6 @@
 import React from "react";
-import "./styles/FeaturedNews.css";
+import "/src/styles/FeaturedNews.css";
+
 import { FaArrowRight } from 'react-icons/fa';
 
 const FeaturedNews = () => {
@@ -8,21 +9,26 @@ const FeaturedNews = () => {
             id: 1,
             title: "SVR-KHUYẾN MÃI",
             description: "KHI MUA BẤT KỲ SẢN PHẨM CỦA SVR VỚI HÓA ĐƠN 350K - TẶNG GEL LAVANT 50ML",
-            image: "/src/images/svr.jpg",
+            image: "/src/assets/images/svr.jpg",
             tag: "Promotion"
         },
         {
             id: 2,
             title: "SVR-KHUYẾN MÃI",
             description: "KHI MUA BẤT KỲ SẢN PHẨM CỦA SVR VỚI HÓA ĐƠN 350K - TẶNG GEL LAVANT 50ML",
-            image: "/src/images/srv2.jpg",
+            image: "/src/assets/images/srv2.jpg",
             tag: "New Arrival"
         },
         {
             id: 3,
             title: "SVR-KHUYẾN MÃI",
+<<<<<<< Updated upstream
             description: "KHI MUA BẤT KỲ SẢN PHẨM CỦA SVR VỚI HÓA ĐƠN  - TẶNG GEL LAVANT 50ML",
             image: "/src/images/svr3.jpg",
+=======
+            description: "KHI MUA BẤT KỲ SẢN PHẨM CỦA SVR VỚI HÓA ĐƠN 350K - TẶNG GEL LAVANT 50ML",
+            image: "/src/assets/images/svr3.jpg",
+>>>>>>> Stashed changes
             tag: "Special Offer"
         }
     ];
