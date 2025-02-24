@@ -1,11 +1,10 @@
 /* Apply full-screen gradient background only to the signup page */
 body.signup-page,
 html.signup-page {
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   background: linear-gradient(to right, #287c6a, #ffffff);
   /* Same as Login */
   background-size: cover;
@@ -14,6 +13,7 @@ html.signup-page {
 
 /* Centering the Register Container */
 .register-container {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,10 +25,8 @@ html.signup-page {
   gap: 40px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   padding: 40px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: 40px auto;
+  position: relative;
 }
 
 /* Signup Box */
@@ -141,8 +139,7 @@ html.signup-page {
 /* Responsive Design */
 @media (max-width: 992px) {
   .register-container {
-    flex-direction: column;
-    text-align: center;
+    margin: 20px auto;
     width: 90%;
   }
 
