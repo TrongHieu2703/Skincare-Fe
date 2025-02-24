@@ -141,9 +141,9 @@ html.signup-page {
 /* Responsive Design */
 @media (max-width: 992px) {
   .register-container {
-    flex-direction: column;
-    text-align: center;
-    width: 90%;
+    position: static;
+    transform: none;
+    margin: 20px auto;
   }
 
   .register-image {
