@@ -1,49 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
+import { getCartsByUserId, updateCart, deleteCart } from '../api/cartApi'; 
 import '/src/styles/CartItems.css';
 
 const Cart = () => {
     const navigate = useNavigate();
-    // Mock cart data (later replace with real data from context/redux)
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            name: 'Product 1',
-            price: 450000,
-            quantity: 1,
-            image: '/src/assets/images/sanpham1.jpg'
-        },
-        {
-            id: 2,
-            name: 'Product 2',
-            price: 450000,
-            quantity: 1,
-            image: '/src/assets/images/sanpham2.jpg'
-        },
-        {
-            id: 3,
-            name: 'Product 3',
-            price: 550000,
-            quantity: 1,
-            image: '/src/assets/images/sanpham3.jpg'
-        }
-    ]);
+    const userId = 1; // 🔑 Giả sử UserID lấy từ Auth
+    const [cartItems, setCartItems] = useState([]);
+
+    useEffect(() => {
+        getCartsByUserId(userId)
+            .then((data) => setCartItems(data))
+            .catch((error) => console.error('Error fetching cart:', error));
+    }, [userId]);
 
     const updateQuantity = (id, change) => {
-        setCartItems(prevItems =>
-            prevItems.map(item => {
-                if (item.id === id) {
-                    const newQuantity = item.quantity + change;
-                    return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
-                }
-                return item;
-            })
-        );
+        const updatedCart = cartItems.map(item => {
+            if (item.cartId === id) {
+                const newQuantity = item.quantity + change;
+                return { ...item, quantity: newQuantity > 0 ? newQuantity : 1 };
+            }
+            return item;
+        });
+        setCartItems(updatedCart);
+
+        // ✅ Update Cart in Backend
+        const itemToUpdate = updatedCart.find(item => item.cartId === id);
+        updateCart(id, itemToUpdate).catch(err => console.error(err));
     };
 
     const removeItem = (id) => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+        deleteCart(id)
+            .then(() => setCartItems(cartItems.filter(item => item.cartId !== id)))
+            .catch((error) => console.error('Error deleting cart item:', error));
     };
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -52,12 +42,7 @@ const Cart = () => {
 
     const handleCheckout = () => {
         navigate('/order-detail', {
-            state: {
-                cartItems,
-                subtotal,
-                shippingFee,
-                total
-            }
+            state: { cartItems, subtotal, shippingFee, total }
         });
     };
 
@@ -72,7 +57,7 @@ const Cart = () => {
                 <div className="cart-content">
                     <div className="cart-items">
                         {cartItems.map(item => (
-                            <div key={item.id} className="cart-item">
+                            <div key={item.cartId} className="cart-item">
                                 <div className="item-image">
                                     <img src={item.image} alt={item.name} />
                                 </div>
@@ -84,21 +69,18 @@ const Cart = () => {
                                     <div className="item-controls">
                                         <div className="quantity-controls">
                                             <button
-                                                onClick={() => updateQuantity(item.id, -1)}
+                                                onClick={() => updateQuantity(item.cartId, -1)}
                                                 disabled={item.quantity <= 1}
                                             >
                                                 <FaMinus />
                                             </button>
                                             <span>{item.quantity}</span>
-                                            <button onClick={() => updateQuantity(item.id, 1)}>
+                                            <button onClick={() => updateQuantity(item.cartId, 1)}>
                                                 <FaPlus />
                                             </button>
                                         </div>
 
-                                        <button
-                                            className="remove-button"
-                                            onClick={() => removeItem(item.id)}
-                                        >
+                                        <button className="remove-button" onClick={() => removeItem(item.cartId)}>
                                             <FaTrash />
                                         </button>
                                     </div>
