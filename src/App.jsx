@@ -16,6 +16,8 @@ import Cart from "/src/components/Cart";
 import CartItems from "/src/pages/CartItems";
 import OrderDetail from "./pages/OrderDetails";
 import PaymentPage from "/src/pages/Payment";
+import ProductList from '/src/pages/ProductList';
+import ProductDetails from "/src/pages/ProductDetails"; 
 
 
 
@@ -45,7 +47,8 @@ function App() {
               <Route path="/test-loai-da" element={<SkinTest />} />
               <Route path="/cartitems" element={<CartItems />} />
               <Route path="/order-detail" element={<OrderDetail />} />
-              <Route path="/san-pham" element={<FeaturedNews />} />
+              <Route path="/product-list" element={<ProductList />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/ho-so" element={<Profile />} />
               <Route path="/login" element={<Login />} />
