@@ -90,9 +90,7 @@ const Navbar = () => {
                             <div className="dropdown-menu" style={{ display: 'block', border: '2px solid red' }}>
                             <Link to="/ho-so" className="dropdown-item">Profile</Link>
                             <div className="dropdown-item" onClick={handleLogout}>Logout</div>
-                            {user && user.role === 'admin' && (
-                                <Link to="/admin" className="dropdown-item">Admin Dashboard</Link>
-                            )}
+                            
                             </div>
                         
                         )}
