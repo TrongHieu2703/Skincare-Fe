@@ -16,8 +16,10 @@ import Cart from "/src/components/Cart";
 import CartItems from "/src/pages/CartItems";
 import OrderDetail from "./pages/OrderDetails";
 import PaymentPage from "/src/pages/Payment";
-
-
+import AdminDashboard from "/src/admin/pages2/AdminDashboard";
+import ManageProducts from "/src/admin/pages2/ManageProducts";
+import ManageOrders from "/src/admin/pages2/ManageOrders";
+import ManageCustomers from "/src/admin/pages2/ManageCustomers";
 
 function App() {
   return (
@@ -51,6 +53,11 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/payment" element={<PaymentPage />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/products" element={<ManageProducts />} />
+              <Route path="/admin/orders" element={<ManageOrders />} />
+              <Route path="/admin/customers" element={<ManageCustomers />} />
+            
               <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
             </Routes>
           </div>
