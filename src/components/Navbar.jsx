@@ -69,7 +69,6 @@ const Navbar = () => {
                 <Link to="/test-loai-da">Skin Test</Link>
                 <Link to="/product-list">Products</Link>
                 <Link to="/blog">Blog</Link>
-                {user && <Link to="/ho-so">Profile</Link>}
                 <Link to="/cartitems" className="cart-icon">
                     <FaShoppingCart />
                     {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
