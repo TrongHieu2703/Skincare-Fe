@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getProductById } from '../api/productApi';
+
 import '/src/styles/ProductDetails.css';
+
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -60,5 +62,4 @@ const ProductDetails = () => {
     </div>
   );
 };
-
 export default ProductDetails;
