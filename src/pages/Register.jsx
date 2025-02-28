@@ -47,10 +47,63 @@ const Register = () => {
         {message && <p className="error-message">{message}</p>}
 
         <form onSubmit={handleSubmit}>
-          <input type="text" name="username" placeholder="Username" onChange={handleChange} required />
-          <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-          <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-          <button type="submit" className="register-button">Sign Up</button>
+          {/* Username */}
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            onChange={handleChange}
+            minLength={3}
+            required
+          />
+
+          {/* Email */}
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={handleChange}
+            required
+          />
+
+          {/* Password */}
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            onChange={handleChange}
+            minLength={6}
+            required
+          />
+
+          {/* PhoneNumber */}
+          <input
+            type="text"
+            name="phoneNumber"
+            placeholder="Phone Number"
+            onChange={handleChange}
+          />
+
+          {/* Address */}
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            onChange={handleChange}
+          />
+
+          {/* Avatar - File Input */}
+          <input
+            type="file"
+            name="avatar"
+            accept="image/*" // Chỉ chấp nhận tệp hình ảnh
+            onChange={handleChange} // Hàm xử lý khi chọn tệp
+          />
+
+          {/* Submit Button */}
+          <button type="submit" className="register-button">
+            Sign Up
+          </button>
         </form>
 
         <p className="switch-text">

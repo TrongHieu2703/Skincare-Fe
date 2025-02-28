@@ -23,11 +23,6 @@ const Profile = () => {
 
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    axios.get("https://localhost:5001/api/users")
-      .then(res => setUsers(res.data))
-      .catch(err => console.error(err));
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -99,16 +94,6 @@ const Profile = () => {
         </div>
 
         <button className="save-btn">Save All</button>
-      </div>
-
-      {/* User List Section */}
-      <div className="user-list">
-        <h2>User List</h2>
-        <ul>
-          {users.map(user => (
-            <li key={user.id}>{user.firstName} {user.lastName} - {user.email}</li>
-          ))}
-        </ul>
       </div>
     </div>
   );
