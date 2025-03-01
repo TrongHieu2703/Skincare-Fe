@@ -50,7 +50,7 @@ const AboutUs = () => {
                     </div>
                     <div className="about-card p-4 border rounded shadow-sm mt-4" onClick={handleInfoClick} style={{ cursor: 'pointer' }}>
                         <img src="/src/assets/images/aboutus.jpg" alt="Bao bì thân thiện môi trường" className="about-icon mb-3" />
-                        <h5 className="fw-bold">Bao Bì Thân Thiện Với Môi Trường</h5>
+                        <h5 className="fw-bold"> Thân Thiện Với Môi Trường</h5>
                         <p className="text-muted">
                             Sử dụng bao bì có thể tái chế, hạn chế nhựa, hướng tới bảo vệ môi trường bền vững.
                         </p>
