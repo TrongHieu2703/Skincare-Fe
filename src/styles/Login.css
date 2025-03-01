@@ -11,19 +11,17 @@ html {
 
 .title-container {
     margin-top: 20px;
-    /* Giảm giá trị này để thu hẹp khoảng cách */
 }
 
 .subtitle-container {
     margin-bottom: 10px;
-    /* Giảm khoảng cách dưới tiêu đề */
 }
 
 .image-container {
     margin-top: 10px;
-    /* Giảm khoảng cách trên ảnh */
 }
 
+/* Container chính */
 .login-container {
     display: flex;
     align-items: center;
@@ -36,7 +34,7 @@ html {
     padding: 20px;
 }
 
-.container { 
+.container {
     width: 100%;
     max-width: 100%;
 }
@@ -173,4 +171,27 @@ html {
     height: auto;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* ✅ Hiệu ứng thông báo đăng nhập thành công */
+.success-toast {
+    padding-top: 100px;
+    position: fixed;
+    top: 100px;
+    right: -300px;
+    /* Bắt đầu ngoài màn hình */
+    background-color: #007a50;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    transition: right 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    opacity: 0;
+}
+
+.success-toast.show {
+    right: 20px;
+    /* Trượt vào màn hình */
+    opacity: 1;
 }

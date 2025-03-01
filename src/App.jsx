@@ -38,7 +38,7 @@ function App() {
             <Routes>
               <Route path="/" element={<><Carousel /><FeaturedNews /></>} />
               <Route path="/test-loai-da" element={<SkinTest />} />
-              <Route path="/cartitems" element={<CartItems />} />
+              <Route path="/cart-items" element={<CartItems />} />
               <Route path="/order-detail" element={<OrderDetail />} />
               <Route path="/product-list" element={<ProductList />} />
               <Route path="/product/:id" element={<ProductDetails />} />
@@ -51,7 +51,7 @@ function App() {
               <Route path="/admin/products" element={<ManageProducts />} />
               <Route path="/admin/orders" element={<ManageOrders />} />
               <Route path="/admin/customers" element={<ManageCustomers />} />
-            
+
               <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
             </Routes>
           </div>
