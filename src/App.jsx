@@ -36,9 +36,9 @@ function App() {
           {/* Main Content */}
           <div className="container mt-4">
             <Routes>
-              <Route path="/" element={<><Carousel /><FeaturedNews /></>} />
+              <Route path="/" element={<><Carousel /><Blog /><FeaturedNews /></>} />
               <Route path="/test-loai-da" element={<SkinTest />} />
-              <Route path="/cartitems" element={<CartItems />} />
+              <Route path="/cart-items" element={<CartItems />} />
               <Route path="/order-detail" element={<OrderDetail />} />
               <Route path="/product-list" element={<ProductList />} />
               <Route path="/product/:id" element={<ProductDetails />} />

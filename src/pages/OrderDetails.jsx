@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { createOrder } from '../api/orderApi'; 
+import { createOrder } from '../api/orderApi';
 import '/src/styles/OrderDetails.css';
 
 const OrderDetail = () => {
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+
     const navigate = useNavigate();
     const { state } = useLocation();
     const { cartItems, subtotal, shippingFee, total } = state || {};
@@ -31,6 +35,11 @@ const OrderDetail = () => {
         e.preventDefault();
 
         const orderData = {
+            loading: loading,
+            setLoading: setLoading,
+            setErrorMessage: setErrorMessage,
+            setSuccessMessage: setSuccessMessage,
+
             customerId: 1, // Giả sử lấy từ Auth
             totalPrice: subtotal,
             discountPrice: 0,
@@ -52,8 +61,14 @@ const OrderDetail = () => {
         };
 
         try {
+            setLoading(true);
+            setErrorMessage('');
+            setSuccessMessage('');
+
             const response = await createOrder(orderData);
+            setSuccessMessage('Order placed successfully!');
             navigate('/payment', { state: { orderId: response.id, total } });
+
         } catch (error) {
             console.error('Error creating order:', error);
         }
@@ -90,7 +105,12 @@ const OrderDetail = () => {
                             <textarea name="note" value={orderInfo.note} onChange={handleInputChange} rows="3" />
                         </div>
 
-                        <button type="submit" className="checkout-button">Place Order</button>
+                        <button type="submit" className="checkout-button" disabled={loading}>
+                            {loading ? 'Placing Order...' : 'Place Order'}
+                        </button>
+                        {errorMessage && <div className="error-message">{errorMessage}</div>}
+                        {successMessage && <div className="success-message">{successMessage}</div>}
+
                     </form>
                 </div>
 

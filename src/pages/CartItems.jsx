@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
-import { getCartsByUserId, updateCart, deleteCart } from '../api/cartApi'; 
+import { updateCart, deleteCart, getCartsByUserId } from '../api/cartApi';
 import '/src/styles/CartItems.css';
 
 const Cart = () => {
     const navigate = useNavigate();
-    const userId = 1; // 🔑 Giả sử UserID lấy từ Auth
-    const [cartItems, setCartItems] = useState([]);
+    const location = useLocation();
+    const [cartItems, setCartItems] = useState(location.state?.cartItems || []);
 
     useEffect(() => {
-        getCartsByUserId(userId)
-            .then((data) => setCartItems(data))
-            .catch((error) => console.error('Error fetching cart:', error));
-    }, [userId]);
+        console.log("Cart Items from Location:", location.state?.cartItems); // Debugging log
+        if (!location.state?.cartItems) {
+            // Fetch cart items from backend if not passed from ProductList
+            const userId = 1; // 🔑 Giả sử UserID lấy từ Auth
+            getCartsByUserId(userId)
+                .then((data) => setCartItems(data))
+                .catch((error) => console.error('Error fetching cart:', error));
+        }
+    }, [location.state?.cartItems]);
 
     const updateQuantity = (id, change) => {
         const updatedCart = cartItems.map(item => {

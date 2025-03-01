@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { addToCartApi, updateCartApi, fetchCartItemsApi } from '../api/cartApi'; // Import API functions
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import { FaShoppingCart, FaMinus, FaPlus } from 'react-icons/fa';
@@ -11,16 +13,16 @@ import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
     const navigate = useNavigate();
-    const [cartItems, setCartItems] = useState([
-        { id: 1, name: "Product 1", price: 450000, image: "/src/assets/images/sanpham1.jpg", quantity: 1 },
-        { id: 2, name: "Product 2", price: 450000, image: "/src/assets/images/sanpham2.jpg", quantity: 1 },
-        { id: 3, name: "Product 3", price: 450000, image: "/src/assets/images/sanpham3.jpg", quantity: 1 },
-        { id: 4, name: "Product 4", price: 450000, image: "/src/assets/images/sanpham4.jpg", quantity: 1 },
-        { id: 5, name: "Product 5", price: 450000, image: "/src/assets/images/sanpham5.jpg", quantity: 1 },
-        { id: 6, name: "Product 6", price: 450000, image: "/src/assets/images/sanpham6.jpeg", quantity: 1 },
-        { id: 7, name: "Product 7", price: 450000, image: "/src/assets/images/sanpham7.jpg", quantity: 1 },
-        { id: 8, name: "Product 8", price: 450000, image: "/src/assets/images/sanpham8.jpg", quantity: 1 },
-    ]);
+    const [cartItems, setCartItems] = useState([]);
+
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            const items = await fetchCartItemsApi();
+            setCartItems(items);
+        };
+        fetchCartItems();
+    }, []);
+
 
     const [successMessage, setSuccessMessage] = useState("");
 
@@ -38,9 +40,11 @@ const Cart = () => {
         );
     };
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async (item) => {
+        await addToCartApi(item);
         setSuccessMessage("✅ Added to cart successfully!");
         setTimeout(() => setSuccessMessage(""), 2000); // Ẩn sau 2 giây
+
     };
 
     return (
