@@ -113,7 +113,7 @@ const ProductList = () => {
             <img src={product.imageUrl || 'https://via.placeholder.com/150'} alt={product.name} className="product-image hover-zoom" />
             <div className="product-details">
               <h3 className="product-name highlighted-text">{product.name}</h3>
-              <p className="product-price">Giá: {product.price.toLocaleString()}</p>
+              <p className="product-price">{product.price.toLocaleString()}</p>
               <div className="quantity-control" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, -1)}>-</button>
                 <span className="quantity">{quantities[product.id]}</span>
