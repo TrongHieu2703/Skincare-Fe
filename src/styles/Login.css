@@ -180,7 +180,11 @@ html {
     top: 100px;
     right: -300px;
     /* Bắt đầu ngoài màn hình */
-    background-color: #007a50;
+    background-color: #28a745;
+    /* Updated to a green shade */
+    background-color: #28a745;
+    /* Updated to a green shade */
+
     color: white;
     padding: 15px 20px;
     border-radius: 8px;
