@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
-import { updateCart, deleteCart, getCartsByUserId } from '../api/cartApi';
+import { updateCart, deleteCartItem, getCartByUser } from '../api/cartApi';
 import '/src/styles/CartItems.css';
 
 const Cart = () => {
@@ -26,20 +26,21 @@ const Cart = () => {
         }
 
         if (!location.state?.cartItems && userId) {
-            console.log("Fetching cart from API for user ID:", userId);
-            getCartsByUserId(userId)
+            console.log("🔄 Fetching cart from API for user ID:", userId);
+            getCartByUser()
                 .then((data) => {
                     setCartItems(data);
                     setLoading(false);
                 })
                 .catch((error) => {
-                    console.error('Error fetching cart:', error);
+                    console.error("❌ Error fetching cart:", error);
                     setLoading(false);
                 });
         } else {
             setLoading(false);
         }
     }, [location.state?.cartItems]);
+
 
     const updateQuantity = async (id, change) => {
         const updatedCart = cartItems.map(item => {
@@ -55,21 +56,21 @@ const Cart = () => {
         const itemToUpdate = updatedCart.find(item => item.cartId === id);
         if (itemToUpdate) {
             try {
-                await updateCart(id, itemToUpdate);
+                await updateCart(id, itemToUpdate.quantity); // ✅ Chỉ truyền `quantity`
             } catch (err) {
-                console.error("Error updating cart:", err);
+                console.error("❌ Error updating cart:", err);
             }
         }
     };
-
     const removeItem = async (id) => {
         try {
-            await deleteCart(id);
+            await deleteCartItem(id);
             setCartItems(cartItems.filter(item => item.cartId !== id));
         } catch (error) {
-            console.error('Error deleting cart item:', error);
+            console.error("❌ Error deleting cart item:", error);
         }
     };
+
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shippingFee = 30000;

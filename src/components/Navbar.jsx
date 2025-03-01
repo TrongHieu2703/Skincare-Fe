@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUserCircle } from "react-icons/fa";
-import { getCartsByUserId } from "../api/cartApi";
+import { getCartByUser } from "../api/cartApi";
 import "/src/styles/Navbar.css";
 
 const Navbar = () => {
@@ -13,17 +13,18 @@ const Navbar = () => {
 
     useEffect(() => {
         const loggedUser = localStorage.getItem("user");
-        if (loggedUser) {
+        const token = localStorage.getItem("token");
+
+        if (loggedUser && token) {
             const parsedUser = JSON.parse(loggedUser);
             setUser(parsedUser);
 
-            // ✅ Fetch Cart Count
-            getCartsByUserId(parsedUser.id)
+            getCartByUser()  // ✅ Gọi đúng tên hàm
                 .then((data) => setCartCount(data.length))
-                .catch((err) => console.error("Error fetching cart:", err));
+                .catch((err) => console.error("❌ Error fetching cart:", err));
         } else {
             setUser(null);
-            setCartCount(0); // Reset cart count on logout
+            setCartCount(0);
         }
     }, [location]);
 
@@ -86,11 +87,9 @@ const Navbar = () => {
                         </div>
 
                         {dropdownOpen && (
-
                             <div className="dropdown-menu" style={{ display: 'block', border: '2px solid green' }}>
                                 <Link to="/ho-so" className="dropdown-item">Profile</Link>
                                 <div className="dropdown-item" onClick={handleLogout}>Logout</div>
-
                             </div>
                         )}
                     </div>
