@@ -11,7 +11,6 @@ body {
 
 .footer {
     background: linear-gradient(to right, #ddf3e5, #d1ecd6);
-    padding: 40px 0 0;
     font-family: 'Inter', sans-serif;
     width: 100vw;
     margin-left: calc(-50vw + 50%);
@@ -21,10 +20,10 @@ body {
 .footer-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 30px;
     display: flex;
     justify-content: space-between;
-    gap: 40px;
+    gap: 30px;
 }
 
 /* Brand Section */
@@ -34,13 +33,13 @@ body {
 
 .footer-logo {
     height: 100px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .footer-brand p {
     color: #007B55;
     line-height: 1.6;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .social-links {
@@ -100,9 +99,9 @@ body {
 
 /* Footer Bottom */
 .footer-bottom {
-    margin-top: 40px;
+    margin-top: 30px;
     border-top: 1px solid rgba(0, 123, 85, 0.1);
-    padding: 20px 0;
+
     text-align: center;
     width: 100%;
 }
@@ -110,7 +109,7 @@ body {
 .footer-bottom-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -128,7 +127,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .footer-legal a {

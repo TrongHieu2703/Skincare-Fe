@@ -119,7 +119,7 @@ const ProductList = () => {
                 <span className="quantity">{quantities[product.id]}</span>
                 <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, 1)}>+</button>
               </div>
-              <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>Thêm vào giỏ hàng</button>
+              <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>Add to Cart</button>
               <Link to={`/product/${product.id}`} className="product-link btn-animated">
                 Xem chi tiết
               </Link>
