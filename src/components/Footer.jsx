@@ -1,6 +1,8 @@
 import React from "react";
 import "/src/styles/Footer.css";
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
+import { FaFacebookF, FaYoutube, FaShoppingBag } from 'react-icons/fa';
+import { SiZalo } from 'react-icons/si';
+import { TbLetterL } from 'react-icons/tb';
 
 const Footer = () => {
     return (
@@ -11,10 +13,7 @@ const Footer = () => {
                     <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="footer-logo" />
                     <p>Your trusted destination for premium skincare products and beauty solutions.</p>
                     <div className="social-links">
-                        <a href="#" aria-label="Facebook"><FaFacebookF /></a>
-                        <a href="#" aria-label="Twitter"><FaTwitter /></a>
-                        <a href="#" aria-label="Instagram"><FaInstagram /></a>
-                        <a href="#" aria-label="LinkedIn"><FaLinkedinIn /></a>
+
                     </div>
                 </div>
 
@@ -52,6 +51,20 @@ const Footer = () => {
                             <li><a href="#">Gift Cards</a></li>
                         </ul>
                     </div>
+                </div>
+            </div>
+
+            {/* Footer Extra Information */}
+            <div className="footer-extra">
+                <p>🌿 <strong>GPKD/MST:</strong> 0106740438</p>
+                <img src="/src/assets/images/tich.webp" alt="Đã thông báo Bộ Công Thương" className="bo-cong-thuong" />
+                <p>🌿 <strong>SKINCARE ONLINE🌻</strong></p>
+                <div className="footer-social">
+                    <a href="#" aria-label="Facebook"><FaFacebookF className="social-icon" /></a>
+                    <a href="#" aria-label="YouTube"><FaYoutube className="social-icon" /></a>
+                    <a href="#" aria-label="Zalo"><SiZalo className="social-icon" /></a>
+                    <a href="#" aria-label="Shopee"><FaShoppingBag className="social-icon" /></a>
+                    <a href="#" aria-label="Lazada"><TbLetterL className="social-icon" /></a>
                 </div>
             </div>
 

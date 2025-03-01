@@ -28,14 +28,14 @@ const HomePage = () => {
             {/* Giới thiệu */}
             <section className="px-8 md:px-20 py-12">
                 <h3 className="text-xl font-semibold flex items-center">
-                    <span className="text-green-600 text-2xl pr-2">🟢</span> VỀ CHÚNG TÔI
+                    <span className="text-green-600 text-2xl pr-2">🏵️</span> ABOUT US 🏵️
                 </h3>
                 <p className="mt-4 text-lg">
-                    Skincare  – là câu chuyện khởi nguồn từ tình yêu với thiên nhiên & những sản vật phong phú của Việt Nam,
-                    được các dược sĩ từ <span className="font-bold text-green-700">Đại Học Dược Hà Nội</span> nghiên cứu và phát triển.
+                    Skincare - is a story that originates from the love for nature and the rich products of Vietnam,
+                    received from pharmacists <span className="font-bold text-green-700">Hanoi University of Pharmacy</span> research and development.
                 </p>
                 <p className="mt-4 text-lg">
-                    Chúng tôi cam kết loại bỏ <span className="font-bold text-green-700">gia trong mỹ phẩm</span> và thay thế bằng các <span className="font-bold text-green-700">nguyên liệu thiên nhiên lành sạch</span> như trà xanh, cafe, nghệ, bơ, cám gạo, dầu dưỡng,...
+                    We are committed to eliminating <span className="font-bold text-green-700">spice in cosmetics</span> and replacing it with <span className="font-bold text-green-700">clean natural ingredients</span> such as green tea, coffee, turmeric, avocado, rice bran, nourishing oils,...
                 </p>
             </section>
 
