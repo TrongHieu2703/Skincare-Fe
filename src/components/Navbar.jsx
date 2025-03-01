@@ -66,6 +66,7 @@ const Navbar = () => {
             {/* Navigation Links */}
             <div className="navbar-links">
                 <Link to="/">Home</Link>
+                <Link to="/AboutSkincare">About</Link>
                 <Link to="/test-loai-da">Skin Test</Link>
                 <Link to="/product-list">Products</Link>
                 <Link to="/blog">Blog</Link>
@@ -86,7 +87,7 @@ const Navbar = () => {
 
                         {dropdownOpen && (
 
-                            <div className="dropdown-menu" style={{ display: 'block', border: '2px solid red' }}>
+                            <div className="dropdown-menu" style={{ display: 'block', border: '2px solid green' }}>
                                 <Link to="/ho-so" className="dropdown-item">Profile</Link>
                                 <div className="dropdown-item" onClick={handleLogout}>Logout</div>
 
