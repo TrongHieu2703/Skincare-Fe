@@ -8,37 +8,67 @@ const Cart = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [cartItems, setCartItems] = useState(location.state?.cartItems || []);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log("Cart Items from Location:", location.state?.cartItems); // Debugging log
-        if (!location.state?.cartItems) {
-            // Fetch cart items from backend if not passed from ProductList
-            const userId = 1; // 🔑 Giả sử UserID lấy từ Auth
+        console.log("Cart Items from Location:", location.state?.cartItems);
+
+        const loggedUser = localStorage.getItem("user");
+        let userId = null;
+
+        if (loggedUser) {
+            try {
+                const parsedUser = JSON.parse(loggedUser);
+                userId = parsedUser?.id;
+            } catch (error) {
+                console.error("❌ Error parsing user data:", error);
+            }
+        }
+
+        if (!location.state?.cartItems && userId) {
+            console.log("Fetching cart from API for user ID:", userId);
             getCartsByUserId(userId)
-                .then((data) => setCartItems(data))
-                .catch((error) => console.error('Error fetching cart:', error));
+                .then((data) => {
+                    setCartItems(data);
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error('Error fetching cart:', error);
+                    setLoading(false);
+                });
+        } else {
+            setLoading(false);
         }
     }, [location.state?.cartItems]);
 
-    const updateQuantity = (id, change) => {
+    const updateQuantity = async (id, change) => {
         const updatedCart = cartItems.map(item => {
             if (item.cartId === id) {
-                const newQuantity = item.quantity + change;
-                return { ...item, quantity: newQuantity > 0 ? newQuantity : 1 };
+                const newQuantity = Math.max(1, item.quantity + change);
+                return { ...item, quantity: newQuantity };
             }
             return item;
         });
+
         setCartItems(updatedCart);
 
-        // ✅ Update Cart in Backend
         const itemToUpdate = updatedCart.find(item => item.cartId === id);
-        updateCart(id, itemToUpdate).catch(err => console.error(err));
+        if (itemToUpdate) {
+            try {
+                await updateCart(id, itemToUpdate);
+            } catch (err) {
+                console.error("Error updating cart:", err);
+            }
+        }
     };
 
-    const removeItem = (id) => {
-        deleteCart(id)
-            .then(() => setCartItems(cartItems.filter(item => item.cartId !== id)))
-            .catch((error) => console.error('Error deleting cart item:', error));
+    const removeItem = async (id) => {
+        try {
+            await deleteCart(id);
+            setCartItems(cartItems.filter(item => item.cartId !== id));
+        } catch (error) {
+            console.error('Error deleting cart item:', error);
+        }
     };
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -51,6 +81,10 @@ const Cart = () => {
         });
     };
 
+    if (loading) {
+        return <h2>Loading cart items...</h2>;
+    }
+
     return (
         <div className="cart-page">
             <div className="cart-container">
@@ -59,72 +93,82 @@ const Cart = () => {
                     <span className="item-count">{cartItems.length} items</span>
                 </div>
 
-                <div className="cart-content">
-                    <div className="cart-items">
-                        {cartItems.map(item => (
-                            <div key={item.cartId} className="cart-item">
-                                <div className="item-image">
-                                    <img src={item.image} alt={item.name} />
-                                </div>
-
-                                <div className="item-details">
-                                    <h3>{item.name}</h3>
-                                    <div className="item-price">${(item.price / 23000).toFixed(2)}</div>
-
-                                    <div className="item-controls">
-                                        <div className="quantity-controls">
-                                            <button
-                                                onClick={() => updateQuantity(item.cartId, -1)}
-                                                disabled={item.quantity <= 1}
-                                            >
-                                                <FaMinus />
-                                            </button>
-                                            <span>{item.quantity}</span>
-                                            <button onClick={() => updateQuantity(item.cartId, 1)}>
-                                                <FaPlus />
-                                            </button>
-                                        </div>
-
-                                        <button className="remove-button" onClick={() => removeItem(item.cartId)}>
-                                            <FaTrash />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="item-total">
-                                    ${((item.price * item.quantity) / 23000).toFixed(2)}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="cart-summary">
-                        <h3>Order Summary</h3>
-
-                        <div className="summary-row">
-                            <span>Subtotal</span>
-                            <span>${(subtotal / 23000).toFixed(2)}</span>
-                        </div>
-
-                        <div className="summary-row">
-                            <span>Shipping Fee</span>
-                            <span>${(shippingFee / 23000).toFixed(2)}</span>
-                        </div>
-
-                        <div className="summary-row total">
-                            <span>Total</span>
-                            <span>${(total / 23000).toFixed(2)}</span>
-                        </div>
-
-                        <button
-                            className="checkout-button"
-                            onClick={handleCheckout}
-                            disabled={cartItems.length === 0}
-                        >
-                            Proceed to Checkout
+                {cartItems.length === 0 ? (
+                    <div className="empty-cart">
+                        <h2>Giỏ hàng của bạn đang trống 🛒</h2>
+                        <p>Hãy thêm sản phẩm để tiếp tục mua sắm!</p>
+                        <button onClick={() => navigate("/product-list")} className="continue-shopping">
+                            Tiếp tục mua sắm
                         </button>
                     </div>
-                </div>
+                ) : (
+                    <div className="cart-content">
+                        <div className="cart-items">
+                            {cartItems.map(item => (
+                                <div key={item.cartId} className="cart-item">
+                                    <div className="item-image">
+                                        <img src={item.image} alt={item.name} />
+                                    </div>
+
+                                    <div className="item-details">
+                                        <h3>{item.name}</h3>
+                                        <div className="item-price">${(item.price / 23000).toFixed(2)}</div>
+
+                                        <div className="item-controls">
+                                            <div className="quantity-controls">
+                                                <button
+                                                    onClick={() => updateQuantity(item.cartId, -1)}
+                                                    disabled={item.quantity <= 1}
+                                                >
+                                                    <FaMinus />
+                                                </button>
+                                                <span>{item.quantity}</span>
+                                                <button onClick={() => updateQuantity(item.cartId, 1)}>
+                                                    <FaPlus />
+                                                </button>
+                                            </div>
+
+                                            <button className="remove-button" onClick={() => removeItem(item.cartId)}>
+                                                <FaTrash />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="item-total">
+                                        ${((item.price * item.quantity) / 23000).toFixed(2)}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="cart-summary">
+                            <h3>Order Summary</h3>
+
+                            <div className="summary-row">
+                                <span>Subtotal</span>
+                                <span>${(subtotal / 23000).toFixed(2)}</span>
+                            </div>
+
+                            <div className="summary-row">
+                                <span>Shipping Fee</span>
+                                <span>${(shippingFee / 23000).toFixed(2)}</span>
+                            </div>
+
+                            <div className="summary-row total">
+                                <span>Total</span>
+                                <span>${(total / 23000).toFixed(2)}</span>
+                            </div>
+
+                            <button
+                                className="checkout-button"
+                                onClick={handleCheckout}
+                                disabled={cartItems.length === 0}
+                            >
+                                Proceed to Checkout
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

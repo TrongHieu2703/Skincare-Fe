@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { addToCartApi, updateCartApi, fetchCartItemsApi } from '../api/cartApi'; // Import API functions
+import { addCart, updateCart, getAllCarts } from '../api/cartApi'; // Import API functions
+
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -14,6 +15,15 @@ import { useNavigate } from "react-router-dom";
 const Cart = () => {
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
+
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            const items = await getAllCarts();
+            setCartItems(items);
+        };
+        fetchCartItems();
+    }, []);
+
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -41,7 +51,8 @@ const Cart = () => {
     };
 
     const handleAddToCart = async (item) => {
-        await addToCartApi(item);
+        await addCart(item);
+
         setSuccessMessage("✅ Added to cart successfully!");
         setTimeout(() => setSuccessMessage(""), 2000); // Ẩn sau 2 giây
 

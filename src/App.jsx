@@ -36,7 +36,7 @@ function App() {
           {/* Main Content */}
           <div className="container mt-4">
             <Routes>
-              <Route path="/" element={<><Carousel /><Blog /><FeaturedNews /></>} />
+              <Route path="/" element={<><Carousel /><FeaturedNews /></>} />
               <Route path="/test-loai-da" element={<SkinTest />} />
               <Route path="/cart-items" element={<CartItems />} />
               <Route path="/order-detail" element={<OrderDetail />} />

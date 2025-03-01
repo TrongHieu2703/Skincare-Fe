@@ -128,14 +128,16 @@ body {
 }
 
 .login {
-    background: linear-gradient(45deg, #007B55, #005c40);
+    background: linear-gradient(45deg, #007BFF, #0056b3);
+
     border: none;
     color: white;
 }
 
 .register {
     background: transparent;
-    border: 2px solid #007B55;
+    border: 2px solid #007BFF;
+
     color: #007B55;
 }
 
@@ -240,7 +242,7 @@ body {
 
 /* Optional: Make Logout Red */
 .dropdown-item.logout {
-    color: #e74c3c;
+    color: #227931;
 }
 
 .dropdown-item.logout:hover {
