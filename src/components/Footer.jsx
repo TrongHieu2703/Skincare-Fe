@@ -13,11 +13,7 @@ const Footer = () => {
                     <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="footer-logo" />
                     <p>Your trusted destination for premium skincare products and beauty solutions.</p>
                     <div className="social-links">
-                        <a href="#" aria-label="Facebook"><FaFacebookF /></a>
-                        <a href="#" aria-label="YouTube"><FaYoutube /></a>
-                        <a href="#" aria-label="Zalo"><SiZalo /></a>
-                        <a href="#" aria-label="Shopee"><FaShoppingBag /></a>
-                        <a href="#" aria-label="Lazada"><TbLetterL /></a>
+
                     </div>
                 </div>
 
