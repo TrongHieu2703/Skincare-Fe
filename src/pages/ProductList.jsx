@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { getAllProducts } from '../api/productApi';
-import { Link } from 'react-router-dom';
-import '/src/styles/ProductList.css';
+import { Link, useHistory } from 'react-router-dom';
+
+import '../styles/ProductList.css';
+
 
 const ProductList = () => {
+  const [successMessage, setSuccessMessage] = useState('');
+  const [messageVisible, setMessageVisible] = useState(false);
+
+
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
@@ -13,7 +19,8 @@ const ProductList = () => {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    getAllProducts(1, 50)
+    getAllProducts(1, 10)
+
       .then((res) => {
         setProducts(res.data);
         setFilteredProducts(res.data);
@@ -44,14 +51,44 @@ const ProductList = () => {
     }));
   };
 
+  const history = useHistory(); // Initialize useHistory
+
   const handleAddToCart = (product) => {
+    // Existing code...
+
     setCart((prevCart) => {
+      setSuccessMessage('Added to cart!'); // Set success message
+
+      setMessageVisible(true); // Show the message
+      console.log("Success message shown"); // Debugging log
+      setTimeout(() => {
+        setMessageVisible(false); // Hide the message after 3 seconds
+        console.log("Success message hidden"); // Debugging log
+      }, 3000);
+      // Add fade-in and fade-out effect
+      const messageElement = document.querySelector('.success-message');
+      if (messageElement) {
+        messageElement.classList.add('fade-in');
+        console.log("Fade-in class added"); // Debugging log
+        setTimeout(() => {
+          messageElement.classList.remove('fade-in');
+          messageElement.classList.add('fade-out');
+          console.log("Fade-out class added"); // Debugging log
+        }, 2500); // Start fade-out after 2.5 seconds
+
+
+      }
+
+
+
       const existingProduct = prevCart.find((item) => item.id === product.id);
       if (existingProduct) {
         return prevCart.map((item) =>
           item.id === product.id ? { ...item, quantity: item.quantity + quantities[product.id] } : item
         );
+        history.push('/cart'); // Redirect to cart after adding
       } else {
+
         return [...prevCart, { ...product, quantity: quantities[product.id] }];
       }
     });
@@ -105,19 +142,23 @@ const ProductList = () => {
       </div>
 
 
+      {messageVisible && <div className="success-message">{successMessage}</div>} {/* Display success message */}
+
       <div className="product-list animated-grid">
+
         {currentProducts.map((product) => (
           <div key={product.id} className="product-card animated-fade-in">
             <img src={product.imageUrl || 'https://via.placeholder.com/150'} alt={product.name} className="product-image hover-zoom" />
             <div className="product-details">
               <h3 className="product-name highlighted-text">{product.name}</h3>
-              <p className="product-price">Giá: {product.price.toLocaleString()}</p>
+              <p className="product-price">{product.price.toLocaleString()}</p>
               <div className="quantity-control" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, -1)}>-</button>
                 <span className="quantity">{quantities[product.id]}</span>
                 <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, 1)}>+</button>
               </div>
-              <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>Thêm vào giỏ hàng</button>
+              <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>Add to Cart</button>
+
               <Link to={`/product/${product.id}`} className="product-link btn-animated">
                 Xem chi tiết
               </Link>
