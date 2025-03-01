@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUserCircle } from "react-icons/fa";
-import { getCartsByUserId } from "../api/cartApi"; 
+import { getCartsByUserId } from "../api/cartApi";
 import "/src/styles/Navbar.css";
 
 const Navbar = () => {
@@ -66,10 +66,11 @@ const Navbar = () => {
             {/* Navigation Links */}
             <div className="navbar-links">
                 <Link to="/">Home</Link>
+                <Link to="/AboutSkincare">About</Link>
                 <Link to="/test-loai-da">Skin Test</Link>
                 <Link to="/product-list">Products</Link>
                 <Link to="/blog">Blog</Link>
-                <Link to="/cartitems" className="cart-icon">
+                <Link to="/cart-items" className="cart-icon">
                     <FaShoppingCart />
                     {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
                 </Link>
@@ -86,9 +87,9 @@ const Navbar = () => {
 
                         {dropdownOpen && (
 
-                            <div className="dropdown-menu" style={{ display: 'block', border: '2px solid red' }}>
-                            <Link to="/ho-so" className="dropdown-item">Profile</Link>
-                            <div className="dropdown-item" onClick={handleLogout}>Logout</div>
+                            <div className="dropdown-menu" style={{ display: 'block', border: '2px solid green' }}>
+                                <Link to="/ho-so" className="dropdown-item">Profile</Link>
+                                <div className="dropdown-item" onClick={handleLogout}>Logout</div>
 
                             </div>
                         )}

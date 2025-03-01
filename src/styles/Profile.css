@@ -1,7 +1,7 @@
 /* Profile Container */
 .profile-container {
     max-width: 800px;
-    margin-top: -400px;
+    margin: 0 auto;
     font-family: "Poppins", sans-serif;
     background: #ffffff;
     padding: 20px;
@@ -97,6 +97,21 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Layout: Chia thành 2 cột */
+.form-layout {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.general-info {
+    flex: 1;
+}
+
+.address-info {
+    flex: 1;
 }
 
 h3 {

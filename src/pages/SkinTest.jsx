@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "/src/styles/SkinTest.css";
 import { FaCheck } from 'react-icons/fa';
+import FeaturedNews from "/src/components/FeaturedNews";
 
 const SkinTest = () => {
   const [answers, setAnswers] = useState({
@@ -28,6 +29,7 @@ const SkinTest = () => {
   };
 
   return (
+
     <div className="skin-test-container">
       <div className="test-content">
         <div className="test-header">
@@ -399,6 +401,7 @@ const SkinTest = () => {
           <button type="submit" className="submit-button">
             Get Your Skin Analysis
           </button>
+
         </form>
 
         {submitted && (

@@ -128,14 +128,16 @@ body {
 }
 
 .login {
-    background: linear-gradient(45deg, #007B55, #005c40);
+    background: linear-gradient(45deg, #053525, #0a7e23);
+
     border: none;
     color: white;
 }
 
 .register {
     background: transparent;
-    border: 2px solid #007B55;
+    border: 2px solid #1f9b7c;
+
     color: #007B55;
 }
 
@@ -197,7 +199,7 @@ body {
     background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(11, 82, 20, 0.15);
     z-index: 9999;
     width: 180px;
     padding: 5px 0;
@@ -240,9 +242,9 @@ body {
 
 /* Optional: Make Logout Red */
 .dropdown-item.logout {
-    color: #e74c3c;
+    color: #227931;
 }
 
 .dropdown-item.logout:hover {
-    background-color: #f9e3e3;
+    background-color: #1e9c76;
 }
