@@ -51,7 +51,7 @@ function App() {
               <Route path="/admin/products" element={<ManageProducts />} />
               <Route path="/admin/orders" element={<ManageOrders />} />
               <Route path="/admin/customers" element={<ManageCustomers />} />
-            
+
               <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
             </Routes>
           </div>

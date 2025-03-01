@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api/authApi"; // Import từ authApi.js
+import { loginUser } from "../api/authApi";
 import "/src/styles/Login.css";
 import logo from "/src/assets/images/logo.png";
 import googleIcon from "/src/assets/images/googleicon.png";
@@ -9,14 +9,13 @@ import loginImage from "/src/assets/images/loginlogo.jpg";
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
 
-  // Hàm xử lý thay đổi input
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Hàm xử lý khi submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -25,7 +24,6 @@ const Login = () => {
         password: formData.password
       });
 
-      // Lưu thông tin người dùng nếu API trả về
       localStorage.setItem("user", JSON.stringify({
         email: response.email,
         username: response.username,
@@ -36,7 +34,13 @@ const Login = () => {
       }));
 
       setMessage("Đăng nhập thành công!");
-      setTimeout(() => navigate("/blog"), 1500); // Chuyển hướng sau khi đăng nhập
+      setShowToast(true);
+
+      setTimeout(() => {
+        setShowToast(false);
+        navigate("/blog");
+      }, 3000);
+
     } catch (error) {
       setMessage(error.message || "Đăng nhập thất bại!");
     }
@@ -90,6 +94,11 @@ const Login = () => {
 
       <div className="login-image">
         <img src={loginImage} alt="Skincare" />
+      </div>
+
+      {/* Thông báo đăng nhập thành công */}
+      <div className={`success-toast ${showToast ? "show" : ""}`}>
+        Đăng nhập thành công!
       </div>
     </div>
   );
