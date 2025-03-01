@@ -24,6 +24,9 @@ import ManageCustomers from "/src/admin/pages2/ManageCustomers";
 
 import ProductList from "/src/pages/ProductList";
 import ProductDetails from "/src/pages/ProductDetails";
+import AboutUs from "/src/components/Aboutus";
+
+
 
 
 
@@ -32,11 +35,12 @@ function App() {
     <Router>
       <div className="app-container">
         <Navbar />
+
         <div className="content-wrapper">
           {/* Main Content */}
           <div className="container mt-4">
             <Routes>
-              <Route path="/" element={<><Carousel /><FeaturedNews /></>} />
+              <Route path="/" element={<><Carousel /><AboutUs /><FeaturedNews /></>} />
               <Route path="/test-loai-da" element={<SkinTest />} />
               <Route path="/cart-items" element={<CartItems />} />
               <Route path="/order-detail" element={<OrderDetail />} />

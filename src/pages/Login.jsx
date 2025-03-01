@@ -33,12 +33,13 @@ const Login = () => {
         address: response.address
       }));
 
-      setMessage("Đăng nhập thành công!");
+      setMessage("Đăng nhập thành công!"); // Success message
+
       setShowToast(true);
 
       setTimeout(() => {
         setShowToast(false);
-        navigate("/blog");
+        navigate("/");
       }, 3000);
 
     } catch (error) {
@@ -97,7 +98,8 @@ const Login = () => {
       </div>
 
       {/* Thông báo đăng nhập thành công */}
-      <div className={`success-toast ${showToast ? "show" : ""}`}>
+      <div className={`success-toast ${showToast ? "show" : ""}`} style={{ backgroundColor: '#28a745' }}>
+
         Đăng nhập thành công!
       </div>
     </div>
