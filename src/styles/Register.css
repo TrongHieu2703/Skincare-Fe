@@ -31,6 +31,7 @@ html.signup-page {
 
 /* Signup Box */
 .register-box {
+  margin-top: -00px;
   width: 100%;
   max-width: 400px;
   background: white;

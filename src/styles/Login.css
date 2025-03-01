@@ -23,6 +23,7 @@ html {
 
 /* Container chính */
 .login-container {
+    margin-top: -800px;
     display: flex;
     align-items: center;
     justify-content: center;

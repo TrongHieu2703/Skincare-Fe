@@ -25,6 +25,7 @@ import ManageCustomers from "/src/admin/pages2/ManageCustomers";
 import ProductList from "/src/pages/ProductList";
 import ProductDetails from "/src/pages/ProductDetails";
 import AboutUs from "/src/components/Aboutus";
+import AboutSkincare from "/src/pages/AboutSkincare";
 
 
 
@@ -55,6 +56,7 @@ function App() {
               <Route path="/admin/products" element={<ManageProducts />} />
               <Route path="/admin/orders" element={<ManageOrders />} />
               <Route path="/admin/customers" element={<ManageCustomers />} />
+              <Route path="/AboutSkincare" element={<AboutSkincare />} />
 
               <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
             </Routes>

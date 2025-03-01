@@ -14,7 +14,7 @@ const ProductList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getAllProducts(1, 50)
+    getAllProducts(1, 30)
       .then((res) => {
         setProducts(res.data);
         setFilteredProducts(res.data);
