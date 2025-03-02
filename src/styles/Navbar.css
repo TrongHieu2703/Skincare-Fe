@@ -11,7 +11,7 @@
     top: 0;
     width: 100%;
     z-index: 1000;
-    height: 70px;
+    height: 80px;
     transition: background-color 0.3s ease;
 }
 
@@ -119,9 +119,9 @@ body {
 .login,
 .register {
     padding: 0.8rem 1.5rem;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.5px;
-    border-radius: 8px;
+    border-radius: 6px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
