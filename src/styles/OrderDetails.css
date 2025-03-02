@@ -1,150 +1,151 @@
 .order-detail-page {
-    padding: 40px 20px;
-    background-color: #f8f9fa;
-    min-height: 100vh;
-  }
-  
+  margin-top: 100px;
+  padding: 40px 20px;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.order-detail-container {
+  padding-top: 100px;
+  /* Tùy ý, giảm bớt so với 300px để tránh quá nhiều khoảng trống */
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 30px;
+}
+
+.order-detail-left {
+  background: rgb(184, 226, 209);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.order-detail-left h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #125e32;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #0C713D;
+}
+
+.checkout-button {
+  width: 100%;
+  padding: 15px;
+  background: #0C713D;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.checkout-button:hover {
+  background: #0A5A31;
+}
+
+.error-message {
+  color: #dc3545;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: #28a745;
+  margin-top: 10px;
+}
+
+.order-detail-right {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  background: rgb(184, 226, 209);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.order-detail-right h3 {
+  margin-bottom: 20px;
+  font-size: 40px;
+  color: #64c481;
+}
+
+.cart-items-summary {
+  margin-bottom: 20px;
+}
+
+.cart-item-summary {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #050101;
+}
+
+.cart-item-summary:last-child {
+  border-bottom: none;
+}
+
+.price-details {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #641e1e;
+}
+
+.price-row.total {
+  font-size: 28px;
+  font-weight: 600;
+  color: #154129;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+@media (max-width: 992px) {
   .order-detail-container {
-    padding-top: 100px; /* Tùy ý, giảm bớt so với 300px để tránh quá nhiều khoảng trống */
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: 30px;
+    grid-template-columns: 1fr;
   }
-  
-  .order-detail-left {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-  
-  .order-detail-left h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #555;
-    margin-bottom: 5px;
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-  
-  .form-group input:focus,
-  .form-group textarea:focus {
-    outline: none;
-    border-color: #0C713D;
-  }
-  
-  .checkout-button {
-    width: 100%;
-    padding: 15px;
-    background: #0C713D;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.2s;
-  }
-  
-  .checkout-button:hover {
-    background: #0A5A31;
-  }
-  
-  .error-message {
-    color: #dc3545;
-    margin-top: 10px;
-  }
-  
-  .success-message {
-    color: #28a745;
-    margin-top: 10px;
-  }
-  
+
   .order-detail-right {
-    position: sticky;
-    top: 100px;
-    height: fit-content;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-  
-  .order-detail-right h3 {
-    margin-bottom: 20px;
-    font-size: 20px;
-    color: #333;
-  }
-  
-  .cart-items-summary {
-    margin-bottom: 20px;
-  }
-  
-  .cart-item-summary {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-    color: #555;
-  }
-  
-  .cart-item-summary:last-child {
-    border-bottom: none;
-  }
-  
-  .price-details {
+    position: static;
     margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
   }
-  
-  .price-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .price-row.total {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #eee;
-  }
-  
-  @media (max-width: 992px) {
-    .order-detail-container {
-      grid-template-columns: 1fr;
-    }
-  
-    .order-detail-right {
-      position: static;
-      margin-top: 20px;
-    }
-  }
-  
+}
