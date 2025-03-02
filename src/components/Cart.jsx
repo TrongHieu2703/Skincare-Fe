@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { addCart, updateCart, getAllCarts } from '../api/cartApi'; // Import API functions
-
+import { useDispatch } from 'react-redux';
+import { addCartItemAsync } from '../store/cartSlice'; // Remove unused import
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -11,28 +11,21 @@ import 'swiper/css/pagination';
 import "/src/styles/Cart.css";
 import { useNavigate } from "react-router-dom";
 
-
 const Cart = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
 
     useEffect(() => {
         const fetchCartItems = async () => {
-            const items = await getAllCarts();
+            // Fetch cart items from the API or local storage
+            // const items = await getAllCarts(); // Commenting out the unused function
+            const items = []; // Placeholder for cart items
             setCartItems(items);
         };
+
         fetchCartItems();
     }, []);
-
-
-    useEffect(() => {
-        const fetchCartItems = async () => {
-            const items = await fetchCartItemsApi();
-            setCartItems(items);
-        };
-        fetchCartItems();
-    }, []);
-
 
     const [successMessage, setSuccessMessage] = useState("");
 
@@ -51,20 +44,16 @@ const Cart = () => {
     };
 
     const handleAddToCart = async (item) => {
-        await addCart(item);
-
+        await dispatch(addCartItemAsync(item.productId, item.quantity));
         setSuccessMessage("✅ Added to cart successfully!");
-        setTimeout(() => setSuccessMessage(""), 2000); // Ẩn sau 2 giây
-
+        setTimeout(() => setSuccessMessage(""), 2000); // Hide after 2 seconds
     };
 
     return (
         <div className="cart-page">
             <div className="cart-section">
                 <h2 className="member-privileges-title">FEATURED PRODUCTS🔥</h2>
-
                 {successMessage && <div className="success-message">{successMessage}</div>}
-
                 <Swiper
                     modules={[Navigation, Pagination, Autoplay]}
                     spaceBetween={10}
@@ -80,13 +69,11 @@ const Cart = () => {
                                 <div className="item-image">
                                     <img src={item.image} alt={item.name} />
                                 </div>
-
                                 <div className="item-info">
                                     <h3>{item.name}</h3>
                                     <div className="item-price">
                                         {item.price.toLocaleString()}đ
                                     </div>
-
                                     <div className="quantity-control">
                                         <label>Quantity:</label>
                                         <div className="quantity-buttons">
@@ -104,8 +91,7 @@ const Cart = () => {
                                             </button>
                                         </div>
                                     </div>
-
-                                    <button className="add-cart-btn" onClick={handleAddToCart}>
+                                    <button className="add-cart-btn" onClick={() => handleAddToCart(item)}>
                                         <FaShoppingCart /> Add to Cart
                                     </button>
                                 </div>
@@ -123,7 +109,6 @@ const Cart = () => {
                         className="main-banner"
                     />
                 </div>
-
                 <div className="offers-grid">
                     <div className="offer-card">
                         <div className="offer-header">
@@ -139,7 +124,6 @@ const Cart = () => {
                             <div className="limit-text">(Up to 200k for first order)</div>
                         </div>
                     </div>
-
                     <div className="offer-card">
                         <div className="offer-header">
                             <img
@@ -155,7 +139,6 @@ const Cart = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className="auth-section">
                     <p className="password-note">
                         *Note: Your password must contain at least one uppercase letter and one special character: ?!@

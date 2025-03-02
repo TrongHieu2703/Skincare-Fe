@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 
 import Navbar from "/src/components/Navbar";
+import Cart from "/src/components/Cart";
 import Footer from "/src/components/Footer";
 import Carousel from "/src/components/Carousel";
 import FeaturedNews from "/src/components/FeaturedNews";
@@ -31,6 +32,7 @@ import AboutSkincare from "/src/pages/AboutSkincare";
 
 
 
+
 function App() {
   return (
     <Router>
@@ -44,6 +46,7 @@ function App() {
               <Route path="/" element={<><Carousel /><AboutUs /><FeaturedNews /></>} />
               <Route path="/test-loai-da" element={<SkinTest />} />
               <Route path="/cart-items" element={<CartItems />} />
+              <Route path="/cart" element={<Cart />} />
               <Route path="/order-detail" element={<OrderDetail />} />
               <Route path="/product-list" element={<ProductList />} />
               <Route path="/product/:id" element={<ProductDetails />} />
@@ -57,6 +60,7 @@ function App() {
               <Route path="/admin/orders" element={<ManageOrders />} />
               <Route path="/admin/customers" element={<ManageCustomers />} />
               <Route path="/AboutSkincare" element={<AboutSkincare />} />
+
 
               <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
             </Routes>
