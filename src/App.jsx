@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
+import { AuthProvider } from './auth/AuthProvider';
+import PrivateRoute from './auth/PrivateRoute';
 
 import Navbar from "/src/components/Navbar";
 import Cart from "/src/components/Cart";
@@ -16,6 +18,7 @@ import Register from "/src/pages/Register";
 import Profile from "/src/pages/Profile";
 import CartItems from "/src/pages/CartItems";
 import OrderDetail from "./pages/OrderDetails";
+import Checkout from "./pages/Checkout";
 import PaymentPage from "/src/pages/Payment";
 
 import AdminDashboard from "/src/admin/pages2/AdminDashboard";
@@ -35,40 +38,56 @@ import AboutSkincare from "/src/pages/AboutSkincare";
 
 function App() {
   return (
-    <Router>
-      <div className="app-container">
-        <Navbar />
+    <AuthProvider>
+      <Router>
+        <div className="app-container">
+          <Navbar />
 
-        <div className="content-wrapper">
-          {/* Main Content */}
-          <div className="container mt-4">
-            <Routes>
-              <Route path="/" element={<><Carousel /><AboutUs /><FeaturedNews /></>} />
-              <Route path="/test-loai-da" element={<SkinTest />} />
-              <Route path="/cart-items" element={<CartItems />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/order-detail" element={<OrderDetail />} />
-              <Route path="/product-list" element={<ProductList />} />
-              <Route path="/product/:id" element={<ProductDetails />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/ho-so" element={<Profile />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/payment" element={<PaymentPage />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/products" element={<ManageProducts />} />
-              <Route path="/admin/orders" element={<ManageOrders />} />
-              <Route path="/admin/customers" element={<ManageCustomers />} />
-              <Route path="/AboutSkincare" element={<AboutSkincare />} />
+          <div className="content-wrapper">
+            {/* Main Content */}
+            <div className="container mt-4">
+              <Routes>
+                <Route path="/" element={<><Carousel /><AboutUs /><FeaturedNews /></>} />
+                <Route path="/test-loai-da" element={<SkinTest />} />
+                <Route path="/cart-items" element={<CartItems />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/order-detail" element={<OrderDetail />} />
+                <Route path="/Checkout" element={<Checkout />} />
+                <Route path="/product-list" element={<ProductList />} />
+                <Route path="/product/:id" element={<ProductDetails />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/ho-so" element={<Profile />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/products" element={<ManageProducts />} />
+                <Route path="/admin/orders" element={<ManageOrders />} />
+                <Route path="/admin/customers" element={<ManageCustomers />} />
+                <Route path="/AboutSkincare" element={<AboutSkincare />} />
 
+                <Route path="/order-details" element={
+                  <PrivateRoute>
+                    <OrderDetail />
+                  </PrivateRoute>
+                } />
+                
+                <Route path="/profile" element={
+                  <PrivateRoute>
+                    <Profile />
+                  </PrivateRoute>
+                } />
 
-              <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
-            </Routes>
+                <Route path="/order/:orderId" element={<OrderDetail />} />
+
+                <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
+              </Routes>
+            </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 

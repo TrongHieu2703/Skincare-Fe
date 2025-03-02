@@ -24,6 +24,8 @@ const Login = () => {
         password: formData.password
       });
 
+      console.log("Login response:", response); // Debug log
+
       // Lưu thông tin user vào localStorage
       localStorage.setItem("user", JSON.stringify({
         id: response.id,
@@ -34,21 +36,29 @@ const Login = () => {
         phoneNumber: response.phoneNumber,
         address: response.address
       }));
+      
+      // Lưu token vào localStorage - không cần vì đã được xử lý trong loginUser
+      // if (response.token) {
+      //   localStorage.setItem("token", response.token);
+      // }
 
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
 
-      setTimeout(() => {
-        if (userRole === "Admin") {
-          navigate("/dashboard"); // Redirect to dashboard for admin
-        } else {
-          navigate("/"); // Redirect to default page for user
-        }
-
-        setShowToast(false);
-        navigate("/");
-      }, 3000);
+      // Chuyển hướng ngay lập tức thay vì đợi setTimeout
+      if (response.role === "Admin") {
+        setTimeout(() => {
+          navigate("/dashboard");
+          setShowToast(false);
+        }, 1500);
+      } else {
+        setTimeout(() => {
+          navigate("/");
+          setShowToast(false);
+        }, 1500);
+      }
     } catch (error) {
+      console.error("Login error:", error);
       setMessage(error.message || "Đăng nhập thất bại!");
     }
   };
