@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { addCart } from '../api/cartApi';
+import { addToCart } from '../api/cartApi';
+
 
 const initialState = {
     items: [],
