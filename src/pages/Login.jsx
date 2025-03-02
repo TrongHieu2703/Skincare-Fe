@@ -39,6 +39,12 @@ const Login = () => {
       setShowToast(true);
 
       setTimeout(() => {
+        if (userRole === "Admin") {
+          navigate("/dashboard"); // Redirect to dashboard for admin
+        } else {
+          navigate("/"); // Redirect to default page for user
+        }
+
         setShowToast(false);
         navigate("/");
       }, 3000);
