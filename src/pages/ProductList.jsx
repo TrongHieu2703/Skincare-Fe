@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { getAllProducts } from '../api/productApi';
-import { Link, useNavigate } from 'react-router-dom';
-import '/src/styles/ProductList.css';
+// src/pages/ProductList.jsx
+import React, { useEffect, useState } from "react";
+import { getAllProducts } from "../api/productApi";
+import { addToCart } from "../api/cartApi";
+import { Link, useNavigate } from "react-router-dom";
+import "/src/styles/ProductList.css";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -10,7 +12,6 @@ const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
   const [quantities, setQuantities] = useState({});
-  const [cart, setCart] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,19 +46,18 @@ const ProductList = () => {
     }));
   };
 
-  const handleAddToCart = (product) => {
-    setCart((prevCart) => {
-      const existingProduct = prevCart.find((item) => item.id === product.id);
-      if (existingProduct) {
-        return prevCart.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + quantities[product.id] } : item
-        );
-      } else {
-        return [...prevCart, { ...product, quantity: quantities[product.id] }];
-      }
-    });
-    console.log("Cart Items:", cart); // Debugging log
-    navigate('/cart-items', { state: { cartItems: cart } }); // Navigate to CartItems component with cart items
+  const handleAddToCart = async (product) => {
+    try {
+      const quantity = quantities[product.id];
+      await addToCart(product.id, quantity);
+      // Hiển thị thông báo thành công (bạn có thể dùng react-toastify)
+      alert("✅ Added to cart successfully!");
+      // Có thể điều hướng tới trang giỏ hàng nếu muốn
+      // navigate('/cart-items');
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      alert("❌ Failed to add to cart!");
+    }
   };
 
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -73,23 +73,49 @@ const ProductList = () => {
           <div className="filter-group">
             <h4>GIÁ SẢN PHẨM</h4>
             <div className="filter-option">
-              <input type="radio" name="priceFilter" id="all" checked={!selectedPriceRange} onChange={() => handleFilterChange(null)} />
+              <input
+                type="radio"
+                name="priceFilter"
+                id="all"
+                checked={!selectedPriceRange}
+                onChange={() => handleFilterChange(null)}
+              />
               <label htmlFor="all">Tất cả</label>
             </div>
             <div className="filter-option">
-              <input type="radio" name="priceFilter" id="price1" onChange={() => handleFilterChange([0, 100000])} />
+              <input
+                type="radio"
+                name="priceFilter"
+                id="price1"
+                onChange={() => handleFilterChange([0, 100000])}
+              />
               <label htmlFor="price1">Giá dưới 100.000đ</label>
             </div>
             <div className="filter-option">
-              <input type="radio" name="priceFilter" id="price2" onChange={() => handleFilterChange([100000, 200000])} />
+              <input
+                type="radio"
+                name="priceFilter"
+                id="price2"
+                onChange={() => handleFilterChange([100000, 200000])}
+              />
               <label htmlFor="price2">100.000đ - 200.000đ</label>
             </div>
             <div className="filter-option">
-              <input type="radio" name="priceFilter" id="price3" onChange={() => handleFilterChange([200000, 300000])} />
+              <input
+                type="radio"
+                name="priceFilter"
+                id="price3"
+                onChange={() => handleFilterChange([200000, 300000])}
+              />
               <label htmlFor="price3">200.000đ - 300.000đ</label>
             </div>
             <div className="filter-option">
-              <input type="radio" name="priceFilter" id="price4" onChange={() => handleFilterChange([300000, 500000])} />
+              <input
+                type="radio"
+                name="priceFilter"
+                id="price4"
+                onChange={() => handleFilterChange([300000, 500000])}
+              />
               <label htmlFor="price4">300.000đ - 500.000đ</label>
             </div>
           </div>
@@ -98,11 +124,21 @@ const ProductList = () => {
         <div className="category-box animated-fade-in">
           <h3 className="category-title">SẢN PHẨM MỘC AN</h3>
           <ul className="category-list">
-            <li><span>🌿</span> Chăm Sóc Môi & Trang Điểm</li>
-            <li><span>🌿</span> Chăm Sóc - Trị Rụng Tóc</li>
-            <li><span>🌿</span> Chăm Sóc Da An Toàn</li>
-            <li><span>🌿</span> Nước Hoa Khô - Tinh Dầu Thiên Nhiên</li>
-            <li><span>🌿</span> Combo Giảm Giá</li>
+            <li>
+              <span>🌿</span> Chăm Sóc Môi & Trang Điểm
+            </li>
+            <li>
+              <span>🌿</span> Chăm Sóc - Trị Rụng Tóc
+            </li>
+            <li>
+              <span>🌿</span> Chăm Sóc Da An Toàn
+            </li>
+            <li>
+              <span>🌿</span> Nước Hoa Khô - Tinh Dầu Thiên Nhiên
+            </li>
+            <li>
+              <span>🌿</span> Combo Giảm Giá
+            </li>
           </ul>
         </div>
       </div>
@@ -110,16 +146,29 @@ const ProductList = () => {
       <div className="product-list animated-grid">
         {currentProducts.map((product) => (
           <div key={product.id} className="product-card animated-fade-in">
-            <img src={product.imageUrl || 'https://via.placeholder.com/150'} alt={product.name} className="product-image hover-zoom" />
+            <img
+              src={product.imageUrl || "https://via.placeholder.com/150"}
+              alt={product.name}
+              className="product-image hover-zoom"
+            />
             <div className="product-details">
               <h3 className="product-name highlighted-text">{product.name}</h3>
               <p className="product-price">{product.price.toLocaleString()}</p>
-              <div className="quantity-control" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, -1)}>-</button>
+              <div
+                className="quantity-control"
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
+                <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, -1)}>
+                  -
+                </button>
                 <span className="quantity">{quantities[product.id]}</span>
-                <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, 1)}>+</button>
+                <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, 1)}>
+                  +
+                </button>
               </div>
-              <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>Add to Cart</button>
+              <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
+                Add to Cart
+              </button>
               <Link to={`/product/${product.id}`} className="product-link btn-animated">
                 Xem chi tiết
               </Link>

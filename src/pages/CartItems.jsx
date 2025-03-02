@@ -1,177 +1,169 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
-import { updateCart, deleteCartItem, getCartByUser } from '../api/cartApi';
-import '/src/styles/CartItems.css';
+// src/pages/CartItems.jsx
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
+import { getCartByUser, updateCart, deleteCartItem } from "../api/cartApi";
+import "/src/styles/CartItems.css";
 
-const Cart = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [cartItems, setCartItems] = useState(location.state?.cartItems || []);
-    const [loading, setLoading] = useState(true);
+const CartItems = () => {
+  const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        console.log("Cart Items from Location:", location.state?.cartItems);
-
-        const loggedUser = localStorage.getItem("user");
-        let userId = null;
-
-        if (loggedUser) {
-            try {
-                const parsedUser = JSON.parse(loggedUser);
-                userId = parsedUser?.id;
-            } catch (error) {
-                console.error("❌ Error parsing user data:", error);
-            }
-        }
-
-        if (!location.state?.cartItems && userId) {
-            console.log("Fetching cart from API for user ID:", userId);
-            getCartByUser(userId)
-                .then((data) => {
-                    setCartItems(data);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error('Error fetching cart:', error);
-                    setLoading(false);
-                });
-        } else {
-            setLoading(false);
-        }
-    }, [location.state?.cartItems]);
-
-    const updateQuantity = async (id, change) => {
-        const updatedCart = cartItems.map(item => {
-            if (item.cartId === id) {
-                const newQuantity = Math.max(1, item.quantity + change);
-                return { ...item, quantity: newQuantity };
-            }
-            return item;
-        });
-
-        setCartItems(updatedCart);
-
-        const itemToUpdate = updatedCart.find(item => item.cartId === id);
-        if (itemToUpdate) {
-            try {
-                await updateCart(id, itemToUpdate);
-            } catch (err) {
-                console.error("Error updating cart:", err);
-            }
-        }
-    };
-
-    const removeItem = async (id) => {
-        try {
-            await deleteCartItem(id);
-            setCartItems(cartItems.filter(item => item.cartId !== id));
-        } catch (error) {
-            console.error('Error deleting cart item:', error);
-        }
-    };
-
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shippingFee = 30000;
-    const total = subtotal + shippingFee;
-
-    const handleCheckout = () => {
-        navigate('/order-detail', {
-            state: { cartItems, subtotal, shippingFee, total }
-        });
-    };
-
-    if (loading) {
-        return <h2>Loading cart items...</h2>;
+  // Lấy cart từ server
+  useEffect(() => {
+    async function fetchCart() {
+      try {
+        const data = await getCartByUser();
+        setCartItems(data);
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      } finally {
+        setLoading(false);
+      }
     }
+    fetchCart();
+  }, []);
 
-    return (
-        <div className="cart-page">
-            <div className="cart-container">
-                <div className="cart-header">
-                    <h1>Shopping Cart</h1>
-                    <span className="item-count">{cartItems.length} items</span>
-                </div>
+  // Cập nhật số lượng
+  const updateQuantity = async (cartId, productId, change) => {
+    // Cập nhật state local
+    const updatedItems = cartItems.map((item) => {
+      if (item.cartId === cartId) {
+        const newQty = Math.max(1, item.quantity + change);
+        return { ...item, quantity: newQty };
+      }
+      return item;
+    });
+    setCartItems(updatedItems);
 
-                {cartItems.length === 0 ? (
-                    <div className="empty-cart">
-                        <h2>Giỏ hàng của bạn đang trống 🛒</h2>
-                        <p>Hãy thêm sản phẩm để tiếp tục mua sắm!</p>
-                        <button onClick={() => navigate("/product-list")} className="continue-shopping">
-                            Tiếp tục mua sắm
-                        </button>
-                    </div>
-                ) : (
-                    <div className="cart-content">
-                        <div className="cart-items">
-                            {cartItems.map(item => (
-                                <div key={item.cartId} className="cart-item">
-                                    <div className="item-image">
-                                        <img src={item.image} alt={item.name} />
-                                    </div>
+    // Gọi API updateCart
+    const itemToUpdate = updatedItems.find((item) => item.cartId === cartId);
+    if (itemToUpdate) {
+      try {
+        await updateCart(itemToUpdate.cartId, productId, itemToUpdate.quantity);
+      } catch (err) {
+        console.error("Error updating cart:", err);
+      }
+    }
+  };
 
-                                    <div className="item-details">
-                                        <h3>{item.name}</h3>
-                                        <div className="item-price">${(item.price / 23000).toFixed(2)}</div>
+  // Xóa item
+  const removeItem = async (cartId) => {
+    try {
+      await deleteCartItem(cartId);
+      setCartItems(cartItems.filter((item) => item.cartId !== cartId));
+    } catch (error) {
+      console.error("Error deleting cart item:", error);
+    }
+  };
 
-                                        <div className="item-controls">
-                                            <div className="quantity-controls">
-                                                <button
-                                                    onClick={() => updateQuantity(item.cartId, -1)}
-                                                    disabled={item.quantity <= 1}
-                                                >
-                                                    <FaMinus />
-                                                </button>
-                                                <span>{item.quantity}</span>
-                                                <button onClick={() => updateQuantity(item.cartId, 1)}>
-                                                    <FaPlus />
-                                                </button>
-                                            </div>
+  // Tính subtotal dựa trên item.product?.price
+  const subtotal = cartItems.reduce((sum, item) => {
+    const price = item.product?.price ?? 0;
+    return sum + price * item.quantity;
+  }, 0);
 
-                                            <button className="remove-button" onClick={() => removeItem(item.cartId)}>
-                                                <FaTrash />
-                                            </button>
-                                        </div>
-                                    </div>
+  const shippingFee = 30000;
+  const total = subtotal + shippingFee;
 
-                                    <div className="item-total">
-                                        ${((item.price * item.quantity) / 23000).toFixed(2)}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+  const handleCheckout = () => {
+    navigate("/order-detail", { state: { cartItems, subtotal, shippingFee, total } });
+  };
 
-                        <div className="cart-summary">
-                            <h3>Order Summary</h3>
+  if (loading) {
+    return <h2>Loading cart items...</h2>;
+  }
 
-                            <div className="summary-row">
-                                <span>Subtotal</span>
-                                <span>${(subtotal / 23000).toFixed(2)}</span>
-                            </div>
-
-                            <div className="summary-row">
-                                <span>Shipping Fee</span>
-                                <span>${(shippingFee / 23000).toFixed(2)}</span>
-                            </div>
-
-                            <div className="summary-row total">
-                                <span>Total</span>
-                                <span>${(total / 23000).toFixed(2)}</span>
-                            </div>
-
-                            <button
-                                className="checkout-button"
-                                onClick={handleCheckout}
-                                disabled={cartItems.length === 0}
-                            >
-                                Proceed to Checkout
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
+  return (
+    <div className="cart-page">
+      <div className="cart-container">
+        <div className="cart-header">
+          <h1>Shopping Cart</h1>
+          <span className="item-count">{cartItems.length} items</span>
         </div>
-    );
+
+        {cartItems.length === 0 ? (
+          <div className="empty-cart">
+            <h2>Giỏ hàng của bạn đang trống 🛒</h2>
+            <p>Hãy thêm sản phẩm để tiếp tục mua sắm!</p>
+            <button onClick={() => navigate("/product-list")} className="continue-shopping">
+              Tiếp tục mua sắm
+            </button>
+          </div>
+        ) : (
+          <div className="cart-content">
+            <div className="cart-items">
+              {cartItems.map((item) => {
+                const productPrice = item.product?.price ?? 0;
+                const productName = item.product?.name || "Unnamed product";
+                const productImage = item.product?.image || "https://via.placeholder.com/150";
+
+                return (
+                  <div key={item.cartId} className="cart-item">
+                    <div className="item-image">
+                      <img src={productImage} alt={productName} />
+                    </div>
+
+                    <div className="item-details">
+                      <h3>{productName}</h3>
+                      <div className="item-price">
+                        ${(productPrice / 23000).toFixed(2)}
+                      </div>
+                      <div className="item-controls">
+                        <div className="quantity-controls">
+                          <button
+                            onClick={() => updateQuantity(item.cartId, item.productId, -1)}
+                            disabled={item.quantity <= 1}
+                          >
+                            <FaMinus />
+                          </button>
+                          <span>{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item.cartId, item.productId, 1)}>
+                            <FaPlus />
+                          </button>
+                        </div>
+                        <button className="remove-button" onClick={() => removeItem(item.cartId)}>
+                          <FaTrash /> Remove
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="item-total">
+                      ${((productPrice * item.quantity) / 23000).toFixed(2)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="cart-summary">
+              <h3>Order Summary</h3>
+              <div className="summary-row">
+                <span>Subtotal</span>
+                <span>${(subtotal / 23000).toFixed(2)}</span>
+              </div>
+              <div className="summary-row">
+                <span>Shipping Fee</span>
+                <span>${(shippingFee / 23000).toFixed(2)}</span>
+              </div>
+              <div className="summary-row total">
+                <span>Total</span>
+                <span>${(total / 23000).toFixed(2)}</span>
+              </div>
+              <button
+                className="checkout-button"
+                onClick={handleCheckout}
+                disabled={cartItems.length === 0}
+              >
+                Proceed to Checkout
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
-export default Cart;
+export default CartItems;
