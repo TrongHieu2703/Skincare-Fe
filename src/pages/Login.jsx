@@ -24,9 +24,9 @@ const Login = () => {
         password: formData.password
       });
 
-      const userRole = response.role; // Get user role
+      // Lưu thông tin user vào localStorage
       localStorage.setItem("user", JSON.stringify({
-
+        id: response.id,
         email: response.email,
         username: response.username,
         role: response.role,
@@ -35,8 +35,7 @@ const Login = () => {
         address: response.address
       }));
 
-      setMessage("Đăng nhập thành công!"); // Success message
-
+      setMessage("Đăng nhập thành công!");
       setShowToast(true);
 
       setTimeout(() => {
@@ -49,7 +48,6 @@ const Login = () => {
         setShowToast(false);
         navigate("/");
       }, 3000);
-
     } catch (error) {
       setMessage(error.message || "Đăng nhập thất bại!");
     }
@@ -62,7 +60,11 @@ const Login = () => {
         <h2>WELCOME BACK</h2>
         <p>We're glad to see you again!</p>
 
-        {message && <div className={`message ${message.includes("thành công") ? "success" : "error"}`}>{message}</div>}
+        {message && (
+          <div className={`message ${message.includes("thành công") ? "success" : "error"}`}>
+            {message}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
@@ -96,7 +98,10 @@ const Login = () => {
           </button>
 
           <p className="register-link">
-            Don't have an account? <span onClick={() => navigate("/register")} className="signup-link">Sign up for free!</span>
+            Don't have an account?{" "}
+            <span onClick={() => navigate("/register")} className="signup-link">
+              Sign up for free!
+            </span>
           </p>
         </form>
       </div>
@@ -107,7 +112,6 @@ const Login = () => {
 
       {/* Thông báo đăng nhập thành công */}
       <div className={`success-toast ${showToast ? "show" : ""}`} style={{ backgroundColor: '#28a745' }}>
-
         Đăng nhập thành công!
       </div>
     </div>
