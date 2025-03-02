@@ -7,11 +7,15 @@ const CartItems = () => {
 
     useEffect(() => {
         const fetchCart = async () => {
-            const items = await getCartByUser();
-            setCartItems(items);
-        };
-        fetchCart();
-    }, []);
+            try {
+                const items = await getCartByUser();
+                setCartItems(items);
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+            } // Closing brace for try-catch block
+        }; // Closing brace for fetchCart function
+        fetchCart(); // Call the fetchCart function
+    }, []); // Dependency array for useEffect
 
     const handleCreateOrder = async () => {
         try {
