@@ -1,3 +1,4 @@
+// src/api/cartApi.js
 import axios from 'axios';
 
 const API_URL = "https://localhost:7290/api/Cart";
@@ -9,9 +10,9 @@ const axiosClient = axios.create({
   },
 });
 
-// 🔹 Interceptor tự động thêm token vào header
+// Interceptor to automatically add token to header
 axiosClient.interceptors.request.use(config => {
-  const token = localStorage.getItem("token"); // 🛠 Lấy token từ localStorage
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -20,21 +21,30 @@ axiosClient.interceptors.request.use(config => {
   return Promise.reject(error);
 });
 
+// Function to fetch the user's cart
+export const getCartByUser = async () => {
+  try {
+    const token = localStorage.getItem("token"); // Debugging log
+
+
+    console.log("Token retrieved:", token); // Log the token
+    console.log("Local Storage:", localStorage); // Log the entire localStorage
+    const response = await axiosClient.get('/user');
+
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error fetching cart:", error.response?.data || error.message);
+
+
+    throw error;
+  }
+};
+
 // ✅ Thêm sản phẩm vào giỏ hàng
 export const addCart = async (productId, quantity) => {
   const response = await axiosClient.post('/add', { productId, quantity });
   return response.data;
-};
-
-// ✅ Lấy giỏ hàng của user hiện tại
-export const getCartByUser = async () => {
-  try {
-    const response = await axiosClient.get('/user');
-    return response.data;
-  } catch (error) {
-    console.error("❌ Error fetching cart:", error.response?.data || error.message);
-    throw error;
-  }
 };
 
 // ✅ Tạo đơn hàng từ giỏ hàng
