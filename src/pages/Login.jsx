@@ -24,7 +24,9 @@ const Login = () => {
         password: formData.password
       });
 
+      const userRole = response.role; // Get user role
       localStorage.setItem("user", JSON.stringify({
+
         email: response.email,
         username: response.username,
         role: response.role,
@@ -38,6 +40,12 @@ const Login = () => {
       setShowToast(true);
 
       setTimeout(() => {
+        if (userRole === "Admin") {
+          navigate("/dashboard"); // Redirect to dashboard for admin
+        } else {
+          navigate("/"); // Redirect to default page for user
+        }
+
         setShowToast(false);
         navigate("/");
       }, 3000);
