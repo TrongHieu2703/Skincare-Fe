@@ -47,7 +47,7 @@ const Login = () => {
           navigate("/"); // Redirect to default page for user
         }
         setShowToast(false);
-      }, 3000);
+      }, 1000);
     } catch (error) {
       setMessage(error.message || "Đăng nhập thất bại!");
     }
