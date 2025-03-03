@@ -24,7 +24,7 @@ const Login = () => {
         password: formData.password
       });
 
-      // Lưu thông tin user vào localStorage
+      // Store user information in localStorage
       localStorage.setItem("user", JSON.stringify({
         id: response.id,
         email: response.email,
@@ -38,15 +38,15 @@ const Login = () => {
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
 
+      const userRole = response.role; // Extract user role from response
+
       setTimeout(() => {
         if (userRole === "Admin") {
           navigate("/dashboard"); // Redirect to dashboard for admin
         } else {
           navigate("/"); // Redirect to default page for user
         }
-
         setShowToast(false);
-        navigate("/");
       }, 3000);
     } catch (error) {
       setMessage(error.message || "Đăng nhập thất bại!");
