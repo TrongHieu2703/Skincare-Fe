@@ -63,8 +63,16 @@ export const deleteOrder = async (id) => {
 
 // Lấy lịch sử đơn hàng của người dùng
 export const getUserOrders = async () => {
-  const response = await axiosClient.get(`${BASE_URL}/user`);
-  return response.data;
+  try {
+    const response = await axiosClient.get(`${BASE_URL}/user`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user orders:', error);
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error(error.message || 'Error fetching user orders');
+  }
 };
 
 // Lấy chi tiết đơn hàng an toàn

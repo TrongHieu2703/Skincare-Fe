@@ -37,35 +37,93 @@ body {
 /* Navbar Search */
 .navbar-search {
     position: relative;
-    flex-grow: 1;
-    max-width: 400px;
-    margin: 0 20px;
+    flex: 1;
+    max-width: 500px;
+    margin: 0 2rem;
 }
 
-.navbar-search input {
+.navbar-search form {
+    display: flex;
+    align-items: center;
     width: 100%;
-    padding: 10px 16px;
-    border: 1px solid #41b543;
-    border-radius: 20px;
-    padding-right: 40px;
-    font-size: 1rem;
-    background-color: #f4f4f4;
-    transition: border-color 0.3s;
 }
 
-.navbar-search input:focus {
-    border-color: #007B55;
+.search-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
     outline: none;
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.1);
 }
 
+.search-button {
+    background: none;
+    border: none;
+    padding: 0.8rem;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    color: #666;
+}
 
 .search-icon {
+    font-size: 1.1rem;
+}
+
+.search-results {
     position: absolute;
-    top: 50%;
-    right: 12px;
-    transform: translateY(-50%);
-    color: #007B55;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 0.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem;
     cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: #f8f9fa;
+}
+
+.search-result-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 1rem;
+}
+
+.search-result-info {
+    flex: 1;
+}
+
+.search-result-name {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.2rem;
+}
+
+.search-result-price {
+    color: #2ecc71;
+    font-weight: 600;
 }
 
 /* Navbar Links */

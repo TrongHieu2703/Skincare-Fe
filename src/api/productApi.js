@@ -54,3 +54,17 @@ export const updateProduct = (productId, updatedData) => {
 export const deleteProduct = (productId) => {
   return axiosClient.delete(`${API_URL}/${productId}`);
 };
+
+// Search products
+export const searchProducts = async (searchTerm) => {
+    try {
+        const response = await axiosClient.get(`${API_URL}/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error searching products:', error);
+        if (error.response && error.response.data) {
+            throw error.response.data;
+        }
+        throw new Error(error.message || 'Error searching products');
+    }
+};

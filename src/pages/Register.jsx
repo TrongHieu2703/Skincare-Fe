@@ -10,12 +10,19 @@ const Register = () => {
     username: "",
     email: "",
     password: "",
+    phoneNumber: "",
+    address: "",
+    avatar: null
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === 'avatar') {
+      setFormData({ ...formData, avatar: e.target.files[0] });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -27,87 +34,108 @@ const Register = () => {
 
     try {
       await registerUser(formData);
-      setMessage("Đăng ký thành công! Hãy đăng nhập.");
-      setTimeout(() => navigate("/login"), 2000); // Điều hướng sau 2s
+      setMessage("Đăng ký thành công! Chuyển hướng đến trang đăng nhập...");
+      setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
-      setMessage(error.message || "Đăng ký thất bại!");
+      setMessage(error.message || "Đăng ký thất bại! Vui lòng thử lại.");
     }
   };
 
   return (
     <div className="register-container">
       <div className="register-image">
-        <img src={signupImage} alt="Signup" />
+        <img src={signupImage} alt="Đăng ký" />
       </div>
       <div className="register-box">
-        <img src={logo} alt="Skincare Logo" className="logo" />
-        <h2>SIGN UP</h2>
-        <p>Join Us Today!</p>
+        <img src={logo} alt="Logo Skincare" className="logo" />
+        <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
+        <p>Tham gia cùng chúng tôi ngay hôm nay!</p>
 
-        {message && <p className="error-message">{message}</p>}
+        {message && <p className={`message ${message.includes("thành công") ? "success" : "error"}`}>
+          {message}
+        </p>}
 
         <form onSubmit={handleSubmit}>
-          {/* Username */}
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            minLength={3}
-            required
-          />
+          {/* Tên đăng nhập */}
+          <div className="input-group">
+            <label>Tên đăng nhập</label>
+            <input
+              type="text"
+              name="username"
+              placeholder="Nhập tên đăng nhập"
+              onChange={handleChange}
+              minLength={3}
+              required
+            />
+          </div>
 
           {/* Email */}
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Nhập địa chỉ email"
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          {/* Password */}
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            minLength={6}
-            required
-          />
+          {/* Mật khẩu */}
+          <div className="input-group">
+            <label>Mật khẩu</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
+              onChange={handleChange}
+              minLength={6}
+              required
+            />
+          </div>
 
-          {/* PhoneNumber */}
-          <input
-            type="text"
-            name="phoneNumber"
-            placeholder="Phone Number"
-            onChange={handleChange}
-          />
+          {/* Số điện thoại */}
+          <div className="input-group">
+            <label>Số điện thoại</label>
+            <input
+              type="tel"
+              name="phoneNumber"
+              placeholder="Nhập số điện thoại"
+              onChange={handleChange}
+            />
+          </div>
 
-          {/* Address */}
-          <input
-            type="text"
-            name="address"
-            placeholder="Address"
-            onChange={handleChange}
-          />
+          {/* Địa chỉ */}
+          <div className="input-group">
+            <label>Địa chỉ</label>
+            <input
+              type="text"
+              name="address"
+              placeholder="Nhập địa chỉ"
+              onChange={handleChange}
+            />
+          </div>
 
-          {/* Avatar - File Input */}
-          <input
-            type="file"
-            name="avatar"
-            accept="image/*" // Chỉ chấp nhận tệp hình ảnh
-            onChange={handleChange} // Hàm xử lý khi chọn tệp
-          />
+          {/* Ảnh đại diện */}
+          <div className="input-group">
+            <label>Ảnh đại diện</label>
+            <input
+              type="file"
+              name="avatar"
+              accept="image/*"
+              onChange={handleChange}
+              className="file-input"
+            />
+          </div>
 
-          {/* Submit Button */}
+          {/* Nút đăng ký */}
           <button type="submit" className="register-button">
-            Sign Up
+            Đăng ký
           </button>
         </form>
 
         <p className="switch-text">
-          Have an account? <Link to="/login">Sign in now!</Link>
+          Đã có tài khoản? <Link to="/login">Đăng nhập ngay!</Link>
         </p>
       </div>
     </div>

@@ -23,6 +23,26 @@ const OrderDetails = () => {
   // Thêm state để hiển thị thông báo thanh toán thành công
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   
+  // Thêm style cho payment-success-banner
+  const successBannerStyle = {
+    position: 'fixed',
+    top: '80px', // Đẩy xuống dưới navbar
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 1000,
+    width: '90%',
+    maxWidth: '600px',
+    padding: '15px 20px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    animation: 'slideDown 0.5s ease-out'
+  };
+  
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login', { state: { from: location } });
@@ -190,10 +210,21 @@ const OrderDetails = () => {
   return (
     <div className="order-details-page">
       {showPaymentSuccess && (
-        <div className="payment-success-banner">
-          <i className="fas fa-check-circle"></i>
-          Thanh toán thành công! Cảm ơn bạn đã đặt hàng.
-          <button className="close-button" onClick={() => setShowPaymentSuccess(false)}>
+        <div style={successBannerStyle}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="fas fa-check-circle"></i>
+            Đặt hàng thành công! Cảm ơn bạn đã mua sắm.
+          </div>
+          <button 
+            onClick={() => setShowPaymentSuccess(false)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'white',
+              cursor: 'pointer',
+              padding: '5px'
+            }}
+          >
             <i className="fas fa-times"></i>
           </button>
         </div>
