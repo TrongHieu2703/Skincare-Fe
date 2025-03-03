@@ -189,21 +189,20 @@ const Checkout = () => {
 
   // Thêm hàm giả lập thanh toán thành công cho tất cả phương thức
   const simulatePayment = async (paymentMethod, orderData) => {
-    // Giả lập thanh toán cho Credit và Bank
     if (paymentMethod !== "Cash") {
-      return new Promise((resolve) => {
-        // Hiển thị thông báo đang xử lý thanh toán
-        setSuccessMessage(`Đang xử lý thanh toán qua ${paymentMethod === "Credit" ? "thẻ tín dụng" : "PayPal"}...`);
-        
-        // Giả lập thời gian xử lý thanh toán
-        setTimeout(() => {
-          setSuccessMessage(`Thanh toán ${paymentMethod === "Credit" ? "thẻ tín dụng" : "PayPal"} thành công!`);
-          resolve(true);
-        }, 2000);
-      });
+        return new Promise((resolve) => {
+            setSuccessMessage(`Đang xử lý thanh toán qua ${
+                paymentMethod === "Credit" ? "thẻ tín dụng" : "PayPal"
+            }...`);
+            
+            setTimeout(() => {
+                setSuccessMessage(`Thanh toán ${
+                    paymentMethod === "Credit" ? "thẻ tín dụng" : "PayPal"
+                } thành công!`);
+                resolve(true);
+            }, 2000);
+        });
     }
-    
-    // Cash không cần giả lập thanh toán
     return Promise.resolve(true);
   };
 
@@ -291,10 +290,10 @@ const Checkout = () => {
     <div className="order-detail-page">
       <div className="order-detail-container">
         <div className="order-detail-left">
-          <h2>Shipping Information</h2>
+          <h2>Thông tin giao hàng</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Full Name *</label>
+              <label>Họ và tên *</label>
               <input
                 type="text"
                 name="fullName"
@@ -316,7 +315,7 @@ const Checkout = () => {
               />
             </div>
             <div className="form-group">
-              <label>Phone *</label>
+              <label>Số điện thoại *</label>
               <input
                 type="tel"
                 name="phone"
@@ -326,7 +325,7 @@ const Checkout = () => {
               />
             </div>
             <div className="form-group">
-              <label>Address *</label>
+              <label>Địa chỉ *</label>
               <input
                 type="text"
                 name="address"
@@ -362,7 +361,7 @@ const Checkout = () => {
           </form>
         </div>
         <div className="order-detail-right">
-          <h3>Order Summary</h3>
+          <h3>Tổng quan đơn hàng</h3>
           <div className="cart-items-summary">
             {cartItems.map((item) => {
               const productName = item.product?.name || 'Product';

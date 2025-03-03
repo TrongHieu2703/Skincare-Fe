@@ -30,6 +30,7 @@ import ProductList from "/src/pages/ProductList";
 import ProductDetails from "/src/pages/ProductDetails";
 import AboutUs from "/src/components/Aboutus";
 import AboutSkincare from "/src/pages/AboutSkincare";
+import OrderHistory from './pages/OrderHistory';
 
 
 
@@ -79,6 +80,7 @@ function App() {
                 } />
 
                 <Route path="/order/:orderId" element={<OrderDetail />} />
+                <Route path="/order-history" element={<OrderHistory />} />
 
                 <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
               </Routes>

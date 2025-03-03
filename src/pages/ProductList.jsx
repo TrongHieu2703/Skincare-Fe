@@ -10,33 +10,45 @@ const ProductList = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 8;
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [quantities, setQuantities] = useState({});
   const navigate = useNavigate();
 
+  const fetchProducts = async (page) => {
+    try {
+      setLoading(true);
+      const response = await getAllProducts(page, 8); // 8 sản phẩm mỗi trang
+      setProducts(response.data);
+      setFilteredProducts(response.data);
+      setTotalPages(response.totalPages);
+      
+      // Khởi tạo số lượng mặc định cho mỗi sản phẩm
+      const initialQuantities = response.data.reduce((acc, product) => {
+        acc[product.id] = 1;
+        return acc;
+      }, {});
+      setQuantities(initialQuantities);
+    } catch (error) {
+      console.error("Lỗi khi tải sản phẩm:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    getAllProducts(1, 30)
-      .then((res) => {
-        setProducts(res.data);
-        setFilteredProducts(res.data);
-        const initialQuantities = res.data.reduce((acc, product) => {
-          acc[product.id] = 1;
-          return acc;
-        }, {});
-        setQuantities(initialQuantities);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+    fetchProducts(currentPage);
+  }, [currentPage]);
 
   const handleFilterChange = (range) => {
     setSelectedPriceRange(range);
+    setCurrentPage(1);
     if (!range) {
       setFilteredProducts(products);
     } else {
       const [min, max] = range;
       setFilteredProducts(products.filter((p) => p.price >= min && p.price <= max));
     }
-    setCurrentPage(1);
   };
 
   const handleQuantityChange = (id, delta) => {
@@ -50,28 +62,27 @@ const ProductList = () => {
     try {
       const quantity = quantities[product.id];
       await addToCart(product.id, quantity);
-      // Hiển thị thông báo thành công (bạn có thể dùng react-toastify)
-      alert("✅ Added to cart successfully!");
-      // Có thể điều hướng tới trang giỏ hàng nếu muốn
-      // navigate('/cart-items');
+      alert("✅ Đã thêm vào giỏ hàng thành công!");
     } catch (error) {
-      console.error("Add to cart error:", error);
-      alert("❌ Failed to add to cart!");
+      console.error("Lỗi khi thêm vào giỏ hàng:", error);
+      alert("❌ Thêm vào giỏ hàng thất bại!");
     }
   };
 
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo(0, 0);
+    }
+  };
 
   return (
     <div className="product-page full-page">
       <div className="sidebar animated-slide-in">
         <div className="filter-box">
-          <h3 className="filter-title">BỘ LỌC</h3>
+          <h3 className="filter-title">BỘ LỌC TÌM KIẾM</h3>
           <div className="filter-group">
-            <h4>GIÁ SẢN PHẨM</h4>
+            <h4>KHOẢNG GIÁ</h4>
             <div className="filter-option">
               <input
                 type="radio"
@@ -89,7 +100,7 @@ const ProductList = () => {
                 id="price1"
                 onChange={() => handleFilterChange([0, 100000])}
               />
-              <label htmlFor="price1">Giá dưới 100.000đ</label>
+              <label htmlFor="price1">Dưới 100.000₫</label>
             </div>
             <div className="filter-option">
               <input
@@ -120,61 +131,100 @@ const ProductList = () => {
             </div>
           </div>
         </div>
-        {/* Danh mục sản phẩm */}
         <div className="category-box animated-fade-in">
-          <h3 className="category-title">SẢN PHẨM MỘC AN</h3>
+          <h3 className="category-title">DANH MỤC SẢN PHẨM</h3>
           <ul className="category-list">
-            <li>
-              <span>🌿</span> Chăm Sóc Môi & Trang Điểm
-            </li>
-            <li>
-              <span>🌿</span> Chăm Sóc - Trị Rụng Tóc
-            </li>
-            <li>
-              <span>🌿</span> Chăm Sóc Da An Toàn
-            </li>
-            <li>
-              <span>🌿</span> Nước Hoa Khô - Tinh Dầu Thiên Nhiên
-            </li>
-            <li>
-              <span>🌿</span> Combo Giảm Giá
-            </li>
+            <li><span>🌿</span> Chăm Sóc Da Mặt</li>
+            <li><span>🌿</span> Chăm Sóc Cơ Thể</li>
+            <li><span>🌿</span> Chăm Sóc Tóc</li>
+            <li><span>🌿</span> Mỹ Phẩm Trang Điểm</li>
+            <li><span>🌿</span> Combo Tiết Kiệm</li>
           </ul>
         </div>
       </div>
 
-      <div className="product-list animated-grid">
-        {currentProducts.map((product) => (
-          <div key={product.id} className="product-card animated-fade-in">
-            <img
-              src={product.imageUrl || "https://via.placeholder.com/150"}
-              alt={product.name}
-              className="product-image hover-zoom"
-            />
-            <div className="product-details">
-              <h3 className="product-name highlighted-text">{product.name}</h3>
-              <p className="product-price">{product.price.toLocaleString()}</p>
-              <div
-                className="quantity-control"
-                style={{ display: "flex", alignItems: "center", gap: "10px" }}
-              >
-                <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, -1)}>
-                  -
-                </button>
-                <span className="quantity">{quantities[product.id]}</span>
-                <button className="quantity-btn" onClick={() => handleQuantityChange(product.id, 1)}>
-                  +
-                </button>
-              </div>
-              <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
-                Add to Cart
-              </button>
-              <Link to={`/product/${product.id}`} className="product-link btn-animated">
-                Xem chi tiết
-              </Link>
+      <div className="product-content">
+        {loading ? (
+          <div className="loading-spinner">Đang tải sản phẩm...</div>
+        ) : (
+          <>
+            <div className="product-list animated-grid">
+              {filteredProducts.map((product) => (
+                <div key={product.id} className="product-card animated-fade-in">
+                  <Link to={`/product/${product.id}`} className="product-image-link">
+                    <img
+                      src={product.mainImage || "/placeholder-product.png"}
+                      alt={product.name}
+                      className="product-image hover-zoom"
+                    />
+                  </Link>
+                  <div className="product-details">
+                    <h3 className="product-name">{product.name}</h3>
+                    <p className="product-price">
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                      }).format(product.price)}
+                    </p>
+                    <div className="quantity-control">
+                      <button 
+                        className="quantity-btn"
+                        onClick={() => handleQuantityChange(product.id, -1)}
+                      >
+                        -
+                      </button>
+                      <span className="quantity">{quantities[product.id]}</span>
+                      <button 
+                        className="quantity-btn"
+                        onClick={() => handleQuantityChange(product.id, 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button 
+                      className="add-to-cart-btn"
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      Thêm vào giỏ
+                    </button>
+                    <Link 
+                      to={`/product/${product.id}`}
+                      className="view-detail-btn"
+                    >
+                      Xem chi tiết
+                    </Link>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
+
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="page-btn"
+              >
+                &lt; Trước
+              </button>
+              {[...Array(totalPages)].map((_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => handlePageChange(index + 1)}
+                  className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="page-btn"
+              >
+                Sau &gt;
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
