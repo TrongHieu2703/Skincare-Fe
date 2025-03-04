@@ -11,44 +11,43 @@ const Footer = () => {
                 {/* Brand Section */}
                 <div className="footer-brand">
                     <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="footer-logo" />
-                    <p>Your trusted destination for premium skincare products and beauty solutions.</p>
+                    <p>Điểm đến đáng tin cậy của bạn cho các sản phẩm chăm sóc da cao cấp và giải pháp làm đẹp.</p>
                     <div className="social-links">
-
                     </div>
                 </div>
 
                 {/* Footer Sections */}
                 <div className="footer-sections">
                     <div className="footer-section">
-                        <h4>Products</h4>
+                        <h4>Sản Phẩm</h4>
                         <ul>
-                            <li><a href="#">Face Care</a></li>
-                            <li><a href="#">Body Care</a></li>
-                            <li><a href="#">Hair Care</a></li>
-                            <li><a href="#">Makeup</a></li>
-                            <li><a href="#">Fragrances</a></li>
+                            <li><a href="#">Chăm Sóc Mặt</a></li>
+                            <li><a href="#">Chăm Sóc Cơ Thể</a></li>
+                            <li><a href="#">Chăm Sóc Tóc</a></li>
+                            <li><a href="#">Trang Điểm</a></li>
+                            <li><a href="#">Nước Hoa</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-section">
-                        <h4>Help & Support</h4>
+                        <h4>Hỗ Trợ & Giúp Đỡ</h4>
                         <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">FAQs</a></li>
-                            <li><a href="#">Shipping Info</a></li>
-                            <li><a href="#">Returns</a></li>
-                            <li><a href="#">Order Status</a></li>
+                            <li><a href="#">Liên Hệ Với Chúng Tôi</a></li>
+                            <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                            <li><a href="#">Thông Tin Vận Chuyển</a></li>
+                            <li><a href="#">Trả Hàng</a></li>
+                            <li><a href="#">Tình Trạng Đơn Hàng</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-section">
-                        <h4>Company</h4>
+                        <h4>Công Ty</h4>
                         <ul>
-                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Về Chúng Tôi</a></li>
                             <li><a href="#">Blog</a></li>
-                            <li><a href="#">Careers</a></li>
-                            <li><a href="#">Press</a></li>
-                            <li><a href="#">Gift Cards</a></li>
+                            <li><a href="#">Cơ Hội Nghề Nghiệp</a></li>
+                            <li><a href="#">Báo Chí</a></li>
+                            <li><a href="#">Thẻ Quà Tặng</a></li>
                         </ul>
                     </div>
                 </div>
@@ -72,11 +71,11 @@ const Footer = () => {
             <div className="footer-bottom">
                 <div className="footer-bottom-content">
                     <div className="footer-legal">
-                        <a href="#">Privacy Policy</a>
+                        <a href="#">Chính Sách Bảo Mật</a>
                         <span className="separator">•</span>
-                        <a href="#">Terms of Service</a>
+                        <a href="#">Điều Khoản Dịch Vụ</a>
                         <span className="separator">•</span>
-                        <a href="#">Cookie Settings</a>
+                        <a href="#">Cài Đặt Cookie</a>
                     </div>
                     <p>&copy; 2024 Skincare. All rights reserved.</p>
                 </div>

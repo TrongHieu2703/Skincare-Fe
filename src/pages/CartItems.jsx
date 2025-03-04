@@ -72,15 +72,15 @@ const CartItems = () => {
   };
 
   if (loading) {
-    return <h2>Loading cart items...</h2>;
+    return <h2>Đang tải giỏ hàng...</h2>;
   }
 
   return (
     <div className="cart-page">
       <div className="cart-container">
         <div className="cart-header">
-          <h1>Shopping Cart</h1>
-          <span className="item-count">{cartItems.length} items</span>
+          <h1>Giỏ Hàng</h1>
+          <span className="item-count">{cartItems.length} sản phẩm</span>
         </div>
 
         {cartItems.length === 0 ? (
@@ -108,7 +108,8 @@ const CartItems = () => {
                     <div className="item-details">
                       <h3>{productName}</h3>
                       <div className="item-price">
-                        ${(productPrice / 23000).toFixed(2)}
+                        đ{(productPrice).toFixed(0)}
+
                       </div>
                       <div className="item-controls">
                         <div className="quantity-controls">
@@ -124,13 +125,13 @@ const CartItems = () => {
                           </button>
                         </div>
                         <button className="remove-button" onClick={() => removeItem(item.cartId)}>
-                          <FaTrash /> Remove
+                          <FaTrash /> Xóa
                         </button>
                       </div>
                     </div>
 
                     <div className="item-total">
-                      ${((productPrice * item.quantity) / 23000).toFixed(2)}
+                      {((productPrice * item.quantity) / 23000).toFixed(2)}đ
                     </div>
                   </div>
                 );
@@ -138,25 +139,28 @@ const CartItems = () => {
             </div>
 
             <div className="cart-summary">
-              <h3>Order Summary</h3>
+              <h3>Tóm Tắt Đơn Hàng</h3>
               <div className="summary-row">
-                <span>Subtotal</span>
-                <span>${(subtotal / 23000).toFixed(2)}</span>
+                <span>Tổng Tạm Tính</span>
+                <span>{(subtotal).toFixed(0)}đ</span>
+
               </div>
               <div className="summary-row">
-                <span>Shipping Fee</span>
-                <span>${(shippingFee / 23000).toFixed(2)}</span>
+                <span>Phí Vận Chuyển</span>
+                <span>{(shippingFee).toFixed(0)}đ</span>
+
               </div>
               <div className="summary-row total">
-                <span>Total</span>
-                <span>${(total / 23000).toFixed(2)}</span>
+                <span>Tổng Cộng</span>
+                <span>{(total).toFixed(0)}đ</span>
+
               </div>
               <button
                 className="checkout-button"
                 onClick={handleCheckout}
                 disabled={cartItems.length === 0}
               >
-                Proceed to Checkout
+                Tiến Hành Thanh Toán
               </button>
             </div>
           </div>

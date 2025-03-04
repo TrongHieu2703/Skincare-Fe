@@ -24,8 +24,8 @@ const Login = () => {
         password: formData.password
       });
 
-      console.log("Phản hồi đăng nhập:", response);
 
+      console.log("Phản hồi đăng nhập:", response);
       localStorage.setItem("user", JSON.stringify({
         id: response.id,
         email: response.email,
@@ -38,7 +38,6 @@ const Login = () => {
 
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
-
       if (response.role === "Admin") {
         setTimeout(() => {
           navigate("/dashboard");
@@ -99,7 +98,7 @@ const Login = () => {
           </button>
 
           <button type="button" className="google-button">
-            <img src={googleIcon} alt="Google Icon" /> 
+            <img src={googleIcon} alt="Google Icon" />
             Đăng nhập với Google
           </button>
 

@@ -7,50 +7,50 @@ const Blog = () => {
     const blogPosts = [
         {
             id: 1,
-            title: "Drs. Joel and Daniel Schlessinger's top 10 best eye creams",
-            description: "Diminish crow's feet and dark under-eye circles with these dermatologist-recommended eye creams.",
+            title: "10 loại kem mắt tốt nhất của bác sĩ Joel và Daniel Schlessinger",
+            description: "Giảm thiểu nếp nhăn và quầng thâm dưới mắt với những loại kem mắt được bác sĩ da liễu khuyên dùng.",
             image: "/src/assets/images/blog1.jpg",
-            category: "Skin Care",
+            category: "Chăm Sóc Da",
             date: "Feb 14, 2025"
         },
         {
             id: 2,
-            title: "5 skin care resolutions from a SkinCeuticals aesthetician",
+            title: "5 quyết tâm chăm sóc da từ một chuyên gia của SkinCeuticals",
             image: "/src/assets/images/blog2.png",
-            category: "Skin Care",
+            category: "Chăm Sóc Da",
             date: "Feb 10, 2025"
         },
         {
             id: 3,
-            title: "Soothe winter skin with La Roche-Posay Cicaplast B5 Spray",
+            title: "Xoa dịu làn da mùa đông với La Roche-Posay Cicaplast B5 Spray",
             image: "/src/assets/images/blog3.avif",
-            category: "Skin Care",
+            category: "Chăm Sóc Da",
             date: "Feb 07, 2025"
         },
         {
             id: 4,
-            title: "A minimalist routine for sensitive skin with ISDIN",
+            title: "Một quy trình tối giản cho làn da nhạy cảm với ISDIN",
             image: "/src/assets/images/blog4.webp",
-            category: "Skin Care",
+            category: "Chăm Sóc Da",
             date: "Feb 07, 2025"
         },
         {
             id: 5,
-            title: "A minimalist routine for sensitive skin with ISDIN",
+            title: "Một quy trình tối giản cho làn da nhạy cảm với ISDIN",
             image: "/src/assets/images/blog5.png",
-            category: "Skin Care",
+            category: "Chăm Sóc Da",
             date: "Feb 07, 2025"
         }
     ];
 
     const categories = [
-        "Skin Care",
-        "Hot Products",
-        "Hair Care",
-        "Beauty",
-        "News and Events",
-        "Ask the Experts",
-        "Sun Care"
+        "Chăm Sóc Da",
+        "Sản Phẩm Nóng",
+        "Chăm Sóc Tóc",
+        "Làm Đẹp",
+        "Tin Tức và Sự Kiện",
+        "Hỏi Các Chuyên Gia",
+        "Chăm Sóc Da Mặt Trời"
     ];
 
     return (
@@ -58,7 +58,7 @@ const Blog = () => {
             <div className="blog-content">
                 {/* Main Content */}
                 <div className="blog-main">
-                    <h1>Recent Posts</h1>
+                    <h1>Bài Viết Gần Đây</h1>
 
                     {/* Featured Post */}
                     <div className="featured-post">
@@ -73,7 +73,7 @@ const Blog = () => {
                             <h2>{blogPosts[0].title}</h2>
                             <p>{blogPosts[0].description}</p>
                             <Link to={`/blog/${blogPosts[0].id}`} className="read-more">
-                                Read More →
+                                Đọc Thêm →
                             </Link>
                         </div>
                     </div>
@@ -92,7 +92,7 @@ const Blog = () => {
                                 <div className="card-content">
                                     <h3>{post.title}</h3>
                                     <Link to={`/blog/${post.id}`} className="read-more">
-                                        Read More →
+                                        Đọc Thêm →
                                     </Link>
                                 </div>
                             </article>
@@ -103,7 +103,7 @@ const Blog = () => {
                 {/* Sidebar */}
                 <aside className="blog-sidebar">
                     <div className="sidebar-section categories">
-                        <h2>Categories</h2>
+                        <h2>Danh Mục</h2>
                         <ul>
                             {categories.map((category, index) => (
                                 <li key={index}>
@@ -116,7 +116,7 @@ const Blog = () => {
                     </div>
 
                     <div className="sidebar-section social">
-                        <h2>Follow Us</h2>
+                        <h2>Theo Dõi Chúng Tôi</h2>
                         <div className="social-links">
                             <a href="#" className="social-link facebook">
                                 <FaFacebookF />

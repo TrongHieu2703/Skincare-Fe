@@ -8,13 +8,14 @@
     text-align: center;
     margin-bottom: 2rem;
     padding: 2rem;
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    background: linear-gradient(135deg, #2d6343, #0b4720);
     color: white;
     border-radius: 12px;
     box-shadow: 0 2px 4px rgba(46, 204, 113, 0.2);
 }
 
 .order-history-header h1 {
+    color: rgb(211, 240, 226);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,7 +25,7 @@
 
 .orders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
     padding: 1rem;
 }
@@ -59,7 +60,7 @@
 
 .order-number .value {
     font-weight: 600;
-    color: #2ecc71;
+    color: #104928;
 }
 
 .order-status {
@@ -71,7 +72,7 @@
 
 .order-status.pending {
     background: #fff3cd;
-    color: #856404;
+    color: #880c16;
 }
 
 .order-status.completed {
@@ -88,7 +89,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #666;
+    color: #0f0303;
     font-size: 0.9rem;
     margin-bottom: 1rem;
 }
@@ -139,7 +140,7 @@
     color: #666;
     font-size: 0.9rem;
     padding: 0.5rem;
-    background: #f8f9fa;
+    background: #c0c0c0;
     border-radius: 4px;
     margin-top: 0.5rem;
 }
@@ -158,13 +159,13 @@
 
 .order-total .amount {
     font-weight: 600;
-    color: #2ecc71;
+    color: #125c31;
     font-size: 1.1rem;
 }
 
 .view-detail-btn {
     padding: 0.5rem 1rem;
-    background: #2ecc71;
+    background: #158845;
     color: white;
     border: none;
     border-radius: 6px;
@@ -173,7 +174,7 @@
 }
 
 .view-detail-btn:hover {
-    background: #27ae60;
+    background: #0c4624;
 }
 
 /* Loading Spinner */
@@ -193,8 +194,13 @@
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Empty State */
@@ -215,7 +221,7 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
     .orders-grid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -231,4 +237,4 @@
     .order-card {
         padding: 1rem;
     }
-} 
+}

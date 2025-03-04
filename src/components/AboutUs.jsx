@@ -12,25 +12,27 @@ const AboutUs = () => {
 
     return (
         <section className="about-us container text-center my-5">
-            <h2 className="fw-bold">SKINCARE SKIN CARE PRODUCTS🍀</h2>
+            <h2 className="fw-bold">SẢN PHẨM CHĂM SÓC DA🍀</h2>
+
             <p className="text-muted">
-                We carry a line of skin care products <strong>"natural, clean and free of toxic chemicals"</strong>,
-                Helps protect and nourish the skin in the safest way. The product is researched by a team of Pharmacists, suitable for all skin types, including sensitive skin, pregnant women and children.
+                Chúng tôi cung cấp một dòng sản phẩm chăm sóc da <strong>"tự nhiên, sạch và không chứa hóa chất độc hại"</strong>,
+                giúp bảo vệ và nuôi dưỡng làn da một cách an toàn nhất. Sản phẩm được nghiên cứu bởi đội ngũ dược sĩ, phù hợp với mọi loại da, bao gồm cả da nhạy cảm, phụ nữ mang thai và trẻ em.
             </p>
 
             <div className="row align-items-center mt-5">
                 <div className="col-lg-4 text-lg-end text-center mb-4">
                     <div className="about-card p-4 border rounded shadow-sm" onClick={handleInfoClick} style={{ cursor: 'pointer' }}>
                         <img src="/src/assets/images/aboutus.jpg" alt="Thành phần tự nhiên" className="about-icon mb-3" />
-                        <h5 className="fw-bold">Natural Ingredients</h5>
+                        <h5 className="fw-bold">Thành Phần Tự Nhiên</h5>
                         <p className="text-muted">
-                            Extracted from organic ingredients, ensuring safety for sensitive skin, does not cause irritation.                        </p>
+                            Chiết xuất từ các thành phần hữu cơ, đảm bảo an toàn cho làn da nhạy cảm, không gây kích ứng.
+                        </p>
                     </div>
                     <div className="about-card p-4 border rounded shadow-sm mt-4" onClick={handleInfoClick} style={{ cursor: 'pointer' }}>
                         <img src="/src/assets/images/aboutus.jpg" alt="Không hóa chất độc hại" className="about-icon mb-3" />
-                        <h5 className="fw-bold">Contains No Toxic Chemicals</h5>
+                        <h5 className="fw-bold">Không Chứa Hóa Chất Độc Hại</h5>
                         <p className="text-muted">
-                            Committed to containing no parabens, sulfates, alcohol or harmful substances, helping to protect the skin safely.
+                            Cam kết không chứa paraben, sulfate, cồn hay các chất độc hại, giúp bảo vệ làn da an toàn.
                         </p>
                     </div>
                 </div>
@@ -42,16 +44,16 @@ const AboutUs = () => {
                 <div className="col-lg-4 text-lg-start text-center mb-4">
                     <div className="about-card p-4 border rounded shadow-sm" onClick={handleInfoClick} style={{ cursor: 'pointer' }}>
                         <img src="/src/assets/images/aboutus.jpg" alt="Dưỡng ẩm sâu" className="about-icon mb-3" />
-                        <h5 className="fw-bold">Moisturizes & Restores Skin</h5>
+                        <h5 className="fw-bold">Dưỡng Ẩm & Tái Tạo Da</h5>
                         <p className="text-muted">
-                            Helps keep skin soft, deeply moisturizes and supports skin regeneration, minimizing dryness.
+                            Giúp giữ cho làn da mềm mại, cung cấp độ ẩm sâu và hỗ trợ tái tạo da, giảm thiểu tình trạng khô da.
                         </p>
                     </div>
                     <div className="about-card p-4 border rounded shadow-sm mt-4" onClick={handleInfoClick} style={{ cursor: 'pointer' }}>
                         <img src="/src/assets/images/aboutus.jpg" alt="Bao bì thân thiện môi trường" className="about-icon mb-3" />
-                        <h5 className="fw-bold"> Environmentally Friendly</h5>
+                        <h5 className="fw-bold">Thân Thiện Với Môi Trường</h5>
                         <p className="text-muted">
-                            Use recyclable packaging, limit plastic, towards sustainable environmental protection.
+                            Sử dụng bao bì có thể tái chế, hạn chế nhựa, hướng tới bảo vệ môi trường bền vững.
                         </p>
                     </div>
                 </div>
