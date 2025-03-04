@@ -13,6 +13,11 @@ const Footer = () => {
                     <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="footer-logo" />
                     <p>Điểm đến đáng tin cậy của bạn cho các sản phẩm chăm sóc da cao cấp và giải pháp làm đẹp.</p>
                     <div className="social-links">
+                        <a href="#" aria-label="Facebook"><FaFacebookF className="social-icon" /></a>
+                        <a href="#" aria-label="YouTube"><FaYoutube className="social-icon" /></a>
+                        <a href="#" aria-label="Zalo"><SiZalo className="social-icon" /></a>
+                        <a href="#" aria-label="Shopee"><FaShoppingBag className="social-icon" /></a>
+                        <a href="#" aria-label="Lazada"><TbLetterL className="social-icon" /></a>
                     </div>
                 </div>
 
@@ -50,6 +55,28 @@ const Footer = () => {
                             <li><a href="#">Thẻ Quà Tặng</a></li>
                         </ul>
                     </div>
+
+                    <div className="footer-section">
+                        <h4>Chính Sách</h4>
+                        <ul>
+                            <li><a href="#">Chính Sách Bảo Mật</a></li>
+                            <li><a href="#">Điều Khoản Dịch Vụ</a></li>
+                            <li><a href="#">Cài Đặt Cookie</a></li>
+                            <li><a href="#">Chính Sách Trả Hàng</a></li>
+                            <li><a href="#">Chính Sách Vận Chuyển</a></li>
+                        </ul>
+                    </div>
+
+                    <div className="footer-section">
+                        <h4>Liên Kết Nhanh</h4>
+                        <ul>
+                            <li><a href="#">Trang Chủ</a></li>
+                            <li><a href="#">Giới Thiệu</a></li>
+                            <li><a href="#">Sản Phẩm Mới</a></li>
+                            <li><a href="#">Khuyến Mãi</a></li>
+                            <li><a href="#">Liên Hệ</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -58,25 +85,11 @@ const Footer = () => {
                 <p>🌿 <strong>GPKD/MST:</strong> 0106740438</p>
                 <img src="/src/assets/images/tich.webp" alt="Đã thông báo Bộ Công Thương" className="bo-cong-thuong" />
                 <p>🌿 <strong>SKINCARE ONLINE🌻</strong></p>
-                <div className="footer-social">
-                    <a href="#" aria-label="Facebook"><FaFacebookF className="social-icon" /></a>
-                    <a href="#" aria-label="YouTube"><FaYoutube className="social-icon" /></a>
-                    <a href="#" aria-label="Zalo"><SiZalo className="social-icon" /></a>
-                    <a href="#" aria-label="Shopee"><FaShoppingBag className="social-icon" /></a>
-                    <a href="#" aria-label="Lazada"><TbLetterL className="social-icon" /></a>
-                </div>
             </div>
 
             {/* Footer Bottom */}
             <div className="footer-bottom">
                 <div className="footer-bottom-content">
-                    <div className="footer-legal">
-                        <a href="#">Chính Sách Bảo Mật</a>
-                        <span className="separator">•</span>
-                        <a href="#">Điều Khoản Dịch Vụ</a>
-                        <span className="separator">•</span>
-                        <a href="#">Cài Đặt Cookie</a>
-                    </div>
                     <p>&copy; 2024 Skincare. All rights reserved.</p>
                 </div>
             </div>

@@ -8,8 +8,10 @@ import "/src/styles/Carousel.css";
 
 const images = [
     "./src/assets/images/anh1.jpg",
-    "./src/assets/images/anh2.jpg",
-    "./src/assets/images/anh3.png",
+    "./src/assets/images/banner2.jpg",
+    "./src/assets/images/banner9.jpg",
+    "./src/assets/images/banner6.webp",
+
 
 ];
 
