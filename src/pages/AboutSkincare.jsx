@@ -31,11 +31,10 @@ const HomePage = () => {
                     <span className="text-green-600 text-2xl pr-2">🏵️</span> ABOUT US 🏵️
                 </h3>
                 <p className="mt-4 text-lg">
-                    Skincare - is a story that originates from the love for nature and the rich products of Vietnam,
-                    received from pharmacists <span className="font-bold text-green-700">Hanoi University of Pharmacy</span> research and development.
+                    Chăm sóc da - là một câu chuyện bắt nguồn từ tình yêu thiên nhiên và những sản phẩm phong phú của Việt Nam, được phát triển từ các dược sĩ <span className="font-bold text-green-700">Hanoi University of Pharmacy</span>.
                 </p>
                 <p className="mt-4 text-lg">
-                    We are committed to eliminating <span className="font-bold text-green-700">spice in cosmetics</span> and replacing it with <span className="font-bold text-green-700">clean natural ingredients</span> such as green tea, coffee, turmeric, avocado, rice bran, nourishing oils,...
+                    Chúng tôi cam kết loại bỏ các thành phần độc hại trong mỹ phẩm và thay thế bằng các thành phần tự nhiên sạch như trà xanh, cà phê, nghệ, bơ, cám gạo, dầu dưỡng,...
                 </p>
             </section>
 

@@ -1,4 +1,4 @@
-// src/pages/OrderDetail.jsx
+// src/pages/Checkout.jsx
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createOrder } from '../api/orderApi';
@@ -11,29 +11,29 @@ import { useAuth } from '../auth/AuthProvider';
 const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
   return (
     <div className="payment-selection">
-      <h3>Phương thức thanh toán</h3>
+      <h3>Phương Thức Thanh Toán</h3>
       <div className="payment-methods">
-        <div 
+        <div
           className={`payment-method-card ${selectedMethod === "Credit" ? "selected" : ""}`}
           onClick={() => onChange("Credit")}
         >
           <div className="payment-icon credit-icon">
             <i className="fas fa-credit-card"></i>
           </div>
-          <span>Credit Card</span>
+          <span>Thẻ Tín Dụng</span>
         </div>
-        
-        <div 
+
+        <div
           className={`payment-method-card ${selectedMethod === "Cash" ? "selected" : ""}`}
           onClick={() => onChange("Cash")}
         >
           <div className="payment-icon cash-icon">
             <i className="fas fa-money-bill-wave"></i>
           </div>
-          <span>Cash</span>
+          <span>Tiền Mặt</span>
         </div>
-        
-        <div 
+
+        <div
           className={`payment-method-card ${selectedMethod === "Bank" ? "selected" : ""}`}
           onClick={() => onChange("Bank")}
         >
@@ -43,16 +43,16 @@ const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
           <span>PayPal</span>
         </div>
       </div>
-      
+
       {selectedMethod === "Credit" && (
         <div className="card-details">
           <div className="form-group">
-            <label>Số thẻ</label>
+            <label>Số Thẻ</label>
             <input type="text" placeholder="0000 0000 0000 0000" />
           </div>
           <div className="form-row">
             <div className="form-group half">
-              <label>Hết hạn</label>
+              <label>Hết Hạn</label>
               <input type="text" placeholder="MM/YY" />
             </div>
             <div className="form-group half">
@@ -61,7 +61,7 @@ const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
             </div>
           </div>
           <div className="form-group">
-            <label>Tên chủ thẻ</label>
+            <label>Tên Chủ Thẻ</label>
             <input type="text" placeholder="NGUYEN VAN A" />
           </div>
         </div>
@@ -86,7 +86,7 @@ const Checkout = () => {
 
   // Thêm state cho phương thức thanh toán
   const [paymentMethod, setPaymentMethod] = useState("Cash"); // Mặc định là Cash
-  
+
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -102,7 +102,7 @@ const Checkout = () => {
       setErrorMessage("Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn");
       return;
     }
-    
+
     if (user) {
       setUserId(user.id || 0);
       fetchUserInfo();
@@ -114,12 +114,12 @@ const Checkout = () => {
     try {
       setLoading(true);
       setErrorMessage('');
-      
+
       console.log("Fetching user info..."); // Debug log
-      
+
       const userInfo = await getAccountInfo();
       console.log("User info fetched successfully:", userInfo); // Debug log
-      
+
       // Cập nhật orderInfo dựa trên UProfileDTO và lưu avatar
       setOrderInfo({
         fullName: userInfo.username || '', // Sử dụng username thay vì fullName
@@ -166,15 +166,15 @@ const Checkout = () => {
       };
 
       console.log("Sending update profile request with data:", updateData);
-      
+
       await updateAccountInfo(updateData);
       setSuccessMessage('Cập nhật thông tin thành công!');
-      
+
       // Cập nhật lại thông tin người dùng sau khi update thành công
       await fetchUserInfo();
     } catch (error) {
       console.error('Error updating profile:', error);
-      
+
       // Hiển thị thông báo lỗi chi tiết hơn
       if (error.errors) {
         const errorMessages = Object.values(error.errors).flat().join(', ');
@@ -190,18 +190,16 @@ const Checkout = () => {
   // Thêm hàm giả lập thanh toán thành công cho tất cả phương thức
   const simulatePayment = async (paymentMethod, orderData) => {
     if (paymentMethod !== "Cash") {
-        return new Promise((resolve) => {
-            setSuccessMessage(`Đang xử lý thanh toán qua ${
-                paymentMethod === "Credit" ? "thẻ tín dụng" : "PayPal"
-            }...`);
-            
-            setTimeout(() => {
-                setSuccessMessage(`Thanh toán ${
-                    paymentMethod === "Credit" ? "thẻ tín dụng" : "PayPal"
-                } thành công!`);
-                resolve(true);
-            }, 2000);
-        });
+      return new Promise((resolve) => {
+        setSuccessMessage(`Đang xử lý thanh toán qua ${paymentMethod === "Credit" ? "thẻ tín dụng" : "PayPal"
+          }...`);
+
+        setTimeout(() => {
+          setSuccessMessage(`Thanh toán ${paymentMethod === "Credit" ? "thẻ tín dụng" : "PayPal"
+            } thành công!`);
+          resolve(true);
+        }, 2000);
+      });
     }
     return Promise.resolve(true);
   };
@@ -257,21 +255,21 @@ const Checkout = () => {
       console.log("Submitting order:", orderData);
       const response = await createOrder(orderData);
       console.log("Order created successfully:", response);
-      
+
       // Giả lập quá trình thanh toán
       await simulatePayment(paymentMethod, orderData);
-      
+
       // Sau khi thanh toán thành công, chuyển hướng đến trang chi tiết đơn hàng
-      navigate(`/order/${response.id}`, { 
-        state: { 
+      navigate(`/order/${response.id}`, {
+        state: {
           orderId: response.id,
           paymentSuccess: true,
           paymentMethod: paymentMethod
-        } 
+        }
       });
     } catch (error) {
       console.error('Error creating order:', error);
-      
+
       // Xử lý lỗi chi tiết hơn
       if (error.errors) {
         const errorMessages = Object.values(error.errors).flat().join(', ');
@@ -290,10 +288,10 @@ const Checkout = () => {
     <div className="order-detail-page">
       <div className="order-detail-container">
         <div className="order-detail-left">
-          <h2>Thông tin giao hàng</h2>
+          <h2>Thông Tin Giao Hàng</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Họ và tên *</label>
+              <label>Họ Và Tên *</label>
               <input
                 type="text"
                 name="fullName"
@@ -303,7 +301,7 @@ const Checkout = () => {
               />
             </div>
             <div className="form-group">
-              <label>Email * (Không thể thay đổi)</label>
+              <label>Email * (Không Thể Thay Đổi)</label>
               <input
                 type="email"
                 name="email"
@@ -315,7 +313,7 @@ const Checkout = () => {
               />
             </div>
             <div className="form-group">
-              <label>Số điện thoại *</label>
+              <label>Số Điện Thoại *</label>
               <input
                 type="tel"
                 name="phone"
@@ -325,7 +323,7 @@ const Checkout = () => {
               />
             </div>
             <div className="form-group">
-              <label>Địa chỉ *</label>
+              <label>Địa Chỉ *</label>
               <input
                 type="text"
                 name="address"
@@ -334,34 +332,34 @@ const Checkout = () => {
                 required
               />
             </div>
-            
+
             {/* Thêm component chọn phương thức thanh toán */}
-            <PaymentMethodSelector 
+            <PaymentMethodSelector
               selectedMethod={paymentMethod}
               onChange={setPaymentMethod}
             />
-            
+
             <div className="form-actions">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="update-profile-button"
                 onClick={handleUpdateProfile}
                 disabled={isUpdatingProfile}
               >
-                {isUpdatingProfile ? 'Đang cập nhật...' : 'Cập nhật thông tin'}
+                {isUpdatingProfile ? 'Đang Cập Nhật...' : 'Cập Nhật Thông Tin'}
               </button>
-              
+
               <button type="submit" className="checkout-button" disabled={loading}>
-                {loading ? 'Đang xử lý...' : paymentMethod === "Cash" ? 'Đặt hàng (COD)' : 'Thanh toán ngay'}
+                {loading ? 'Đang Xử Lý...' : paymentMethod === "Cash" ? 'Đặt Hàng (COD)' : 'Thanh Toán Ngay'}
               </button>
             </div>
-            
+
             {errorMessage && <div className="error-message">{errorMessage}</div>}
             {successMessage && <div className="success-message">{successMessage}</div>}
           </form>
         </div>
         <div className="order-detail-right">
-          <h3>Tổng quan đơn hàng</h3>
+          <h3>Tổng Quan Đơn Hàng</h3>
           <div className="cart-items-summary">
             {cartItems.map((item) => {
               const productName = item.product?.name || 'Product';
@@ -370,7 +368,7 @@ const Checkout = () => {
                 <div key={item.cartId || item.id} className="cart-item-summary">
                   <span>{productName}</span>
                   <span>
-                    ${((productPrice * item.quantity) / 23000).toFixed(2)}
+                    {((productPrice * item.quantity)).toFixed(0)}đ
                   </span>
                 </div>
               );
@@ -378,16 +376,16 @@ const Checkout = () => {
           </div>
           <div className="price-details">
             <div className="price-row">
-              <span>Subtotal</span>
-              <span>${(subtotal / 23000).toFixed(2)}</span>
+              <span>Tổng Tạm Tính</span>
+              <span>{(subtotal).toFixed(0)}đ</span>
             </div>
             <div className="price-row">
-              <span>Shipping Fee</span>
-              <span>${(shippingFee / 23000).toFixed(2)}</span>
+              <span>Phí Vận Chuyển</span>
+              <span>{(shippingFee).toFixed(0)}đ</span>
             </div>
             <div className="price-row total">
-              <span>Total</span>
-              <span>${(total / 23000).toFixed(2)}</span>
+              <span>Tổng Cộng</span>
+              <span>{(total).toFixed(0)}đ</span>
             </div>
           </div>
         </div>

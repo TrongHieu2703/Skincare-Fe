@@ -31,7 +31,7 @@ const FeaturedNews = () => {
 
     return (
         <div className="featured-news">
-            <h2 className="section-title">Standout News</h2>
+            <h2 className="section-title">Tin Nổi bậc</h2>
             <div className="news-grid">
                 {newsItems.map(item => (
                     <div key={item.id} className="news-card">
@@ -43,7 +43,7 @@ const FeaturedNews = () => {
                             <h3 className="news-title">{item.title}</h3>
                             <p className="news-description">{item.description}</p>
                             <a href="#" className="read-more">
-                                Read more <FaArrowRight className="arrow-icon" />
+                                Đọc ngay <FaArrowRight className="arrow-icon" />
                             </a>
                         </div>
                     </div>
