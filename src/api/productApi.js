@@ -14,8 +14,17 @@ export const getAllProducts = (pageNumber = 1, pageSize = 10) => {
 /**
  * Lấy chi tiết sản phẩm theo ID
  */
-export const getProductById = (productId) => {
-  return axiosClient.get(`${API_URL}/${productId}`);
+export const getProductById = async (id) => {
+  try {
+    const response = await axiosClient.get(`${API_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching product with ID ${id}:`, error);
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error(error.message || `Error fetching product with ID ${id}`);
+  }
 };
 
 /**
@@ -44,4 +53,18 @@ export const updateProduct = (productId, updatedData) => {
  */
 export const deleteProduct = (productId) => {
   return axiosClient.delete(`${API_URL}/${productId}`);
+};
+
+// Search products
+export const searchProducts = async (searchTerm) => {
+    try {
+        const response = await axiosClient.get(`${API_URL}/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error searching products:', error);
+        if (error.response && error.response.data) {
+            throw error.response.data;
+        }
+        throw new Error(error.message || 'Error searching products');
+    }
 };

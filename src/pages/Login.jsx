@@ -24,7 +24,8 @@ const Login = () => {
         password: formData.password
       });
 
-      // Store user information in localStorage
+
+      console.log("Phản hồi đăng nhập:", response);
       localStorage.setItem("user", JSON.stringify({
         id: response.id,
         email: response.email,
@@ -37,28 +38,29 @@ const Login = () => {
 
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
-
-      const userRole = response.role; // Extract user role from response
-
-      setTimeout(() => {
-        if (userRole === "Admin") {
-          navigate("/dashboard"); // Redirect to dashboard for admin
-        } else {
-          navigate("/"); // Redirect to default page for user
-        }
-        setShowToast(false);
-      }, 1000);
+      if (response.role === "Admin") {
+        setTimeout(() => {
+          navigate("/dashboard");
+          setShowToast(false);
+        }, 1500);
+      } else {
+        setTimeout(() => {
+          navigate("/");
+          setShowToast(false);
+        }, 1500);
+      }
     } catch (error) {
-      setMessage(error.message || "Đăng nhập thất bại!");
+      console.error("Lỗi đăng nhập:", error);
+      setMessage(error.message || "Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-box">
-        <img src={logo} alt="Skincare Logo" className="logo" />
-        <h2>WELCOME BACK</h2>
-        <p>We're glad to see you again!</p>
+        <img src={logo} alt="Logo Skincare" className="logo" />
+        <h2>CHÀO MỪNG TRỞ LẠI</h2>
+        <p>Rất vui được gặp lại bạn!</p>
 
         {message && (
           <div className={`message ${message.includes("thành công") ? "success" : "error"}`}>
@@ -72,7 +74,7 @@ const Login = () => {
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
+              placeholder="Nhập địa chỉ email"
               value={formData.email}
               onChange={handleChange}
               required
@@ -80,27 +82,30 @@ const Login = () => {
           </div>
 
           <div className="input-group">
-            <label>Password</label>
+            <label>Mật khẩu</label>
             <input
               type="password"
               name="password"
-              placeholder="********"
+              placeholder="Nhập mật khẩu"
               value={formData.password}
               onChange={handleChange}
               required
             />
           </div>
 
-          <button type="submit" className="login-button">Sign in</button>
+          <button type="submit" className="login-button">
+            Đăng nhập
+          </button>
 
           <button type="button" className="google-button">
-            <img src={googleIcon} alt="Google Icon" /> Sign in with Google
+            <img src={googleIcon} alt="Google Icon" />
+            Đăng nhập với Google
           </button>
 
           <p className="register-link">
-            Don't have an account?{" "}
+            Chưa có tài khoản?{" "}
             <span onClick={() => navigate("/register")} className="signup-link">
-              Sign up for free!
+              Đăng ký miễn phí!
             </span>
           </p>
         </form>
@@ -110,7 +115,6 @@ const Login = () => {
         <img src={loginImage} alt="Skincare" />
       </div>
 
-      {/* Thông báo đăng nhập thành công */}
       <div className={`success-toast ${showToast ? "show" : ""}`} style={{ backgroundColor: '#28a745' }}>
         Đăng nhập thành công!
       </div>

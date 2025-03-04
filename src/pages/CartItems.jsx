@@ -68,7 +68,7 @@ const CartItems = () => {
   const total = subtotal + shippingFee;
 
   const handleCheckout = () => {
-    navigate("/order-detail", { state: { cartItems, subtotal, shippingFee, total } });
+    navigate("/Checkout", { state: { cartItems, subtotal, shippingFee, total } });
   };
 
   if (loading) {
