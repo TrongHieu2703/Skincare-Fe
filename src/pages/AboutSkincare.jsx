@@ -28,7 +28,7 @@ const HomePage = () => {
             {/* Giới thiệu */}
             <section className="px-8 md:px-20 py-12">
                 <h3 className="text-xl font-semibold flex items-center">
-                    <span className="text-green-600 text-2xl pr-2">🏵️</span> ABOUT US 🏵️
+                    <span className="text-green-600 text-2xl pr-2">🏵️</span> GIỚI THIỆU VỀ CHĂM SÓC DA 🏵️
                 </h3>
                 <p className="mt-4 text-lg">
                     Chăm sóc da - là một câu chuyện bắt nguồn từ tình yêu thiên nhiên và những sản phẩm phong phú của Việt Nam, được phát triển từ các dược sĩ <span className="font-bold text-green-700">Hanoi University of Pharmacy</span>.

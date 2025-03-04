@@ -33,7 +33,7 @@ const SkinTest = () => {
     <div className="skin-test-container">
       <div className="test-content">
         <div className="test-header">
-          <h1>SKINCARE MINI TEST</h1>
+          <h1>BÀI KIỂM TRA DA NHANH</h1>
           <p>Discover Your Perfect Skincare Routine</p>
         </div>
 
