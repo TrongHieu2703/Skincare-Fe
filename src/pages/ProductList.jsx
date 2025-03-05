@@ -22,7 +22,7 @@ const ProductList = () => {
       setProducts(response.data);
       setFilteredProducts(response.data);
       setTotalPages(response.totalPages);
-      
+
       // Khởi tạo số lượng mặc định cho mỗi sản phẩm
       const initialQuantities = response.data.reduce((acc, product) => {
         acc[product.id] = 1;
@@ -65,7 +65,7 @@ const ProductList = () => {
       alert("✅ Đã thêm vào giỏ hàng thành công!");
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      alert("❌ Thêm vào giỏ hàng thất bại!");
+      alert("❌ Đăng nhập để thêm vào giỏ hàng nào!");
     }
   };
 
@@ -167,27 +167,27 @@ const ProductList = () => {
                       }).format(product.price)}
                     </p>
                     <div className="quantity-control">
-                      <button 
+                      <button
                         className="quantity-btn"
                         onClick={() => handleQuantityChange(product.id, -1)}
                       >
                         -
                       </button>
                       <span className="quantity">{quantities[product.id]}</span>
-                      <button 
+                      <button
                         className="quantity-btn"
                         onClick={() => handleQuantityChange(product.id, 1)}
                       >
                         +
                       </button>
                     </div>
-                    <button 
+                    <button
                       className="add-to-cart-btn"
                       onClick={() => handleAddToCart(product)}
                     >
                       Thêm vào giỏ
                     </button>
-                    <Link 
+                    <Link
                       to={`/product/${product.id}`}
                       className="view-detail-btn"
                     >
@@ -202,10 +202,11 @@ const ProductList = () => {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="page-btn"
+                className={`page-btn ${currentPage === 1 ? 'disabled' : ''}`}
               >
-                &lt; Trước
+                <span className="nav-text">&lt; Trước</span>
               </button>
+              
               {[...Array(totalPages)].map((_, index) => (
                 <button
                   key={index + 1}
@@ -215,12 +216,13 @@ const ProductList = () => {
                   {index + 1}
                 </button>
               ))}
+              
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="page-btn"
+                className={`page-btn ${currentPage === totalPages ? 'disabled' : ''}`}
               >
-                Sau &gt;
+                <span className="nav-text">Sau &gt;</span>
               </button>
             </div>
           </>

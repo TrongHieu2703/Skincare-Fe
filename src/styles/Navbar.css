@@ -7,17 +7,16 @@
     align-items: center;
     justify-content: space-between;
     padding: 15px 30px;
-    background: linear-gradient(to right, #aaddbb, #457047);
-    /* Lighter green */
-    box-shadow: 0 2px 15px rgba(0, 123, 85, 0.1);
+    background: linear-gradient(135deg, #d5ebe2 0%, #4ebb85 50%, #74b99f 100%);
+    box-shadow: 0 4px 20px rgba(0, 123, 85, 0.15);
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
     height: 80px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
     font-family: 'Roboto', sans-serif;
-    /* Modern font */
+    backdrop-filter: blur(8px);
 }
 
 /* Push Content Down */
@@ -69,9 +68,9 @@ body {
 
 .search-input:focus {
     outline: none;
-    border-color: #66BB6A;
+    border-color: #90EE90;
     /* Lighter green */
-    box-shadow: 0 0 0 2px rgba(102, 187, 106, 0.1);
+    box-shadow: 0 0 0 2px rgba(144, 238, 144, 0.1);
 }
 
 .search-button {
@@ -134,7 +133,7 @@ body {
 }
 
 .search-result-price {
-    color: #66BB6A;
+    color: #90EE90;
     /* Lighter green */
     font-weight: 600;
 }
@@ -194,31 +193,66 @@ body {
 .login,
 .register {
     padding: 0.8rem 1.5rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    border-radius: 6px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    border-radius: 8px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    text-transform: uppercase;
+    min-width: 120px;
+    font-size: 0.9rem;
 }
 
 .login {
-    background: linear-gradient(45deg, #66BB6A, #4CAF50);
-    /* Lighter green */
+    background: linear-gradient(135deg, #317c5d, #27ae60);
     border: none;
     color: white;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
 }
 
 .register {
-    background: transparent;
-    border: 2px solid #1f9b7c;
-    color: #A5D6A7;
+    background: #90EE90;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    color: white;
+    box-shadow: 0 4px 15px rgba(144, 238, 144, 0.5);
+    transform: translateY(0);
+    animation: floatButton 2s ease-in-out infinite;
+}
+
+@keyframes floatButton {
+    0% {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+
+    50% {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 25px rgba(255, 255, 255, 0.2);
+    }
+
+    100% {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+}
+
+.register:hover {
+    animation: none;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 .login:hover,
 .register:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 85, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.25);
+}
+
+.login:active,
+.register:active {
+    transform: translateY(1px);
 }
 
 .login::after,
@@ -229,9 +263,9 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     transform: translateX(-100%);
-    transition: 0.6s;
+    transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .login:hover::after,
@@ -272,13 +306,14 @@ body {
     position: absolute;
     top: 45px;
     right: 0;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(11, 82, 20, 0.15);
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    backdrop-filter: blur(8px);
     z-index: 9999;
-    width: 180px;
-    padding: 5px 0;
+    width: 200px;
+    padding: 8px 0;
     animation: dropdownFade 0.3s ease-in-out;
 }
 
@@ -319,10 +354,14 @@ body {
 /* Optional: Make Logout Red */
 .dropdown-item.logout {
     color: #e74c3c;
-    /* Changed to a more noticeable red */
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .dropdown-item.logout:hover {
-    background-color: #c0392b;
-    /* Darker red on hover */
+    background: linear-gradient(to right, #ff6b6b, #e74c3c);
+    color: white;
+    transform: translateX(4px);
 }

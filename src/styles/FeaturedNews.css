@@ -1,26 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 .featured-news {
-    padding: 60px 0;
-    background-color: #ffffff;
+    padding: 80px 0;
+    background: linear-gradient(to bottom, #ffffff, #f8fff8);
+}
+
+.news-header {
+    text-align: center;
+    margin-bottom: 50px;
 }
 
 .section-title {
-    font-size: 2.5rem;
-    color: #2d3436;
-    text-align: center;
-    margin-bottom: 40px;
     font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #216942;
+    margin-bottom: 15px;
+    font-weight: 700;
     position: relative;
+    display: inline-block;
 }
 
-.section-title:after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: #007B55;
+.section-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    color: #4caf50;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 2px;
 }
 
 .news-grid {
@@ -33,22 +38,23 @@
 }
 
 .news-card {
-    background: #fff;
-    border-radius: 15px;
+    background: #ffffff;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(76, 175, 80, 0.1);
 }
 
 .news-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(76, 175, 80, 0.2);
+    border-color: #4caf50;
 }
 
 .news-image-wrapper {
     position: relative;
     padding-top: 66.67%;
-    /* 3:2 Aspect Ratio */
     overflow: hidden;
 }
 
@@ -59,41 +65,48 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease;
 }
 
 .news-card:hover .news-image {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 .news-tag {
     position: absolute;
     top: 20px;
     left: 20px;
-    background: #007B55;
+    background: #216942;
     color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.875rem;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(33, 105, 66, 0.2);
 }
 
 .news-content {
-    padding: 25px;
+    padding: 30px;
 }
 
 .news-title {
-    color: #2d3436;
-    font-size: 1.25rem;
+    font-family: 'Playfair Display', serif;
+    color: #216942;
+    font-size: 1.4rem;
     font-weight: 600;
     margin-bottom: 15px;
 }
 
 .news-description {
-    color: #64748b;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 20px;
+    font-family: 'Montserrat', sans-serif;
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 25px;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -101,33 +114,37 @@
 }
 
 .read-more {
+    font-family: 'Montserrat', sans-serif;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    color: #007B55;
+    gap: 10px;
+    color: #216942;
     text-decoration: none;
     font-weight: 600;
-    font-size: 0.95rem;
-    transition: gap 0.3s ease;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    padding: 8px 0;
+    border-bottom: 2px solid transparent;
 }
 
 .read-more:hover {
-    gap: 12px;
+    gap: 15px;
+    color: #4caf50;
+    border-bottom-color: #4caf50;
 }
 
 .arrow-icon {
-    font-size: 0.875rem;
     transition: transform 0.3s ease;
 }
 
 .read-more:hover .arrow-icon {
-    transform: translateX(3px);
+    transform: translateX(5px);
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
     .news-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
     }
 }
 
@@ -136,22 +153,35 @@
         font-size: 2rem;
     }
 
+    .section-subtitle {
+        font-size: 1rem;
+    }
+
     .news-grid {
         grid-template-columns: 1fr;
         max-width: 500px;
     }
+
+    .news-content {
+        padding: 25px;
+    }
 }
 
 @media (max-width: 480px) {
+    .featured-news {
+        padding: 60px 0;
+    }
+
     .section-title {
         font-size: 1.75rem;
     }
 
-    .news-content {
-        padding: 20px;
+    .news-title {
+        font-size: 1.2rem;
     }
 
-    .news-title {
-        font-size: 1.1rem;
+    .news-tag {
+        padding: 8px 15px;
+        font-size: 0.8rem;
     }
 }
