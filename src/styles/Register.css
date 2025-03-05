@@ -26,10 +26,9 @@ html.signup-page {
   gap: 40px;
   box-shadow: 0 15px 35px rgba(76, 175, 80, 0.1);
   padding: 30px;
-  margin: 80px auto 10px;
+  margin: 10px auto;
   animation: fadeIn 0.8s ease-out;
 }
-
 .register-box {
   width: 100%;
   max-width: 450px;
@@ -41,7 +40,6 @@ html.signup-page {
   animation: slideIn 0.6s ease-out;
   font-family: 'Montserrat', sans-serif;
 }
-
 .register-box h2 {
   font-family: 'Playfair Display', serif;
   font-size: 2.2rem;
@@ -50,14 +48,12 @@ html.signup-page {
   margin-bottom: 0.8rem;
   letter-spacing: 0.5px;
 }
-
 .register-box p {
   font-family: 'Montserrat', sans-serif;
   color: #4a6f5d;
   font-size: 1rem;
   margin-bottom: 25px;
 }
-
 .input-group label {
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
@@ -65,7 +61,6 @@ html.signup-page {
   font-size: 0.9rem;
   letter-spacing: 0.3px;
 }
-
 .input-group input {
   font-family: 'Montserrat', sans-serif;
   border: 2px solid rgba(76, 175, 80, 0.1);
@@ -73,13 +68,11 @@ html.signup-page {
   font-size: 0.95rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .input-group input:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
   transform: translateY(-2px);
 }
-
 .register-button {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
@@ -88,18 +81,15 @@ html.signup-page {
   background: linear-gradient(135deg, #4caf50 0%, #216942 100%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .register-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
 }
-
 .register-image {
   flex: 1;
   max-width: 800px;
   animation: fadeInRight 0.8s ease-out;
 }
-
 .register-image img {
   width: 120%;
   height: auto;
@@ -107,27 +97,23 @@ html.signup-page {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
-
 .switch-text {
   font-family: 'Montserrat', sans-serif;
   margin-top: 20px;
   font-size: 0.9rem;
   color: #4a6f5d;
 }
-
 .switch-text a {
   color: #4caf50;
   font-weight: 600;
   transition: all 0.3s ease;
 }
-
 .switch-text a:hover {
   color: #216942;
   text-decoration: none;
   padding-bottom: 2px;
   border-bottom: 2px solid #4caf50;
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -137,7 +123,6 @@ html.signup-page {
     opacity: 1;
   }
 }
-
 .register-box {
   width: 100%;
   max-width: 450px;
@@ -149,7 +134,6 @@ html.signup-page {
   animation: slideIn 0.6s ease-out;
   font-family: 'Montserrat', sans-serif;
 }
-
 .register-box h2 {
   font-family: 'Playfair Display', serif;
   font-size: 2.2rem;
@@ -158,14 +142,12 @@ html.signup-page {
   margin-bottom: 0.8rem;
   letter-spacing: 0.5px;
 }
-
 .register-box p {
   font-family: 'Montserrat', sans-serif;
   color: #4a6f5d;
   font-size: 1rem;
   margin-bottom: 25px;
 }
-
 .input-group label {
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
@@ -173,7 +155,6 @@ html.signup-page {
   font-size: 0.9rem;
   letter-spacing: 0.3px;
 }
-
 .input-group input {
   font-family: 'Montserrat', sans-serif;
   border: 2px solid rgba(76, 175, 80, 0.1);
@@ -181,13 +162,11 @@ html.signup-page {
   font-size: 0.95rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .input-group input:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
   transform: translateY(-2px);
 }
-
 .register-button {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
@@ -196,18 +175,15 @@ html.signup-page {
   background: linear-gradient(135deg, #4caf50 0%, #216942 100%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .register-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
 }
-
 .register-image {
   flex: 1;
   max-width: 800px;
   animation: fadeInRight 0.8s ease-out;
 }
-
 .register-image img {
   width: 120%;
   height: auto;
@@ -215,27 +191,23 @@ html.signup-page {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
-
 .switch-text {
   font-family: 'Montserrat', sans-serif;
   margin-top: 20px;
   font-size: 0.9rem;
   color: #4a6f5d;
 }
-
 .switch-text a {
   color: #4caf50;
   font-weight: 600;
   transition: all 0.3s ease;
 }
-
 .switch-text a:hover {
   color: #216942;
   text-decoration: none;
   padding-bottom: 2px;
   border-bottom: 2px solid #4caf50;
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -245,7 +217,6 @@ html.signup-page {
     opacity: 1;
   }
 }
-
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -257,7 +228,6 @@ html.signup-page {
     transform: translateY(0);
   }
 }
-
 @keyframes fadeInRight {
   from {
     opacity: 0;
@@ -269,7 +239,6 @@ html.signup-page {
     transform: translateX(0);
   }
 }
-
 /* Keep existing responsive styles */
 @media (max-width: 992px) {
   .register-container {
