@@ -10,6 +10,13 @@ const CartItems = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const formatVND = (amount) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(amount);
+  };
+
   // Lấy cart từ server
   useEffect(() => {
     async function fetchCart() {
@@ -97,7 +104,7 @@ const CartItems = () => {
               {cartItems.map((item) => {
                 const productPrice = item.product?.price ?? 0;
                 const productName = item.product?.name || "Unnamed product";
-                const productImage = item.product?.image || "https://via.placeholder.com/150";
+                const productImage = item.product?.mainImage || "https://via.placeholder.com/150";
 
                 return (
                   <div key={item.cartId} className="cart-item">
@@ -108,30 +115,29 @@ const CartItems = () => {
                     <div className="item-details">
                       <h3>{productName}</h3>
                       <div className="item-price">
-                        đ{(productPrice).toFixed(0)}
-
+                        {formatVND(productPrice)}
                       </div>
-                      <div className="item-controls">
-                        <div className="quantity-controls">
-                          <button
-                            onClick={() => updateQuantity(item.cartId, item.productId, -1)}
-                            disabled={item.quantity <= 1}
-                          >
-                            <FaMinus />
-                          </button>
-                          <span>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.cartId, item.productId, 1)}>
-                            <FaPlus />
-                          </button>
-                        </div>
-                        <button className="remove-button" onClick={() => removeItem(item.cartId)}>
-                          <FaTrash /> Xóa
-                        </button>
+                      <div className="item-total">
+                        Thành tiền: {formatVND(productPrice * item.quantity)}
                       </div>
                     </div>
 
-                    <div className="item-total">
-                      {((productPrice * item.quantity) / 23000).toFixed(2)}đ
+                    <div className="item-controls">
+                      <div className="quantity-controls">
+                        <button
+                          onClick={() => updateQuantity(item.cartId, item.productId, -1)}
+                          disabled={item.quantity <= 1}
+                        >
+                          <FaMinus />
+                        </button>
+                        <span>{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.cartId, item.productId, 1)}>
+                          <FaPlus />
+                        </button>
+                      </div>
+                      <button className="remove-button" onClick={() => removeItem(item.cartId)}>
+                        <FaTrash /> Xóa
+                      </button>
                     </div>
                   </div>
                 );
@@ -142,18 +148,15 @@ const CartItems = () => {
               <h3>Tóm Tắt Đơn Hàng</h3>
               <div className="summary-row">
                 <span>Tổng Tạm Tính</span>
-                <span>{(subtotal).toFixed(0)}đ</span>
-
+                <span>{formatVND(subtotal)}</span>
               </div>
               <div className="summary-row">
                 <span>Phí Vận Chuyển</span>
-                <span>{(shippingFee).toFixed(0)}đ</span>
-
+                <span>{formatVND(shippingFee)}</span>
               </div>
               <div className="summary-row total">
                 <span>Tổng Cộng</span>
-                <span>{(total).toFixed(0)}đ</span>
-
+                <span>{formatVND(total)}</span>
               </div>
               <button
                 className="checkout-button"

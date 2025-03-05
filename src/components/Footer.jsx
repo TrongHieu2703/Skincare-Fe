@@ -8,15 +8,18 @@ const Footer = () => {
     return (
         <footer className="footer">
             <div className="footer-content">
-                {/* Brand Section */}
                 <div className="footer-brand">
                     <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="footer-logo" />
                     <p>Điểm đến đáng tin cậy của bạn cho các sản phẩm chăm sóc da cao cấp và giải pháp làm đẹp.</p>
                     <div className="social-links">
+                        <a href="#" aria-label="Facebook"><FaFacebookF /></a>
+                        <a href="#" aria-label="YouTube"><FaYoutube /></a>
+                        <a href="#" aria-label="Zalo"><SiZalo /></a>
+                        <a href="#" aria-label="Shopee"><FaShoppingBag /></a>
+                        <a href="#" aria-label="Lazada"><TbLetterL /></a>
                     </div>
                 </div>
 
-                {/* Footer Sections */}
                 <div className="footer-sections">
                     <div className="footer-section">
                         <h4>Sản Phẩm</h4>
@@ -32,11 +35,11 @@ const Footer = () => {
                     <div className="footer-section">
                         <h4>Hỗ Trợ & Giúp Đỡ</h4>
                         <ul>
-                            <li><a href="#">Liên Hệ Với Chúng Tôi</a></li>
-                            <li><a href="#">Câu Hỏi Thường Gặp</a></li>
-                            <li><a href="#">Thông Tin Vận Chuyển</a></li>
-                            <li><a href="#">Trả Hàng</a></li>
-                            <li><a href="#">Tình Trạng Đơn Hàng</a></li>
+                            <li><a href="#">Liên Hệ</a></li>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="#">Vận Chuyển</a></li>
+                            <li><a href="#">Đổi Trả</a></li>
+                            <li><a href="#">Đơn Hàng</a></li>
                         </ul>
                     </div>
 
@@ -45,40 +48,39 @@ const Footer = () => {
                         <ul>
                             <li><a href="#">Về Chúng Tôi</a></li>
                             <li><a href="#">Blog</a></li>
-                            <li><a href="#">Cơ Hội Nghề Nghiệp</a></li>
+                            <li><a href="#">Tuyển Dụng</a></li>
                             <li><a href="#">Báo Chí</a></li>
-                            <li><a href="#">Thẻ Quà Tặng</a></li>
+                            <li><a href="#">Quà Tặng</a></li>
+                        </ul>
+                    </div>
+
+                    <div className="footer-section">
+                        <h4>Chính Sách</h4>
+                        <ul>
+                            <li><a href="#">Bảo Mật</a></li>
+                            <li><a href="#">Điều Khoản</a></li>
+                            <li><a href="#">Cookie</a></li>
+                            <li><a href="#">Đổi Trả</a></li>
+                            <li><a href="#">Vận Chuyển</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            {/* Footer Extra Information */}
             <div className="footer-extra">
-                <p>🌿 <strong>GPKD/MST:</strong> 0106740438</p>
-                <img src="/src/assets/images/tich.webp" alt="Đã thông báo Bộ Công Thương" className="bo-cong-thuong" />
-                <p>🌿 <strong>SKINCARE ONLINE🌻</strong></p>
-                <div className="footer-social">
-                    <a href="#" aria-label="Facebook"><FaFacebookF className="social-icon" /></a>
-                    <a href="#" aria-label="YouTube"><FaYoutube className="social-icon" /></a>
-                    <a href="#" aria-label="Zalo"><SiZalo className="social-icon" /></a>
-                    <a href="#" aria-label="Shopee"><FaShoppingBag className="social-icon" /></a>
-                    <a href="#" aria-label="Lazada"><TbLetterL className="social-icon" /></a>
+                <div className="certification">
+                    <p>🌿 <strong>GPKD/MST:</strong> 0106740438</p>
+                    <img src="/src/assets/images/tich.webp" alt="Đã thông báo Bộ Công Thương" className="bo-cong-thuong" />
+                </div>
+                <div className="brand-motto">
+                    <span>🌿</span>
+                    <strong>SKINCARE ONLINE</strong>
+                    <span>🌻</span>
                 </div>
             </div>
 
-            {/* Footer Bottom */}
             <div className="footer-bottom">
-                <div className="footer-bottom-content">
-                    <div className="footer-legal">
-                        <a href="#">Chính Sách Bảo Mật</a>
-                        <span className="separator">•</span>
-                        <a href="#">Điều Khoản Dịch Vụ</a>
-                        <span className="separator">•</span>
-                        <a href="#">Cài Đặt Cookie</a>
-                    </div>
-                    <p>&copy; 2024 Skincare. All rights reserved.</p>
-                </div>
+                <p>&copy; 2024 Skincare. All rights reserved.</p>
             </div>
         </footer>
     );

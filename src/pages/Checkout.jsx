@@ -8,6 +8,15 @@ import { updateAccountInfo } from '../api/accountApi';
 import { useAuth } from '../auth/AuthProvider';
 
 // Payment Method Component
+// Add this formatter function at the top after imports
+const formatVND = (amount) => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(amount);
+};
+
+// Update PaymentMethodSelector component
 const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
   return (
     <div className="payment-selection">
@@ -17,9 +26,7 @@ const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
           className={`payment-method-card ${selectedMethod === "Credit" ? "selected" : ""}`}
           onClick={() => onChange("Credit")}
         >
-          <div className="payment-icon credit-icon">
-            <i className="fas fa-credit-card"></i>
-          </div>
+          <img src="/src/assets/images/visa.png" alt="Thẻ tín dụng" />
           <span>Thẻ Tín Dụng</span>
         </div>
 
@@ -27,20 +34,32 @@ const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
           className={`payment-method-card ${selectedMethod === "Cash" ? "selected" : ""}`}
           onClick={() => onChange("Cash")}
         >
-          <div className="payment-icon cash-icon">
-            <i className="fas fa-money-bill-wave"></i>
-          </div>
+          <i className="fas fa-money-bill-wave"></i>
           <span>Tiền Mặt</span>
+        </div>
+
+        <div
+          className={`payment-method-card ${selectedMethod === "Momo" ? "selected" : ""}`}
+          onClick={() => onChange("Momo")}
+        >
+          <img src="/src/assets/images/momo.webp" alt="Momo" />
+          <span>Ví Momo</span>
         </div>
 
         <div
           className={`payment-method-card ${selectedMethod === "Bank" ? "selected" : ""}`}
           onClick={() => onChange("Bank")}
         >
-          <div className="payment-icon paypal-icon">
-            <i className="fas fa-university"></i>
-          </div>
-          <span>PayPal</span>
+          <img src="/src/assets/images/applepay.png" alt="Chuyển khoản" />
+          <span>Apple Pay</span>
+        </div>
+
+        <div
+          className={`payment-method-card ${selectedMethod === "PayPal" ? "selected" : ""}`}
+          onClick={() => onChange("PayPal")}
+        >
+          <img src="/src/assets/images/mastercard.png" alt="PayPal" />
+          <span>MasterCard</span>
         </div>
       </div>
 
@@ -59,10 +78,6 @@ const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
               <label>CVV</label>
               <input type="text" placeholder="123" />
             </div>
-          </div>
-          <div className="form-group">
-            <label>Tên Chủ Thẻ</label>
-            <input type="text" placeholder="NGUYEN VAN A" />
           </div>
         </div>
       )}
@@ -368,24 +383,25 @@ const Checkout = () => {
                 <div key={item.cartId || item.id} className="cart-item-summary">
                   <span>{productName}</span>
                   <span>
-                    {((productPrice * item.quantity)).toFixed(0)}đ
+                    {new Intl.NumberFormat('vi-VN').format(productPrice * item.quantity)}đ
                   </span>
                 </div>
               );
             })}
           </div>
+          // Update the price details section
           <div className="price-details">
             <div className="price-row">
               <span>Tổng Tạm Tính</span>
-              <span>{(subtotal).toFixed(0)}đ</span>
+              <span>{formatVND(subtotal)}</span>
             </div>
             <div className="price-row">
               <span>Phí Vận Chuyển</span>
-              <span>{(shippingFee).toFixed(0)}đ</span>
+              <span>{formatVND(shippingFee)}</span>
             </div>
             <div className="price-row total">
               <span>Tổng Cộng</span>
-              <span>{(total).toFixed(0)}đ</span>
+              <span>{formatVND(total)}</span>
             </div>
           </div>
         </div>

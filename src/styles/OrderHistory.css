@@ -1,7 +1,8 @@
 .order-history-page {
-    padding: 2rem;
+    padding: 20rem 2rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
+    font-family: 'Poppins', sans-serif;
 }
 
 .order-history-header {
@@ -21,6 +22,10 @@
     justify-content: center;
     gap: 10px;
     margin-bottom: 0.5rem;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    animation: fadeInDown 0.5s ease-out;
 }
 
 .orders-grid {
@@ -33,13 +38,34 @@
 .order-card {
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     padding: 1.5rem;
-    transition: transform 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease-out;
 }
 
 .order-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(46, 204, 113, 0.15);
+}
+
+.order-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.order-card:hover::before {
+    transform: scaleX(1);
 }
 
 .order-card-header {
@@ -68,6 +94,13 @@
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 500;
+    transition: all 0.3s ease;
+    transform-origin: center;
+    animation: pulse 2s infinite;
+}
+
+.order-status:hover {
+    transform: scale(1.05);
 }
 
 .order-status.pending {
@@ -117,6 +150,12 @@
     height: 50px;
     object-fit: cover;
     border-radius: 8px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-item:hover img {
+    transform: scale(1.1);
 }
 
 .product-details {
@@ -164,13 +203,32 @@
 }
 
 .view-detail-btn {
-    padding: 0.5rem 1rem;
-    background: #158845;
+    padding: 0.5rem 1.2rem;
+    background: linear-gradient(135deg, #158845, #0d6831);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.view-detail-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0d6831, #158845);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.view-detail-btn:hover::before {
+    left: 0;
 }
 
 .view-detail-btn:hover {
@@ -184,13 +242,15 @@
 }
 
 .spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #2ecc71;
+    border: 3px solid rgba(46, 204, 113, 0.1);
+    border-top: 3px solid #2ecc71;
+    border-right: 3px solid #2ecc71;
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     margin: 0 auto 1rem;
+    filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.2));
 }
 
 @keyframes spin {
@@ -200,6 +260,44 @@
 
     100% {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
     }
 }
 

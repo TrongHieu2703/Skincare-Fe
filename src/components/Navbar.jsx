@@ -148,8 +148,7 @@ const Navbar = () => {
                 <Link to="/test-loai-da">Kiểm tra da</Link>
                 <Link to="/product-list">Sản phẩm</Link>
                 <Link to="/blog">Blog</Link>
-                <Link to="/cart-items" className="cart-icon">
-                    <FaShoppingCart />
+                <Link to="/cart-items" className="cart-icon">Giỏ hàng <FaShoppingCart />
                     {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
                 </Link>
             </div>
