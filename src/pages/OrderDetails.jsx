@@ -10,19 +10,19 @@ const OrderDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
-  
+
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const [productDetails, setProductDetails] = useState({});
-  
+
   // Lấy thông tin đơn hàng từ location state (nếu từ trang payment) hoặc từ API
   const orderIdToFetch = orderId || (location.state && location.state.orderId);
-  
+
   // Thêm state để hiển thị thông báo thanh toán thành công
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
-  
+
   // Thêm style cho payment-success-banner
   const successBannerStyle = {
     position: 'fixed',
@@ -42,24 +42,24 @@ const OrderDetails = () => {
     justifyContent: 'space-between',
     animation: 'slideDown 0.5s ease-out'
   };
-  
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login', { state: { from: location } });
       return;
     }
-    
+
     const fetchOrderDetails = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         if (!orderIdToFetch) {
           setError('Không tìm thấy mã đơn hàng');
           setLoading(false);
           return;
         }
-        
+
         console.log(`Fetching order details for ID: ${orderIdToFetch}`);
         const orderData = await getOrderDetail(orderIdToFetch);
         console.log('Order data received:', orderData);
@@ -71,60 +71,60 @@ const OrderDetails = () => {
         setLoading(false);
       }
     };
-    
+
     fetchOrderDetails();
   }, [orderIdToFetch, isAuthenticated, navigate, location]);
-  
+
   useEffect(() => {
     if (order && order.orderItems && order.orderItems.length > 0) {
       const fetchProductDetails = async () => {
         const details = {};
-        
+
         for (const item of order.orderItems) {
           try {
             const product = await getProductById(item.productId);
             details[item.productId] = product;
           } catch (err) {
             console.error(`Error fetching product #${item.productId}:`, err);
-            details[item.productId] = { 
+            details[item.productId] = {
               name: `Sản phẩm #${item.productId}`,
               price: order.totalPrice / order.orderItems.reduce((acc, i) => acc + i.itemQuantity, 0)
             };
           }
         }
-        
+
         setProductDetails(details);
       };
-      
+
       fetchProductDetails();
     }
   }, [order]);
-  
+
   // Lấy thông tin thanh toán thành công từ location state
   useEffect(() => {
     if (location.state && location.state.paymentSuccess) {
       setShowPaymentSuccess(true);
-      
+
       // Ẩn thông báo sau 5 giây
       const timer = setTimeout(() => {
         setShowPaymentSuccess(false);
       }, 5000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [location.state]);
-  
+
   const formatDate = (dateString) => {
-    const options = { 
-      year: 'numeric', 
-      month: 'long', 
+    const options = {
+      year: 'numeric',
+      month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     };
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   };
-  
+
   const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
       case 'completed':
@@ -139,39 +139,42 @@ const OrderDetails = () => {
         return 'status-pending';
     }
   };
-  
+
   const getPaymentStatusText = (isPrepaid, transactions) => {
     if (!transactions || transactions.length === 0) return 'Chưa thanh toán';
-    
+
     const lastTransaction = transactions[transactions.length - 1];
     if (lastTransaction.status?.toLowerCase() === 'completed') return 'Đã thanh toán';
     if (isPrepaid) return 'Đang xử lý thanh toán';
     return 'Thanh toán khi nhận hàng';
   };
-  
+
   const formatPrice = (price) => {
-    return `$${(price / 23000).toFixed(2)}`;
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(price);
   };
-  
+
   const handlePrintOrder = () => {
     window.print();
   };
-  
+
   const navigateToProducts = () => {
     navigate('/product-list');
   };
-  
+
   const navigateToHome = () => {
     navigate('/');
   };
-  
+
   const getProductInfo = (productId) => {
-    return productDetails[productId] || { 
+    return productDetails[productId] || {
       name: `Sản phẩm #${productId}`,
       price: order?.totalPrice / order?.orderItems.reduce((acc, item) => acc + item.itemQuantity, 0) || 0
     };
   };
-  
+
   if (loading) {
     return (
       <div className="order-details-page">
@@ -182,7 +185,7 @@ const OrderDetails = () => {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="order-details-page">
@@ -194,7 +197,7 @@ const OrderDetails = () => {
       </div>
     );
   }
-  
+
   if (!order) {
     return (
       <div className="order-details-page">
@@ -206,7 +209,7 @@ const OrderDetails = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="order-details-page">
       {showPaymentSuccess && (
@@ -215,7 +218,7 @@ const OrderDetails = () => {
             <i className="fas fa-check-circle"></i>
             Đặt hàng thành công! Cảm ơn bạn đã mua sắm.
           </div>
-          <button 
+          <button
             onClick={() => setShowPaymentSuccess(false)}
             style={{
               background: 'none',
@@ -229,7 +232,7 @@ const OrderDetails = () => {
           </button>
         </div>
       )}
-      
+
       <div className="order-details-container">
         <div className="order-header">
           <div className="order-title">
@@ -242,7 +245,7 @@ const OrderDetails = () => {
             <p>Đặt hàng ngày: {formatDate(order.updatedAt || new Date())}</p>
           </div>
         </div>
-        
+
         <div className="order-body">
           <div className="order-info-grid">
             <div className="customer-info info-card">
@@ -253,7 +256,7 @@ const OrderDetails = () => {
                 <p><strong>Số điện thoại:</strong> {order.customerInfo?.phoneNumber || ''}</p>
               </div>
             </div>
-            
+
             <div className="shipping-info info-card">
               <h3>Thông tin giao hàng</h3>
               <div className="info-content">
@@ -262,15 +265,15 @@ const OrderDetails = () => {
                 <p><strong>Trạng thái:</strong> {order.status === 'Completed' ? 'Đã giao hàng' : 'Đang xử lý'}</p>
               </div>
             </div>
-            
+
             <div className="payment-info info-card">
               <h3>Thông tin thanh toán</h3>
               <div className="info-content">
                 <p>
-                  <strong>Phương thức thanh toán:</strong> 
-                  {order.paymentInfo?.paymentMethod === 'Cash' 
-                    ? 'Tiền mặt khi nhận hàng (COD)' 
-                    : order.paymentInfo?.paymentMethod === 'Credit' 
+                  <strong>Phương thức thanh toán:</strong>
+                  {order.paymentInfo?.paymentMethod === 'Cash'
+                    ? 'Tiền mặt khi nhận hàng (COD)'
+                    : order.paymentInfo?.paymentMethod === 'Credit'
                       ? 'Thẻ tín dụng (Credit Card)'
                       : order.paymentInfo?.paymentMethod === 'Bank'
                         ? 'Chuyển khoản (PayPal)'
@@ -278,9 +281,9 @@ const OrderDetails = () => {
                   }
                 </p>
                 <p>
-                  <strong>Trạng thái thanh toán:</strong> 
-                  {order.paymentInfo?.status === 'Completed' ? 'Đã thanh toán' : 
-                   order.isPrepaid ? 'Đang xử lý thanh toán' : 'Thanh toán khi nhận hàng'}
+                  <strong>Trạng thái thanh toán:</strong>
+                  {order.paymentInfo?.status === 'Completed' ? 'Đã thanh toán' :
+                    order.isPrepaid ? 'Đang xử lý thanh toán' : 'Thanh toán khi nhận hàng'}
                 </p>
                 {order.paymentInfo?.createdDate && (
                   <p>
@@ -290,7 +293,7 @@ const OrderDetails = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="order-items">
             <h3>Sản phẩm đã đặt</h3>
             <div className="order-items-table">
@@ -300,7 +303,7 @@ const OrderDetails = () => {
                 <div className="item-col price-col">Đơn giá</div>
                 <div className="item-col total-col">Thành tiền</div>
               </div>
-              
+
               <div className="order-items-body">
                 {order.orderItems && order.orderItems.map((item, index) => {
                   const product = getProductInfo(item.productId);
@@ -309,8 +312,8 @@ const OrderDetails = () => {
                       <div className="item-col product-col">
                         <div className="product-info">
                           <div className={`product-image ${!item.productImage ? 'placeholder' : ''}`}>
-                            {item.productImage ? 
-                              <img src={item.productImage} alt={item.productName} /> : 
+                            {item.productImage ?
+                              <img src={item.productImage} alt={item.productName} /> :
                               <i className="fas fa-box"></i>
                             }
                           </div>
@@ -333,7 +336,7 @@ const OrderDetails = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="order-summary">
             <h3>Tổng cộng</h3>
             <div className="summary-details">
@@ -357,23 +360,23 @@ const OrderDetails = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Hiển thị voucher nếu có */}
           {order.voucher && (
             <div className="voucher-info">
               <p>
-                <strong>Voucher áp dụng:</strong> 
+                <strong>Voucher áp dụng:</strong>
                 <span className="voucher-code">{order.voucher.code}</span>
                 <span className="voucher-value">
-                  {order.voucher.isPercent 
-                    ? `(Giảm ${order.voucher.value}%)` 
+                  {order.voucher.isPercent
+                    ? `(Giảm ${order.voucher.value}%)`
                     : `(Giảm ${formatPrice(order.voucher.value)})`}
                 </span>
               </p>
             </div>
           )}
         </div>
-        
+
         <div className="order-actions">
           <button className="btn-secondary" onClick={handlePrintOrder}>
             In đơn hàng
