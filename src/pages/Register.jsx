@@ -1,145 +1,242 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api/authApi";
-import logo from "/src/assets/images/logo.png";
-import signupImage from "/src/assets/images/signup-image.jpg";
+import { toast } from 'react-toastify';
+import { FaUser, FaEnvelope, FaLock, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import defaultAvatar from "/src/assets/images/profile-pic.png";
 import "/src/styles/Register.css";
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    phoneNumber: "",
-    address: "",
-    avatar: null
-  });
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        phoneNumber: "",
+        address: "",
+        avatar: "",
+    });
+    const [previewImage, setPreviewImage] = useState(null);
 
-  const handleChange = (e) => {
-    if (e.target.name === 'avatar') {
-      setFormData({ ...formData, avatar: e.target.files[0] });
-    } else {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
-  };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (formData.password.length < 6) {
-      setMessage("Mật khẩu phải có ít nhất 6 ký tự!");
-      return;
-    }
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file size
+            if (file.size > 800 * 1024) {
+                toast.error("Kích thước ảnh không được vượt quá 800KB");
+                return;
+            }
 
-    try {
-      await registerUser(formData);
-      setMessage("Đăng ký thành công! Chuyển hướng đến trang đăng nhập...");
-      setTimeout(() => navigate("/login"), 2000);
-    } catch (error) {
-      setMessage(error.message || "Đăng ký thất bại! Vui lòng thử lại.");
-    }
-  };
+            // Validate file type
+            if (!file.type.match(/^image\/(jpeg|jpg|png|gif)$/)) {
+                toast.error("Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
+                return;
+            }
 
-  return (
-    <div className="register-container">
-      <div className="register-image">
-        <img src={signupImage} alt="Đăng ký" />
-      </div>
-      <div className="register-box">
-        <img src={logo} alt="Logo Skincare" className="logo" />
-        <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
-        <p>Tham gia cùng chúng tôi ngay hôm nay!</p>
+            try {
+                const optimizedImage = await resizeImage(file);
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviewImage(reader.result);
+                    setFormData(prev => ({
+                        ...prev,
+                        avatar: reader.result
+                    }));
+                    toast.success("Đã chọn ảnh đại diện");
+                };
+                reader.readAsDataURL(optimizedImage);
+            } catch (error) {
+                console.error("Error processing image:", error);
+                toast.error("Có lỗi xử lý ảnh, vui lòng thử lại");
+            }
+        }
+    };
 
-        {message && <p className={`message ${message.includes("thành công") ? "success" : "error"}`}>
-          {message}
-        </p>}
+    const resizeImage = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const maxSize = 800;
 
-        <form onSubmit={handleSubmit}>
-          {/* Tên đăng nhập */}
-          <div className="input-group">
-            <label>Tên đăng nhập</label>
-            <input
-              type="text"
-              name="username"
-              placeholder="Nhập tên đăng nhập"
-              onChange={handleChange}
-              minLength={3}
-              required
-            />
-          </div>
+                    if (width > height) {
+                        if (width > maxSize) {
+                            height = Math.round((height * maxSize) / width);
+                            width = maxSize;
+                        }
+                    } else {
+                        if (height > maxSize) {
+                            width = Math.round((width * maxSize) / height);
+                            height = maxSize;
+                        }
+                    }
 
-          {/* Email */}
-          <div className="input-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Nhập địa chỉ email"
-              onChange={handleChange}
-              required
-            />
-          </div>
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
 
-          {/* Mật khẩu */}
-          <div className="input-group">
-            <label>Mật khẩu</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
-              onChange={handleChange}
-              minLength={6}
-              required
-            />
-          </div>
+                    canvas.toBlob((blob) => {
+                        resolve(new File([blob], file.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        }));
+                    }, 'image/jpeg', 0.8);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
 
-          {/* Số điện thoại */}
-          <div className="input-group">
-            <label>Số điện thoại</label>
-            <input
-              type="tel"
-              name="phoneNumber"
-              placeholder="Nhập số điện thoại"
-              onChange={handleChange}
-            />
-          </div>
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (formData.password !== formData.confirmPassword) {
+            toast.error("Mật khẩu xác nhận không khớp");
+            return;
+        }
 
-          {/* Địa chỉ */}
-          <div className="input-group">
-            <label>Địa chỉ</label>
-            <input
-              type="text"
-              name="address"
-              placeholder="Nhập địa chỉ"
-              onChange={handleChange}
-            />
-          </div>
+        try {
+            setLoading(true);
+            await registerUser(formData);
+            toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
+            navigate('/login');
+        } catch (error) {
+            console.error("Registration error:", error);
+            toast.error(error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-          {/* Ảnh đại diện */}
-          <div className="input-group">
-            <label>Ảnh đại diện</label>
-            <input
-              type="file"
-              name="avatar"
-              accept="image/*"
-              onChange={handleChange}
-              className="file-input"
-            />
-          </div>
+    return (
+        <div className="register-container">
+            <div className="register-form">
+                <h2>Đăng ký tài khoản</h2>
+                
+                {/* Avatar Upload */}
+                <div className="avatar-upload">
+                    <div className="avatar-preview">
+                        <img 
+                            src={previewImage || defaultAvatar} 
+                            alt="Avatar Preview" 
+                            className="preview-image"
+                        />
+                    </div>
+                    <label className="avatar-upload-button">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ display: 'none' }}
+                        />
+                        Chọn ảnh đại diện
+                    </label>
+                </div>
 
-          {/* Nút đăng ký */}
-          <button type="submit" className="register-button">
-            Đăng ký
-          </button>
-        </form>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <FaUser className="input-icon" />
+                        <input
+                            type="text"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            placeholder="Tên người dùng"
+                            required
+                        />
+                    </div>
 
-        <p className="switch-text">
-          Đã có tài khoản? <Link to="/login">Đăng nhập ngay!</Link>
-        </p>
-      </div>
-    </div>
-  );
+                    <div className="form-group">
+                        <FaEnvelope className="input-icon" />
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="Email"
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <FaLock className="input-icon" />
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="Mật khẩu"
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <FaLock className="input-icon" />
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="Xác nhận mật khẩu"
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <FaPhone className="input-icon" />
+                        <input
+                            type="tel"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={handleChange}
+                            placeholder="Số điện thoại"
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <FaMapMarkerAlt className="input-icon" />
+                        <input
+                            type="text"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            placeholder="Địa chỉ"
+                            required
+                        />
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        className="register-button"
+                        disabled={loading}
+                    >
+                        {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+                    </button>
+                </form>
+
+                <p className="login-link">
+                    Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+                </p>
+            </div>
+        </div>
+    );
 };
 
 export default Register;
