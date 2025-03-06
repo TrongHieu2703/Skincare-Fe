@@ -17,6 +17,7 @@
     "antd": "^5.24.2",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
+    "cloudinary": "^2.5.1",
     "package-name": "^0.1.0",
     "prop-types": "^15.8.1",
     "q": "^1.5.1",
