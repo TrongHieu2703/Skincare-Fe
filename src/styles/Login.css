@@ -174,11 +174,11 @@ html {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* ✅ Hiệu ứng thông báo đăng nhập thành công */
 .success-toast {
-    padding-top: 100px;
+    padding-top: 400px;
     position: fixed;
-    top: 100px;
+    top: 150px;
+    /* Adjusted to move the toast lower */
     right: -300px;
     /* Bắt đầu ngoài màn hình */
     background-color: #28a745;

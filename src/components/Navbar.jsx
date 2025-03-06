@@ -168,7 +168,7 @@ const Navbar = () => {
             </div>
 
             {/* User Actions - Right */}
-            <div className="navbar-right">
+        <div className="navbar-right">
                 <Link to="/cart-items" className="cart-link">
                     <div className="cart-icon-container">
                         <FaShoppingCart className="cart-icon" />
