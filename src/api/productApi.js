@@ -17,13 +17,10 @@ export const getAllProducts = (pageNumber = 1, pageSize = 10) => {
 export const getProductById = async (id) => {
   try {
     const response = await axiosClient.get(`${API_URL}/${id}`);
-    return response.data;
+    return response;
   } catch (error) {
     console.error(`Error fetching product with ID ${id}:`, error);
-    if (error.response && error.response.data) {
-      throw error.response.data;
-    }
-    throw new Error(error.message || `Error fetching product with ID ${id}`);
+    throw error;
   }
 };
 
@@ -58,13 +55,12 @@ export const deleteProduct = (productId) => {
 // Search products
 export const searchProducts = async (searchTerm) => {
     try {
-        const response = await axiosClient.get(`${API_URL}/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+        const response = await axiosClient.get(`${API_URL}/search`, {
+            params: { keyword: searchTerm }
+        });
         return response.data;
     } catch (error) {
         console.error('Error searching products:', error);
-        if (error.response && error.response.data) {
-            throw error.response.data;
-        }
-        throw new Error(error.message || 'Error searching products');
+        throw error;
     }
 };

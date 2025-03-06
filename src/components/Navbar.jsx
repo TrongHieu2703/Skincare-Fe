@@ -43,28 +43,35 @@ const Navbar = () => {
 
     const toggleDropdown = (e) => {
         e.stopPropagation();
+        console.log('Toggle dropdown clicked');
         setDropdownOpen((prev) => !prev);
+        console.log('Dropdown state:', !dropdownOpen);
+    };
+
+    const handleClickOutside = (e) => {
+        if (!e.target.closest('.user-menu') && dropdownOpen) {
+            setDropdownOpen(false);
+        }
     };
 
     useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (!e.target.closest(".user-menu")) {
-                setDropdownOpen(false);
-            }
-        };
-        document.addEventListener("click", handleClickOutside);
-        return () => document.removeEventListener("click", handleClickOutside);
-    }, []);
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [dropdownOpen]);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
-            if (searchTerm) {
+            if (searchTerm.trim()) {
+                setIsSearching(true);
                 try {
                     const results = await searchProducts(searchTerm);
-                    setSearchResults(results);
+                    setSearchResults(Array.isArray(results) ? results : []);
                     setShowSearchResults(true);
                 } catch (error) {
                     console.error('Search error:', error);
+                    setSearchResults([]);
+                } finally {
+                    setIsSearching(false);
                 }
             } else {
                 setSearchResults([]);
@@ -95,96 +102,113 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            {/* Logo */}
-            <div className="navbar-logo" onClick={() => navigate("/")}>
-                <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="logo" />
+            {/* Logo Section - Left */}
+            <div className="navbar-left">
+                <div className="navbar-logo" onClick={() => navigate("/")}>
+                    <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="logo" />
+                </div>
             </div>
 
-            {/* Updated Search Bar */}
-            <div className="navbar-search">
-                <div className="search-container">
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm sản phẩm..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="search-input"
-                    />
-                    <FaSearch className="search-icon" />
+            {/* Navigation Links - Center */}
+            <div className="navbar-center">
+                <div className="nav-links">
+                    <Link to="/">Trang chủ</Link>
+                    <Link to="/AboutSkincare">Giới thiệu</Link>
+                    <Link to="/test-loai-da">Kiểm tra da</Link>
+                    <Link to="/product-list">Sản phẩm</Link>
+                    <Link to="/blog">Blog</Link>
                 </div>
 
-                {showSearchResults && searchResults.length > 0 && (
-                    <div className="search-results">
-                        {searchResults.map((product) => (
-                            <div
-                                key={product.id}
-                                className="search-result-item"
-                                onClick={() => handleSearchResultClick(product.id)}
-                            >
-                                <img
-                                    src={product.mainImage || '/placeholder.png'}
-                                    alt={product.name}
-                                    className="search-result-image"
-                                />
-                                <div className="search-result-info">
-                                    <div className="search-result-name">{product.name}</div>
-                                    <div className="search-result-price">
-                                        {new Intl.NumberFormat('vi-VN', {
-                                            style: 'currency',
-                                            currency: 'VND'
-                                        }).format(product.price)}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                {/* Search Bar */}
+                <div className="navbar-search">
+                    <div className="search-container">
+                        <FaSearch className="search-icon" />
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm sản phẩm..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
                     </div>
-                )}
+
+                    {showSearchResults && (
+                        <div className="search-results">
+                            {isSearching ? (
+                                <div className="search-loading">Đang tìm kiếm...</div>
+                            ) : searchResults.length > 0 ? (
+                                searchResults.map((product) => (
+                                    <div
+                                        key={product.id}
+                                        className="search-result-item"
+                                        onClick={() => handleSearchResultClick(product.id)}
+                                    >
+                                        <img
+                                            src={product.image || '/placeholder.png'}
+                                            alt={product.name}
+                                            className="search-result-image"
+                                        />
+                                        <div className="search-result-info">
+                                            <div className="search-result-name">{product.name}</div>
+                                            <div className="search-result-price">
+                                                {new Intl.NumberFormat('vi-VN', {
+                                                    style: 'currency',
+                                                    currency: 'VND'
+                                                }).format(product.price)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="no-results">Không tìm thấy sản phẩm</div>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
 
-            {/* Navigation Links */}
-            <div className="navbar-links">
-                <Link to="/">Trang chủ</Link>
-                <Link to="/AboutSkincare">Giới thiệu</Link>
-                <Link to="/test-loai-da">Kiểm tra da</Link>
-                <Link to="/product-list">Sản phẩm</Link>
-                <Link to="/blog">Blog</Link>
-                <Link to="/cart-items" className="cart-icon">Giỏ hàng <FaShoppingCart />
-                    {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+            {/* User Actions - Right */}
+            <div className="navbar-right">
+                <Link to="/cart-items" className="cart-link">
+                    <div className="cart-icon-container">
+                        <FaShoppingCart className="cart-icon" />
+                        {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                    </div>
                 </Link>
-            </div>
 
-            {/* User Section */}
-            <div className="navbar-buttons">
                 {user ? (
                     <div className="user-menu">
                         <div className="user-info" onClick={toggleDropdown}>
                             <FaUserCircle className="user-icon" />
-                            <span>{user.username}</span>
+                            <span className="username">{user.username}</span>
                         </div>
 
                         {dropdownOpen && (
-                            <div className="dropdown-menu" style={{ display: 'block', border: '2px solid green' }}>
-                                <Link to="/ho-so" className="dropdown-item">
-                                    <FaUserCircle className="dropdown-icon" /> Hồ sơ
+                            <div className="dropdown-menu">
+                                <Link to="/profile" className="dropdown-item">
+                                    <FaUserCircle className="dropdown-icon" />
+                                    <span>Hồ sơ</span>
                                 </Link>
                                 <Link to="/order-history" className="dropdown-item">
-                                    <FaHistory className="dropdown-icon" /> Lịch sử đơn hàng
+                                    <FaHistory className="dropdown-icon" />
+                                    <span>Lịch sử đơn hàng</span>
                                 </Link>
                                 <div className="dropdown-item" onClick={handleLogout}>
-                                    <i className="fas fa-sign-out-alt dropdown-icon"></i> Đăng xuất
+                                    <i className="fas fa-sign-out-alt dropdown-icon"></i>
+                                    <span>Đăng xuất</span>
                                 </div>
                             </div>
                         )}
                     </div>
                 ) : (
-                    <>
+                    <div className="auth-buttons">
                         <Link to="/register">
-                            <button className="register">Đăng ký</button>
+                            <button className="register-btn">Đăng ký</button>
                         </Link>
                         <Link to="/login">
-                            <button className="login">Đăng nhập</button>
+                            <button className="login-btn">Đăng nhập</button>
                         </Link>
-                    </>
+                    </div>
                 )}
             </div>
         </nav>
