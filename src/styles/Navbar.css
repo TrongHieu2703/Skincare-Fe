@@ -2,7 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 .navbar {
-
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -85,33 +84,40 @@ body {
 .search-container {
     display: flex;
     align-items: center;
-    background: #ddf3ec00;
-    /* Light green background */
+    background: rgba(221, 243, 236, 0);
     border-radius: 25px;
     padding: 0.7rem 1.5rem;
-    width: 400px;
+    width: 180%;
+    /* Đặt chiều rộng là 180% của phần tử cha */
+    max-width: 4000px;
+    /* Giới hạn chiều rộng tối đa */
+    border: 1px solid rgba(46, 125, 50, 0);
     transition: all 0.3s ease;
 }
 
 .search-container:focus-within {
-    background: #208f6e;
-    box-shadow: 0 0 0 2px #2e7d32;
+    background: rgba(255, 255, 255, 0);
+    /* More visible background on focus */
+    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0);
+    /* Visible green outline */
     transform: scale(1.02);
     /* Slight scale effect on focus */
 }
 
 .search-icon {
     color: #2e7d32;
-    margin-right: 0.8rem;
-    font-size: 1.1rem;
+    margin-right: 1rem;
+    margin-top: -5px;
+    font-size: 1.5rem;
 }
 
 .search-input {
     border: none;
     outline: none;
     width: 100%;
-    font-size: 0.95rem;
+    font-size: 1rem;
     background: transparent;
+    color: #333;
 }
 
 .navbar-right {
@@ -231,12 +237,25 @@ body {
     margin-top: 0.5rem;
     z-index: 1000;
     display: none;
+    /* Hidden by default */
+    opacity: 0;
+    /* Fully transparent */
+    visibility: hidden;
+    /* Not visible */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    /* Smooth fade-in/out */
 }
 
-.user-menu:hover .dropdown-menu {
+.user-menu .dropdown-menu {
     display: block;
+    /* Shown when toggled */
+    opacity: 1;
+    /* Fully visible */
+    visibility: visible;
+    /* Visible */
 }
 
+/* Dropdown items styling */
 .dropdown-item {
     display: flex;
     align-items: center;
@@ -244,18 +263,21 @@ body {
     color: #333;
     text-decoration: none;
     border-radius: 6px;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
     gap: 0.8rem;
 }
 
 .dropdown-item:hover {
     background-color: rgba(46, 125, 50, 0.1);
+    /* Light green background on hover */
     color: #2e7d32;
+    /* Green text on hover */
 }
 
 .dropdown-icon {
     font-size: 1.2rem;
     color: #2e7d32;
+    /* Green icon color */
 }
 
 .search-results {

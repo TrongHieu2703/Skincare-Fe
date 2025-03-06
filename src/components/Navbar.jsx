@@ -7,8 +7,8 @@ import "/src/styles/Navbar.css";
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [cartCount, setCartCount] = useState(0); // 🛒 Cart Counter
+    const [dropdownOpen, setDropdownOpen] = useState(false); // State to track dropdown visibility
+    const [cartCount, setCartCount] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
     const [searchTerm, setSearchTerm] = useState("");
@@ -43,14 +43,12 @@ const Navbar = () => {
 
     const toggleDropdown = (e) => {
         e.stopPropagation();
-        console.log('Toggle dropdown clicked');
-        setDropdownOpen((prev) => !prev);
-        console.log('Dropdown state:', !dropdownOpen);
+        setDropdownOpen((prev) => !prev); // Toggle dropdown visibility
     };
 
     const handleClickOutside = (e) => {
         if (!e.target.closest('.user-menu') && dropdownOpen) {
-            setDropdownOpen(false);
+            setDropdownOpen(false); // Close dropdown if clicked outside
         }
     };
 
@@ -102,14 +100,14 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            {/* Logo Section - Left */}
+            {/* Logo Section */}
             <div className="navbar-left">
                 <div className="navbar-logo" onClick={() => navigate("/")}>
                     <img src="/src/assets/images/logo.png" alt="Skincare Logo" className="logo" />
                 </div>
             </div>
 
-            {/* Navigation Links - Center */}
+            {/* Navigation Links */}
             <div className="navbar-center">
                 <div className="nav-links">
                     <Link to="/">Trang chủ</Link>
@@ -118,8 +116,8 @@ const Navbar = () => {
                     <Link to="/product-list">Sản phẩm</Link>
                     <Link to="/blog">Blog</Link>
                 </div>
-
-                {/* Search Bar */}
+                
+                {/* Add Search Bar */}
                 <div className="navbar-search">
                     <div className="search-container">
                         <FaSearch className="search-icon" />
@@ -167,8 +165,8 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* User Actions - Right */}
-        <div className="navbar-right">
+            {/* User Actions */}
+            <div className="navbar-right">
                 <Link to="/cart-items" className="cart-link">
                     <div className="cart-icon-container">
                         <FaShoppingCart className="cart-icon" />
