@@ -19,6 +19,7 @@ const Profile = () => {
   });
   const [previewImage, setPreviewImage] = useState(null);
   const [originalData, setOriginalData] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Fetch user profile data
   useEffect(() => {
@@ -139,9 +140,9 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Check if there are any changes
-    const hasChanges = Object.keys(formData).some(key => 
+    const hasChanges = Object.keys(formData).some(key =>
       formData[key] !== originalData[key]
     );
 
@@ -153,8 +154,12 @@ const Profile = () => {
     try {
       setSaving(true);
       await updateAccountInfo(formData);
-      toast.success("Cập nhật thông tin thành công!");
-      
+      setShowSuccess(true); // Show success message
+      toast.success("Bạn đã thay đổi thông tin thành công!");
+
+      // Hide success message after 3 seconds
+      setTimeout(() => setShowSuccess(false), 3000);
+
       // Refresh user data
       await fetchUserProfile();
     } catch (error) {
@@ -168,16 +173,14 @@ const Profile = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner">Đang tải thông tin...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="profile-container">
+      {showSuccess && (
+        <div className="success-message">
+          <span className="success-icon">✓</span>
+          Bạn đã thay đổi thông tin thành công!
+        </div>
+      )}
       {/* Cover Image */}
       <div className="cover-photo">
         <img src={coverImage} alt="Cover" />
@@ -186,9 +189,9 @@ const Profile = () => {
       {/* Profile Section */}
       <div className="profile-section">
         <div className="profile-image-container">
-          <img 
-            src={previewImage || getImageUrl(formData.avatar)} 
-            alt="Profile" 
+          <img
+            src={previewImage || getImageUrl(formData.avatar)}
+            alt="Profile"
             className="profile-image"
           />
           <label className="change-photo-button">
@@ -208,7 +211,7 @@ const Profile = () => {
       {/* Profile Form */}
       <form className="profile-form" onSubmit={handleSubmit}>
         <h3>Thông tin cá nhân</h3>
-        
+
         <div className="form-group">
           <label>Tên người dùng</label>
           <input
@@ -254,8 +257,8 @@ const Profile = () => {
           />
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="save-btn"
           disabled={saving}
         >
