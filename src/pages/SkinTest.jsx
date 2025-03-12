@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "/src/styles/SkinTest.css";
-import { FaCheck } from 'react-icons/fa';
-import FeaturedNews from "/src/components/FeaturedNews";
+import { FaCheck } from "react-icons/fa";
 
 const SkinTest = () => {
   const [answers, setAnswers] = useState({
@@ -17,6 +16,7 @@ const SkinTest = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [skinType, setSkinType] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,16 +25,63 @@ const SkinTest = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const points = calculatePoints(answers);
+    const type = determineSkinType(points);
+    setSkinType(type);
     setSubmitted(true);
   };
 
-  return (
+  const calculatePoints = (answers) => {
+    let points = 0;
+    const pointMap = {
+      Dry: 1,
+      Oily: 2,
+      Mixed: 3,
+      Smooth: 1,
+      Flaky: 2,
+      Acne: 3,
+      Wrinkle: 1,
+      Lines: 2,
+      NoLines: 3,
+      Moisturizing: 1,
+      AcneCare: 2,
+      Quick: 3,
+      Tzone: 2,
+      Better: 3,
+      LessSpots: 1,
+      MoreWrinkles: 2,
+      BetterCare: 3,
+      Male: 1,
+      Female: 2,
+      Under25: 1,
+      "25to40": 2,
+      "40to50": 3,
+      Over50: 4,
+    };
 
+    for (const key in answers) {
+      points += pointMap[answers[key]] || 0;
+    }
+
+    return points;
+  };
+
+  const determineSkinType = (points) => {
+    if (points <= 15) {
+      return "Da khô";
+    } else if (points <= 25) {
+      return "Da dầu";
+    } else {
+      return "Da hỗn hợp";
+    }
+  };
+
+  return (
     <div className="skin-test-container">
       <div className="test-content">
         <div className="test-header">
           <h1>BÀI KIỂM TRA DA NHANH</h1>
-          <p>Discover Your Perfect Skincare Routine</p>
+          <p>Khám phá loại da của bạn để chọn sản phẩm phù hợp</p>
         </div>
 
         <form onSubmit={handleSubmit} className="test-form">
@@ -399,18 +446,16 @@ const SkinTest = () => {
           </div>
 
           <button type="submit" className="submit-button">
-            Get Your Skin Analysis
+            Xem kết quả
           </button>
-
         </form>
 
         {submitted && (
           <div className="success-message">
             <div className="success-content">
               <FaCheck className="success-icon" />
-              <h2>Analysis Complete!</h2>
-              <p>Based on your answers, we've created your personalized skincare recommendation.</p>
-              <button className="view-results-btn">View Your Results</button>
+              <h2>Phân tích hoàn tất!</h2>
+              <p>Loại da của bạn là: <strong>{skinType}</strong></p>
             </div>
           </div>
         )}

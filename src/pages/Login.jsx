@@ -24,7 +24,6 @@ const Login = () => {
         password: formData.password
       });
 
-
       console.log("Phản hồi đăng nhập:", response);
       localStorage.setItem("user", JSON.stringify({
         id: response.id,
@@ -38,17 +37,14 @@ const Login = () => {
 
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
-      if (response.role === "Admin") {
-        setTimeout(() => {
+      setTimeout(() => {
+        if (response.role === "Admin") {
           navigate("/admin/dashboard");
-          setShowToast(false);
-        }, 1500);
-      } else {
-        setTimeout(() => {
+        } else {
           navigate("/");
-          setShowToast(false);
-        }, 1500);
-      }
+        }
+        setShowToast(false);
+      }, 1500);
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
       setMessage(error.message || "Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");

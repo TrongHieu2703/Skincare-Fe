@@ -54,7 +54,7 @@ const Sidebar = () => {
           <span>Tài khoản</span>
         </div>
         {showLogout && (
-          <button className={styles.logoutButton}>
+          <button className={styles.logoutButton} onClick={() => navigate('/login')}>
             <FaSignOutAlt className={styles.icon} />
             Đăng xuất
           </button>
