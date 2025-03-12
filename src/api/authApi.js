@@ -17,7 +17,6 @@ export const loginUser = async (credentials) => {
     // Gửi request login
     const response = await axiosClient.post("/Authentication/login", credentials);
 
-    // Kiểm tra response đầy đủ
     console.log("✅ Login API response:", response);
 
     if (!response.data || !response.data.data || !response.data.data.token) {
@@ -27,16 +26,27 @@ export const loginUser = async (credentials) => {
 
     // Lấy token từ response
     const token = response.data.data.token;
+    const userData = {
+      id: response.data.data.id,
+      email: response.data.data.email,
+      username: response.data.data.username,
+      role: response.data.data.role,
+      avatar: response.data.data.avatar,
+      phoneNumber: response.data.data.phoneNumber,
+      address: response.data.data.address
+    };
 
-    // Lưu token vào localStorage (thêm Bearer để đảm bảo chuẩn)
+    // ✅ Lưu token và user data vào localStorage
     localStorage.setItem("token", `Bearer ${token}`);
+    localStorage.setItem("user", JSON.stringify(userData));
+
     console.log("✅ Token saved to localStorage:", localStorage.getItem("token"));
+    console.log("✅ User data saved:", JSON.parse(localStorage.getItem("user")));
 
     return response.data;
   } catch (error) {
     console.error("❌ Login API error:", error);
 
-    // Xử lý lỗi linh hoạt hơn
     if (error.response) {
       console.error("❌ API Error Response:", error.response.data);
       throw error.response.data;
@@ -45,6 +55,7 @@ export const loginUser = async (credentials) => {
     }
   }
 };
+
 
 export const logoutUser = () => {
   localStorage.removeItem("token");

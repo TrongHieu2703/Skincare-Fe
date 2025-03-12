@@ -23,37 +23,40 @@ const Login = () => {
         email: formData.email,
         password: formData.password
       });
-
-
-      console.log("Phản hồi đăng nhập:", response);
+  
+      console.log("✅ Phản hồi đăng nhập:", response);
+  
+      // Kiểm tra token trong localStorage sau khi đăng nhập
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        console.error("❌ Token không được lưu vào localStorage sau khi đăng nhập!");
+      } else {
+        console.log("✅ Token từ localStorage sau đăng nhập:", storedToken);
+      }
+  
       localStorage.setItem("user", JSON.stringify({
-        id: response.id,
-        email: response.email,
-        username: response.username,
-        role: response.role,
-        avatar: response.avatar,
-        phoneNumber: response.phoneNumber,
-        address: response.address
+        id: response.data.id,
+        email: response.data.email,
+        username: response.data.username,
+        role: response.data.role,
+        avatar: response.data.avatar,
+        phoneNumber: response.data.phoneNumber,
+        address: response.data.address
       }));
-
+  
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
-      if (response.role === "Admin") {
-        setTimeout(() => {
-          navigate("/admin/dashboard");
-          setShowToast(false);
-        }, 1500);
-      } else {
-        setTimeout(() => {
-          navigate("/");
-          setShowToast(false);
-        }, 1500);
-      }
+  
+      setTimeout(() => {
+        navigate(response.data.role === "Admin" ? "/admin/dashboard" : "/");
+        setShowToast(false);
+      }, 1500);
     } catch (error) {
-      console.error("Lỗi đăng nhập:", error);
+      console.error("❌ Lỗi đăng nhập:", error);
       setMessage(error.message || "Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
     }
   };
+  
 
   return (
     <div className="login-container">

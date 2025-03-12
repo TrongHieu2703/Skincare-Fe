@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'https://localhost:7290/api', // Chỉ đến /api
+  baseURL: 'https://localhost:7290/api',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -9,51 +9,37 @@ const axiosClient = axios.create({
 
 // Interceptor cho request: Gắn token nếu có
 axiosClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token'); // Lấy token từ localStorage
-  console.log("Token from localStorage:", token); // Debug
+  let token = localStorage.getItem('token');
 
-  if (token) {
-    // Tránh lặp "Bearer Bearer ..."
-    const finalToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
-    config.headers.Authorization = finalToken;
-
-    console.log(`Token found for ${config.url}:`, finalToken.substring(0, 30) + '...');
-    console.log("Request with auth header:", config.url, config.headers.Authorization); // Debug
+  if (!token) {
+    console.warn("⚠️ No token found in localStorage!");
   } else {
-    console.log(`No token found for request to ${config.url}`);
-  }
+    console.log("✅ Token from localStorage:", token);
+    
+    // Đảm bảo đúng format "Bearer ..."
+    if (!token.startsWith("Bearer ")) {
+      token = `Bearer ${token}`;
+      localStorage.setItem('token', token);
+    }
 
-  // Log cấu hình đầy đủ của request
-  console.log('Full request config:', {
-    method: config.method,
-    url: config.url,
-    baseURL: config.baseURL,
-    headers: config.headers,
-    data: config.data
-  });
+    config.headers.Authorization = token;
+    console.log(`📡 Request with token -> ${config.url}:`, config.headers.Authorization);
+  }
 
   return config;
 }, (error) => {
-  console.error('Request interceptor error:', error);
+  console.error('❌ Request interceptor error:', error);
   return Promise.reject(error);
 });
 
-// Interceptor cho response: Log kết quả
+// Interceptor cho response
 axiosClient.interceptors.response.use(
   (response) => {
-    console.log(`✅ Response received for ${response.config.url}:`, {
-      status: response.status,
-      statusText: response.statusText,
-      data: response.data
-    });
+    console.log(`✅ Response from ${response.config.url}:`, response);
     return response;
   },
   (error) => {
-    console.error(`❌ Response error from ${error.config?.url || 'unknown'}:`, {
-      status: error.response?.status,
-      message: error.message,
-      responseData: error.response?.data
-    });
+    console.error(`❌ Error response from ${error.config?.url || 'unknown'}:`, error);
     return Promise.reject(error);
   }
 );
