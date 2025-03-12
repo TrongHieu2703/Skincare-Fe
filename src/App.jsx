@@ -21,28 +21,26 @@ import OrderDetail from "./pages/OrderDetails";
 import Checkout from "./pages/Checkout";
 import PaymentPage from "/src/pages/Payment";
 
-import AdminDashboard from "/src/admin/pages2/AdminDashboard";
-import ManageProducts from "/src/admin/pages2/ManageProducts";
-import ManageOrders from "/src/admin/pages2/ManageOrders";
-import ManageCustomers from "/src/admin/pages2/ManageCustomers";
-
 import ProductList from "/src/pages/ProductList";
 import ProductDetails from "/src/pages/ProductDetails";
 import AboutUs from "/src/components/Aboutus";
 import AboutSkincare from "/src/pages/AboutSkincare";
 import OrderHistory from './pages/OrderHistory';
+import Dashboard from "/admin/admin/pages2/Dashboard"; // Import the Dashboard component
 
-
-
-
-
+// Import additional components
+import PromotionManager from "/admin/admin/pages2/PromotionManager";
+import ProductManager from "/admin/admin/pages2/ProductManager";
+import OrderManager from "/admin/admin/pages2/OrderManager";
+import ContentManager from "/admin/admin/pages2/ContentManager";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <div className="app-container">
-          <Navbar />
+          {/* Conditionally render Navbar */}
+          {!window.location.pathname.startsWith("/admin") && <Navbar />}
 
           <div className="content-wrapper">
             {/* Main Content */}
@@ -61,10 +59,6 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/payment" element={<PaymentPage />} />
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/products" element={<ManageProducts />} />
-                <Route path="/admin/orders" element={<ManageOrders />} />
-                <Route path="/admin/customers" element={<ManageCustomers />} />
                 <Route path="/AboutSkincare" element={<AboutSkincare />} />
 
                 <Route path="/order-details" element={
@@ -72,7 +66,7 @@ function App() {
                     <OrderDetail />
                   </PrivateRoute>
                 } />
-                
+
                 <Route path="/profile" element={
                   <PrivateRoute>
                     <Profile />
@@ -82,11 +76,20 @@ function App() {
                 <Route path="/order/:orderId" element={<OrderDetail />} />
                 <Route path="/order-history" element={<OrderHistory />} />
 
+                {/* Admin routes */}
+                <Route path="/admin/dashboard" element={<Dashboard />} />
+                <Route path="/admin/promotions" element={<PromotionManager />} />
+                <Route path="/admin/productsmanager" element={<ProductManager />} />
+                <Route path="/admin/orders" element={<OrderManager />} />
+                <Route path="/admin/content" element={<ContentManager />} />
+
                 <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
               </Routes>
             </div>
           </div>
-          <Footer />
+
+          {/* Conditionally render Footer */}
+          {!window.location.pathname.startsWith("/admin") && <Footer />}
         </div>
       </Router>
     </AuthProvider>

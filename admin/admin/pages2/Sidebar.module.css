@@ -1,0 +1,39 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 300px;
+  background-color: #8eb8a1ab;
+  color: #0a2219;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  text-align: left; /* Align title to the left */
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+}
+
+.item {
+  padding: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: left; /* Align items to the left */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+}
+
+.item:hover {
+  background-color: #bdc3c7;
+}
+
+.item svg {
+  margin-right: 10px; /* Add space between icon and text */
+}

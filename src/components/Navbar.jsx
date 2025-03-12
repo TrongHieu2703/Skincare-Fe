@@ -62,7 +62,10 @@ const Navbar = () => {
             if (searchTerm.trim()) {
                 setIsSearching(true);
                 try {
-                    const results = await searchProducts(searchTerm);
+                    console.log(`Searching for: ${searchTerm}`); // Log the search term
+                    const response = await searchProducts(searchTerm);
+                    console.log('Search response:', response); // Log the response
+                    const results = response.data; // Extract the 'data' field
                     setSearchResults(Array.isArray(results) ? results : []);
                     setShowSearchResults(true);
                 } catch (error) {
@@ -116,7 +119,7 @@ const Navbar = () => {
                     <Link to="/product-list">Sản phẩm</Link>
                     <Link to="/blog">Blog</Link>
                 </div>
-                
+
                 {/* Add Search Bar */}
                 <div className="navbar-search">
                     <div className="search-container">

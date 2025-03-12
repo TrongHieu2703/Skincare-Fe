@@ -19,22 +19,28 @@ const CartItems = () => {
 
   // Lấy cart từ server
   useEffect(() => {
-    async function fetchCart() {
+    const fetchCart = async () => {
       try {
-        const data = await getCartByUser();
-        setCartItems(data);
+        const response = await getCartByUser(); // Corrected function name
+        console.log("API cart data:", response.data); // debug
+        if (Array.isArray(response.data)) {
+          setCartItems(response.data); // đảm bảo gán đúng ở đây
+        } else {
+          console.error("Expected an array but received:", response.data);
+        }
       } catch (error) {
-        console.error("Error fetching cart:", error);
+        console.error("Lỗi khi lấy giỏ hàng:", error);
       } finally {
         setLoading(false);
       }
-    }
+    };
+
     fetchCart();
   }, []);
 
+
   // Cập nhật số lượng
   const updateQuantity = async (cartId, productId, change) => {
-    // Cập nhật state local
     const updatedItems = cartItems.map((item) => {
       if (item.cartId === cartId) {
         const newQty = Math.max(1, item.quantity + change);
@@ -44,7 +50,6 @@ const CartItems = () => {
     });
     setCartItems(updatedItems);
 
-    // Gọi API updateCart
     const itemToUpdate = updatedItems.find((item) => item.cartId === cartId);
     if (itemToUpdate) {
       try {
@@ -65,7 +70,7 @@ const CartItems = () => {
     }
   };
 
-  // Tính subtotal dựa trên item.product?.price
+  // ✅ Sửa lỗi reduce bằng cách đảm bảo cartItems là mảng
   const subtotal = cartItems.reduce((sum, item) => {
     const price = item.product?.price ?? 0;
     return sum + price * item.quantity;

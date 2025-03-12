@@ -1,0 +1,299 @@
+.section {
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .form {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .input, .select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    color: black;
+    font-size: 16px;
+    min-width: 200px;
+  }
+  
+  .button {
+    padding: 10px 15px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .button:hover {
+    background-color: #2ecc71;
+  }
+  
+  .cancelButton {
+    padding: 10px 15px;
+    background-color: #7f8c8d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 16px;
+  }
+  
+  .cancelButton:hover {
+    background-color: #95a5a6;
+  }
+  
+  .filterContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .filterGroup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .filterSelect {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    color: black;
+    font-size: 16px;
+  }
+  
+  .exportButton {
+    padding: 8px 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .exportButton:hover {
+    background-color: #2980b9;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .th, .td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+  }
+  
+  .th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .td {
+    background-color: white;
+  }
+  
+  .statusBadge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .actionButtons {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .viewButton, .editButton, .deleteButton {
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .viewButton {
+    background-color: #2c3e50;
+  }
+  
+  .viewButton:hover {
+    background-color: #34495e;
+  }
+  
+  .editButton {
+    background-color: #3498db;
+  }
+  
+  .editButton:hover {
+    background-color: #2980b9;
+  }
+  
+  .deleteButton {
+    background-color: #e74c3c;
+  }
+  
+  .deleteButton:hover {
+    background-color: #c0392b;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background-color: white;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .modalHeader h2 {
+    margin: 0;
+    color: #2c3e50;
+  }
+  
+  .closeButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #7f8c8d;
+  }
+  
+  .closeButton:hover {
+    color: #e74c3c;
+  }
+  
+  .modalBody {
+    padding: 20px;
+  }
+  
+  .orderInfo, .orderItems, .orderStatus {
+    margin-bottom: 30px;
+  }
+  
+  .orderInfo h3, .orderItems h3, .orderStatus h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  .orderInfo p {
+    margin: 8px 0;
+  }
+  
+  .itemsTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .itemsTable th, .itemsTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .itemsTable th {
+    background-color: #f2f2f2;
+  }
+  
+  .itemsTable tfoot {
+    font-weight: bold;
+  }
+  
+  .statusButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .statusButton {
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    border-width: 2px;
+    border-style: solid;
+    background-color: transparent;
+    transition: all 0.2s;
+  }
+  
+  .statusButton:hover {
+    opacity: 0.8;
+  }
+  
+  .activeStatus {
+    font-weight: bold;
+  }
+  
+  .noOrders {
+    text-align: center;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .noOrders p {
+    color: #7f8c8d;
+    font-size: 18px;
+  }
+  
+  .orderDetails {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+  }

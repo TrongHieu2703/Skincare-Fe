@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 .cart-page {
-  margin-top: -500px;
+  margin-top: 60px;
+  /* Adjust margin to prevent navbar overlap */
   background: linear-gradient(135deg, #f8faf9 0%, #e8f5e9 100%);
   min-height: 100vh;
   padding: 60px 40px;
@@ -72,33 +73,20 @@
 .item-controls {
   display: flex;
   align-items: center;
-  /* Center the controls vertically */
   justify-content: center;
-  /* Center the controls horizontally */
   gap: 15px;
-  /* Add some space between the controls */
 }
-
 
 .quantity-controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Center the quantity controls */
   gap: 15px;
   background: #f8faf9;
   padding: 10px 15px;
   border-radius: 12px;
   transition: all 0.3s ease;
   margin: 0 auto;
-  /* Center the quantity controls */
-}
-
-.quantity-controls {
-  background: #f8faf9;
-  border: 2px solid #e8f5e9;
-  padding: 12px 20px;
-  border-radius: 15px;
 }
 
 .quantity-controls button {
@@ -214,7 +202,6 @@
   color: #216942;
   font-weight: 600;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  /* Added text shadow */
 }
 
 .item-count {
@@ -232,11 +219,9 @@
 
 .cart-items {
   background: #ffffff;
-  /* Pure white for contrast */
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  /* Softer shadow */
 }
 
 .cart-item {
@@ -251,7 +236,6 @@
 .cart-item:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  /* Softer shadow */
 }
 
 .item-image img {
@@ -261,7 +245,6 @@
   border-radius: 15px;
   transition: transform 0.5s ease;
   border: 2px solid #e8f5e9;
-  /* Added border for better definition */
 }
 
 .item-image img:hover {
@@ -332,11 +315,9 @@
 
 .cart-summary {
   background: #ffffff;
-  /* Pure white for contrast */
   border-radius: 20px;
   padding: 35px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  /* Softer shadow */
   height: fit-content;
   position: sticky;
   top: 20px;
@@ -403,7 +384,7 @@
 .continue-shopping {
   margin-top: 30px;
   padding: 15px 30px;
-  background: linear-gradient(135 deg, #4caf50 0%, #216942 100%);
+  background: linear-gradient(135deg, #4caf50 0%, #216942 100%);
   color: white;
   border: none;
   border-radius: 12px;

@@ -21,7 +21,6 @@ const Profile = () => {
   const [originalData, setOriginalData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Fetch user profile data
   useEffect(() => {
     fetchUserProfile();
   }, [navigate]);
@@ -141,7 +140,6 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if there are any changes
     const hasChanges = Object.keys(formData).some(key =>
       formData[key] !== originalData[key]
     );
@@ -154,13 +152,11 @@ const Profile = () => {
     try {
       setSaving(true);
       await updateAccountInfo(formData);
-      setShowSuccess(true); // Show success message
+      setShowSuccess(true);
       toast.success("Bạn đã thay đổi thông tin thành công!");
 
-      // Hide success message after 3 seconds
       setTimeout(() => setShowSuccess(false), 3000);
 
-      // Refresh user data
       await fetchUserProfile();
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -181,12 +177,10 @@ const Profile = () => {
           Bạn đã thay đổi thông tin thành công!
         </div>
       )}
-      {/* Cover Image */}
       <div className="cover-photo">
         <img src={coverImage} alt="Cover" />
       </div>
 
-      {/* Profile Section */}
       <div className="profile-section">
         <div className="profile-image-container">
           <img
@@ -208,7 +202,6 @@ const Profile = () => {
         <p>{formData.email}</p>
       </div>
 
-      {/* Profile Form */}
       <form className="profile-form" onSubmit={handleSubmit}>
         <h3>Thông tin cá nhân</h3>
 
