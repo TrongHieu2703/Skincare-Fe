@@ -53,14 +53,16 @@ export const deleteProduct = (productId) => {
 };
 
 // Search products
-export const searchProducts = async (searchTerm) => {
-    try {
-        const response = await axiosClient.get(`${API_URL}/search`, {
-            params: { keyword: searchTerm }
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error searching products:', error);
-        throw error;
-    }
+export const searchProducts = async (keyword) => {
+  try {
+    console.log(`Searching for products with keyword: ${keyword}`); // Log the search keyword
+    const response = await axiosClient.get(`/Product/search`, { // Adjust the endpoint if necessary
+      params: { keyword: encodeURIComponent(keyword) }
+    });
+    console.log('Search response:', response.data); // Log the response data
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching search results:', error);
+    return [];
+  }
 };

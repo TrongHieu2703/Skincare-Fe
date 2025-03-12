@@ -1,8 +1,10 @@
 import axiosClient from "./axiosClient";
 
-// Lấy cart của user hiện tại (server dựa vào token)
-export const getCartByUser = async () => {
-  const response = await axiosClient.get("/cart/user");
+// Lấy cart của user hiện tại với phân trang (server dựa vào token)
+export const getCartByUser = async (pageNumber = 1, pageSize = 10) => {
+  const response = await axiosClient.get("/cart/user", {
+    params: { pageNumber, pageSize }
+  });
   return response.data; // Mảng cart item
 };
 

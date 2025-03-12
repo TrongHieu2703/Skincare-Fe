@@ -40,7 +40,7 @@ const Login = () => {
       setShowToast(true);
       if (response.role === "Admin") {
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/admin/dashboard");
           setShowToast(false);
         }, 1500);
       } else {

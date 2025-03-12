@@ -1,6 +1,7 @@
+// src/pages/OrderDetails.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { getOrderById, getOrderDetail } from '../api/orderApi';
+import { getOrderDetail } from '../api/orderApi';
 import { getProductById } from '../api/productApi';
 import { useAuth } from '../auth/AuthProvider';
 import '/src/styles/OrderDetails.css';
@@ -9,39 +10,15 @@ const OrderDetails = () => {
   const { orderId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [productDetails, setProductDetails] = useState({});
-
-  // Lấy thông tin đơn hàng từ location state (nếu từ trang payment) hoặc từ API
-  const orderIdToFetch = orderId || (location.state && location.state.orderId);
-
-  // Thêm state để hiển thị thông báo thanh toán thành công
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
-  // Thêm style cho payment-success-banner
-  const successBannerStyle = {
-    position: 'fixed',
-    top: '80px', // Đẩy xuống dưới navbar
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 1000,
-    width: '90%',
-    maxWidth: '600px',
-    padding: '15px 20px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    animation: 'slideDown 0.5s ease-out'
-  };
+  const orderIdToFetch = orderId || (location.state && location.state.orderId);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -60,12 +37,9 @@ const OrderDetails = () => {
           return;
         }
 
-        console.log(`Fetching order details for ID: ${orderIdToFetch}`);
         const orderData = await getOrderDetail(orderIdToFetch);
-        console.log('Order data received:', orderData);
         setOrder(orderData);
       } catch (err) {
-        console.error('Error fetching order details:', err);
         setError('Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.');
       } finally {
         setLoading(false);
@@ -85,7 +59,6 @@ const OrderDetails = () => {
             const product = await getProductById(item.productId);
             details[item.productId] = product;
           } catch (err) {
-            console.error(`Error fetching product #${item.productId}:`, err);
             details[item.productId] = {
               name: `Sản phẩm #${item.productId}`,
               price: order.totalPrice / order.orderItems.reduce((acc, i) => acc + i.itemQuantity, 0)
@@ -100,12 +73,10 @@ const OrderDetails = () => {
     }
   }, [order]);
 
-  // Lấy thông tin thanh toán thành công từ location state
   useEffect(() => {
     if (location.state && location.state.paymentSuccess) {
       setShowPaymentSuccess(true);
 
-      // Ẩn thông báo sau 5 giây
       const timer = setTimeout(() => {
         setShowPaymentSuccess(false);
       }, 5000);
@@ -138,15 +109,6 @@ const OrderDetails = () => {
       default:
         return 'status-pending';
     }
-  };
-
-  const getPaymentStatusText = (isPrepaid, transactions) => {
-    if (!transactions || transactions.length === 0) return 'Chưa thanh toán';
-
-    const lastTransaction = transactions[transactions.length - 1];
-    if (lastTransaction.status?.toLowerCase() === 'completed') return 'Đã thanh toán';
-    if (isPrepaid) return 'Đang xử lý thanh toán';
-    return 'Thanh toán khi nhận hàng';
   };
 
   const formatPrice = (price) => {
@@ -252,7 +214,7 @@ const OrderDetails = () => {
               <h3>Thông tin khách hàng</h3>
               <div className="info-content">
                 <p><strong>Tên khách hàng:</strong> {order.customerInfo?.username || ''}</p>
-                <p><strong>Email:</strong> {order.customerInfo?.email || ''}</p>
+                <p><strong>Email:</strong> {order.customerInfo?.email || 'Email không có sẵn'}</p> {/* Display email */}
                 <p><strong>Số điện thoại:</strong> {order.customerInfo?.phoneNumber || ''}</p>
               </div>
             </div>
@@ -361,7 +323,6 @@ const OrderDetails = () => {
             </div>
           </div>
 
-          {/* Hiển thị voucher nếu có */}
           {order.voucher && (
             <div className="voucher-info">
               <p>

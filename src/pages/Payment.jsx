@@ -5,8 +5,8 @@ import "/src/styles/Payments.css";
 export default function PaymentPage() {
     const navigate = useNavigate();
     const { state } = useLocation();
-    const { orderId, total, paymentMethod = "Credit" } = state || {};
-    
+    const { orderId, total, paymentMethod = "Credit", email } = state || {}; // Added email
+
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethod);
     const [paymentSuccess, setPaymentSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -46,6 +46,7 @@ export default function PaymentPage() {
                     <div className="payment-success-container">
                         <h2 className="payment-success">Congratulations! Your payment was successful.</h2>
                         <p>Order #{orderId} has been confirmed.</p>
+                        <p>Email: {email}</p> {/* Display email */}
                         <div className="success-actions">
                             <button onClick={handleContinueShopping} className="continue-shopping">
                                 Continue Shopping
@@ -63,6 +64,7 @@ export default function PaymentPage() {
                                 <span>Total Amount</span>
                                 <p>${formattedTotal}</p>
                                 <small>Order #{orderId}</small>
+                                <small>Email: {email}</small> {/* Display email */}
                             </div>
                             <div className="payment-method">
                                 <label>Payment Method</label>
