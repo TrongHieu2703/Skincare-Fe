@@ -3,6 +3,12 @@ import "/src/styles/SkinTest.css";
 import { FaCheck } from "react-icons/fa";
 
 const SkinTest = () => {
+  const [buttonColor, setButtonColor] = useState("#008080"); // State for button color
+
+  const changeButtonColor = () => {
+    setButtonColor("#ff5733"); // Change to a new color on click
+  };
+
   const [answers, setAnswers] = useState({
     q1: "",
     q2: "",
@@ -445,8 +451,14 @@ const SkinTest = () => {
             </div>
           </div>
 
-          <button type="submit" className="submit-button">
+          <button
+            type="submit"
+            className="submit-button"
+            style={{ backgroundColor: buttonColor }} // Apply dynamic color
+            onClick={changeButtonColor} // Change color on click
+          >
             Xem kết quả
+
           </button>
         </form>
 
@@ -460,7 +472,7 @@ const SkinTest = () => {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

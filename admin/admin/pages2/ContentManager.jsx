@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '/admin/admin/pages2/ContentManager.module.css';
 import Sidebar from '/admin/admin/pages2/Sidebar';
+import { getBlogs, createBlog } from '/src/api/blogApi';
 
 const ContentManager = () => {
   const [activeTab, setActiveTab] = useState('blog');
@@ -26,7 +27,6 @@ const ContentManager = () => {
     status: 'active'
   });
 
-  // Blog categories
   const categories = [
     { value: 'skincare', label: 'Chăm sóc da' },
     { value: 'product', label: 'Giới thiệu sản phẩm' },
@@ -34,13 +34,20 @@ const ContentManager = () => {
     { value: 'news', label: 'Tin tức' }
   ];
 
-  // Banner positions
   const bannerPositions = [
     { value: 'home_top', label: 'Đầu trang chủ' },
     { value: 'home_middle', label: 'Giữa trang chủ' },
     { value: 'sidebar', label: 'Thanh bên' },
     { value: 'category_page', label: 'Trang danh mục' }
   ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getBlogs();
+      setPosts(data);
+    };
+    fetchData();
+  }, []);
 
   const handleImageUpload = (e, type) => {
     const file = e.target.files[0];
@@ -87,16 +94,21 @@ const ContentManager = () => {
     });
   };
 
-  const addPost = () => {
+  const addPost = async () => {
     if (validatePost()) {
-      setPosts([...posts, {
-        id: Date.now(),
+      const newPostData = {
         ...newPost,
         date: new Date().toISOString(),
         views: 0,
-        comments: []
-      }]);
-      resetNewPost();
+        comments: [],
+      };
+
+      const created = await createBlog(newPostData);
+      if (created) {
+        const updated = await getBlogs();
+        setPosts(updated);
+        resetNewPost();
+      }
     }
   };
 
@@ -196,7 +208,7 @@ const ContentManager = () => {
                 {posts.map(post => (
                   <tr key={post.id}>
                     <td>{post.title}</td>
-                    <td>{categories.find(c => c.value === post.category)?.label}</td>
+                    <td>{categories.find(c => c.value === post.category)?.label || post.category}</td>
                     <td>{new Date(post.date).toLocaleDateString('vi-VN')}</td>
                     <td>{post.views}</td>
                     <td>
@@ -274,4 +286,4 @@ const ContentManager = () => {
   );
 };
 
-export default ContentManager; 
+export default ContentManager;

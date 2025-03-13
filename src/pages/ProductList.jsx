@@ -18,7 +18,7 @@ const ProductList = () => {
   const fetchProducts = async (page) => {
     try {
       setLoading(true);
-      const response = await getAllProducts(page, 8);
+      const response = await getAllProducts(page, 12);
       console.log("📦 RESPONSE FROM API:", response);
 
       const productArray = Array.isArray(response)
