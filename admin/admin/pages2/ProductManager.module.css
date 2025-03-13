@@ -1,199 +1,94 @@
-.section {
-  padding: 20px;
+.dashboardContainer {
+  margin-top: 400px;
+  display: flex;
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboardContent {
+  flex: 1;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  margin: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #396e63;
+  margin-bottom: 10px;
+}
+
+/* Table */
+.productTable {
   width: 100%;
-}
-
-.form {
-  margin-bottom: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  background-color: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.input,
-.select {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
-  color: black;
-  font-size: 16px;
-  min-width: 200px;
-}
-
-.button {
-  padding: 8px 12px;
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-.button:hover {
-  background-color: #2ecc71;
-  transform: translateY(-1px);
-}
-
-.cancelButton {
-  padding: 8px 12px;
-  background-color: #7f8c8d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 8px;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-.cancelButton:hover {
-  background-color: #95a5a6;
-  transform: translateY(-1px);
-}
-
-.variantButton {
-  padding: 8px 12px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-.variantButton:hover {
-  background-color: #2980b9;
-  transform: translateY(-1px);
-}
-
-.variantForm {
-  background-color: #f8f9fa;
-  border-left: 4px solid #3498db;
-}
-
-.variantList {
-  margin-bottom: 20px;
-  background-color: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.variantItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.removeVariantButton {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.editButton {
-  padding: 6px 10px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 4px;
-  font-size: 0.8125rem;
-  transition: all 0.2s ease;
-}
-
-.editButton:hover {
-  background-color: #2980b9;
-  transform: translateY(-1px);
-}
-
-.deleteButton {
-  padding: 6px 10px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8125rem;
-  transition: all 0.2s ease;
-}
-
-.deleteButton:hover {
-  background-color: #c0392b;
-  transform: translateY(-1px);
-}
-
-.table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-collapse: collapse;
   border-radius: 12px;
   overflow: hidden;
-  background-color: white;
+  margin-top: 20px;
 }
 
-.th,
-.td {
+.productTable thead {
+  background-color: #8cc5af;
+}
+
+.productTable th {
+  padding: 12px;
+  text-align: center;
+  color: #2f4858;
+  font-weight: 600;
+}
+
+.productTable td {
+  padding: 14px;
+  text-align: center;
+  vertical-align: middle;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.productTable tr:hover {
+  background-color: #f7fafd;
+}
+
+/* Image */
+.productImage {
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Action buttons */
+.iconButton {
+  padding: 8px 10px;
+  margin: 0 5px;
   border: none;
-  border-bottom: 1px solid #e9ecef;
-  padding: 16px 20px;
-  text-align: left;
-  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
 }
 
-.th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 0.95rem;
-  white-space: nowrap;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+.editIcon {
+  background-color: #0d6efd;
+  color: #fff;
 }
 
-.td {
-  background-color: white;
-  font-size: 0.95rem;
-  color: #34495e;
-  line-height: 1.5;
+.editIcon:hover {
+  background-color: #0b5ed7;
 }
 
-.td:hover {
-  background-color: #f8f9fa;
+.deleteIcon {
+  background-color: #dc3545;
+  color: #fff;
 }
 
-.lowStock {
-  color: #e74c3c;
-  font-weight: 600;
-  padding: 4px 8px;
-  background-color: rgba(231, 76, 60, 0.1);
-  border-radius: 4px;
-}
-
-.warning {
-  color: #e74c3c;
-  margin-left: 8px;
-  font-weight: 500;
+.deleteIcon:hover {
+  background-color: #c82333;
 }

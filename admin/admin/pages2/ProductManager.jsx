@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styles from '/admin/admin/pages2/Dashboard.module.css';
+import styles from '/admin/admin/pages2/ProductManager.module.css';
 import { getAllProducts } from '/src/api/productApi';
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import icon
 import Sidebar from './Sidebar';
@@ -41,8 +41,8 @@ const ProductManager = () => {
       <Sidebar />
 
       <main className={styles.dashboardContent}>
-        <h1 className={styles.title}>Product Manager</h1>
-        <p>Manage your products here!</p>
+        <h1 className={styles.title}> Quản lý sản phẩm</h1>
+        <p>Tất cả sản phẩm ở dưới đây!</p>
 
         {loading ? (
           <p>Đang tải sản phẩm...</p>
@@ -50,7 +50,7 @@ const ProductManager = () => {
           <table className={styles.productTable}>
             <thead>
               <tr>
-                <th>ID</th>
+                <th>stt</th>
                 <th>Hình ảnh</th>
                 <th>Tên</th>
                 <th>Mô tả</th>

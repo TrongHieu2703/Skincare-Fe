@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styles from '/admin/admin/pages2/PromotionManager.module.css';
 import Sidebar from './Sidebar';
+import { getAllVouchers, createVoucher, updateVoucher, deleteVoucher } from '../../../src/api/voucherApi';
 
-const PromotionManager = ({ orders }) => {
-  // Track promotion usage from orders
+const PromotionManager = ({ orders = [] }) => {
   const updatePromotionUsage = (promotion) => {
     const usedInOrders = orders.filter(order => order.promotionCode === promotion.code);
     const totalDiscount = usedInOrders.reduce((sum, order) => sum + order.discountAmount, 0);
@@ -18,19 +18,31 @@ const PromotionManager = ({ orders }) => {
   const [promotions, setPromotions] = useState([]);
   const [newPromotion, setNewPromotion] = useState({
     code: '',
-    type: 'percentage', // 'percentage' or 'fixed'
+    type: 'percentage',
     value: '',
     minOrder: '',
     startDate: '',
     endDate: '',
-    category: '', // for category-specific discounts
+    category: '',
     usageLimit: '',
     description: ''
   });
   const [selectedPromotion, setSelectedPromotion] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
 
-  // Promotion types
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        const response = await getAllVouchers();
+        setPromotions(response.data);
+      } catch (error) {
+        console.error('Error fetching vouchers:', error);
+      }
+    };
+
+    fetchVouchers();
+  }, []);
+
   const promotionTypes = [
     { value: 'percentage', label: 'Giảm theo %' },
     { value: 'fixed', label: 'Giảm số tiền cố định' },
@@ -38,16 +50,15 @@ const PromotionManager = ({ orders }) => {
     { value: 'category', label: 'Giảm giá theo danh mục' }
   ];
 
-  const addPromotion = () => {
+  const addPromotion = async () => {
     if (validatePromotion(newPromotion)) {
-      setPromotions([...promotions, {
-        id: Date.now(),
-        ...newPromotion,
-        status: isActive(newPromotion) ? 'active' : 'scheduled',
-        usageCount: 0,
-        totalDiscount: 0
-      }]);
-      resetNewPromotion();
+      try {
+        const response = await createVoucher(newPromotion);
+        setPromotions([...promotions, response]);
+        resetNewPromotion();
+      } catch (error) {
+        console.error('Error creating promotion:', error);
+      }
     }
   };
 
@@ -84,8 +95,13 @@ const PromotionManager = ({ orders }) => {
     });
   };
 
-  const deletePromotion = (id) => {
-    setPromotions(promotions.filter(p => p.id !== id));
+  const deletePromotion = async (id) => {
+    try {
+      await deleteVoucher(id);
+      setPromotions(promotions.filter(p => p.voucherId !== id));
+    } catch (error) {
+      console.error('Error deleting promotion:', error);
+    }
   };
 
   const isActive = (promotion) => {
@@ -111,7 +127,6 @@ const PromotionManager = ({ orders }) => {
     });
   };
 
-  // Filter promotions based on status
   const filteredPromotions = promotions.filter(promotion =>
     filterStatus === 'all' || getPromotionStatus(promotion) === filterStatus
   ).map(updatePromotionUsage);
@@ -122,7 +137,6 @@ const PromotionManager = ({ orders }) => {
       <div className={styles.section}>
         <h1>Quản lý khuyến mãi</h1>
 
-        {/* Add new promotion form */}
         <div className={styles.form}>
           <input
             type="text"
@@ -156,14 +170,12 @@ const PromotionManager = ({ orders }) => {
           />
           <input
             type="datetime-local"
-            placeholder="Ngày bắt đầu"
             value={newPromotion.startDate}
             onChange={(e) => setNewPromotion({ ...newPromotion, startDate: e.target.value })}
             className={styles.input}
           />
           <input
             type="datetime-local"
-            placeholder="Ngày kết thúc"
             value={newPromotion.endDate}
             onChange={(e) => setNewPromotion({ ...newPromotion, endDate: e.target.value })}
             className={styles.input}
@@ -184,7 +196,6 @@ const PromotionManager = ({ orders }) => {
           <button onClick={addPromotion} className={styles.button}>Thêm khuyến mãi</button>
         </div>
 
-        {/* Filter promotions */}
         <div className={styles.filterContainer}>
           <select
             value={filterStatus}
@@ -199,7 +210,6 @@ const PromotionManager = ({ orders }) => {
           </select>
         </div>
 
-        {/* Promotions table */}
         <table className={styles.table}>
           <thead>
             <tr>
@@ -215,24 +225,12 @@ const PromotionManager = ({ orders }) => {
           </thead>
           <tbody>
             {filteredPromotions.map(promotion => (
-              <tr key={promotion.id}>
+              <tr key={promotion.voucherId}>
                 <td>{promotion.code}</td>
                 <td>{promotionTypes.find(t => t.value === promotion.type)?.label}</td>
-                <td>
-                  {promotion.type === 'percentage'
-                    ? `${promotion.value}%`
-                    : `${parseInt(promotion.value).toLocaleString()}đ`
-                  }
-                </td>
-                <td>
-                  {formatDate(promotion.startDate)} - {formatDate(promotion.endDate)}
-                </td>
-                <td>
-                  {promotion.usageLimit
-                    ? `${promotion.usageCount}/${promotion.usageLimit}`
-                    : promotion.usageCount
-                  }
-                </td>
+                <td>{promotion.type === 'percentage' ? `${promotion.value}%` : `${parseInt(promotion.value).toLocaleString()}đ`}</td>
+                <td>{formatDate(promotion.startDate)} - {formatDate(promotion.endDate)}</td>
+                <td>{promotion.usageLimit ? `${promotion.usageCount}/${promotion.usageLimit}` : promotion.usageCount}</td>
                 <td>
                   <span
                     className={styles.statusBadge}
@@ -252,25 +250,14 @@ const PromotionManager = ({ orders }) => {
                 </td>
                 <td>{promotion.totalDiscount.toLocaleString()}đ</td>
                 <td>
-                  <button
-                    onClick={() => setSelectedPromotion(promotion)}
-                    className={styles.viewButton}
-                  >
-                    Chi tiết
-                  </button>
-                  <button
-                    onClick={() => deletePromotion(promotion.id)}
-                    className={styles.deleteButton}
-                  >
-                    Xóa
-                  </button>
+                  <button onClick={() => setSelectedPromotion(promotion)} className={styles.viewButton}>Chi tiết</button>
+                  <button onClick={() => deletePromotion(promotion.voucherId)} className={styles.deleteButton}>Xóa</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* Promotion details modal */}
         {selectedPromotion && (
           <div className={styles.modal}>
             <div className={styles.modalContent}>
@@ -287,16 +274,11 @@ const PromotionManager = ({ orders }) => {
                 </div>
                 <div className={styles.detailRow}>
                   <span className={styles.label}>Đơn hàng tối thiểu:</span>
-                  <span className={styles.value}>
-                    {selectedPromotion.minOrder ? `${parseInt(selectedPromotion.minOrder).toLocaleString()}đ` : 'Không giới hạn'}
-                  </span>
+                  <span className={styles.value}>{selectedPromotion.minOrder ? `${parseInt(selectedPromotion.minOrder).toLocaleString()}đ` : 'Không giới hạn'}</span>
                 </div>
                 <div className={styles.detailRow}>
                   <span className={styles.label}>Lượt sử dụng:</span>
-                  <span className={styles.value}>
-                    {selectedPromotion.usageCount}
-                    {selectedPromotion.usageLimit ? `/${selectedPromotion.usageLimit}` : ''}
-                  </span>
+                  <span className={styles.value}>{selectedPromotion.usageCount}{selectedPromotion.usageLimit ? `/${selectedPromotion.usageLimit}` : ''}</span>
                 </div>
                 <div className={styles.detailRow}>
                   <span className={styles.label}>Tổng giảm giá:</span>
@@ -307,7 +289,6 @@ const PromotionManager = ({ orders }) => {
           </div>
         )}
 
-        {/* Show message when no promotions */}
         {filteredPromotions.length === 0 && (
           <div className={styles.noPromotions}>
             <p>Không có khuyến mãi nào{filterStatus !== 'all' ? ` ${filterStatus}` : ''}.</p>
@@ -318,13 +299,11 @@ const PromotionManager = ({ orders }) => {
   );
 };
 
-// Define prop types
 PromotionManager.propTypes = {
   orders: PropTypes.arrayOf(PropTypes.shape({
     promotionCode: PropTypes.string,
     discountAmount: PropTypes.number,
-    // Add other order properties if needed
   })).isRequired,
 };
 
-export default PromotionManager; 
+export default PromotionManager;
