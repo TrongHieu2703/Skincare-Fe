@@ -1,5 +1,5 @@
+// src/api/authApi.js
 import axiosClient from "./axiosClient";
-import { useAuth } from "../auth/AuthProvider";
 
 export const registerUser = async (userData) => {
   try {
@@ -34,18 +34,13 @@ export const loginUser = async (credentials) => {
       address: response.data.data.address
     };
 
-    // 🟢 Gọi hàm login từ useAuth để cập nhật trạng thái user toàn cục
-    const { login } = useAuth();
-    login(userData, token);
-
-    console.log("✅ User logged in:", userData);
-    return response.data;
+    // Trả về dữ liệu để component tự gọi login()
+    return { userData, token };
   } catch (error) {
     console.error("❌ Login API error:", error);
     throw error.response ? error.response.data : error.message;
   }
 };
-
 
 export const logoutUser = () => {
   localStorage.removeItem("token");
