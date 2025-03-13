@@ -20,7 +20,7 @@ const Sidebar = () => {
 
   return (
     <div className={styles.sidebar}>
-      <h2 className={styles.title}>Skincare Dashboard ☘</h2>
+      <h2 className={styles.title}>Trang bán mỹ phẩm ☘</h2>
       <ul className={styles.list}>
         <li className={styles.item} onClick={() => navigate('/admin/dashboard')}>
           <FaTachometerAlt className={styles.icon} />
