@@ -37,13 +37,12 @@ export const deleteAccount = async (id) => {
     throw error.response ? error.response.data : error.message;
   }
 };
+// Lấy thông tin tài khoản của user
 export const getAccountInfo = async () => {
   try {
-    const response = await axios.get("/api/Account/user-profile", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}` // hoặc thay bằng token bạn đang dùng
-      }
-    });
+    // Sử dụng axiosClient đã được cấu hình baseURL và interceptor
+    const response = await axiosClient.get("/Account/user-profile");
+    // Giả sử API trả về data theo cấu trúc { data: { ...userInfo } }
     return response.data.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Lỗi khi lấy thông tin tài khoản");
@@ -51,9 +50,8 @@ export const getAccountInfo = async () => {
 };
 export const updateAccountInfo = async (updatedData) => {
   try {
-    const response = await axios.put("/api/Account/update-profile", updatedData, {
+    const response = await axiosClient.put("/Account/update-profile", updatedData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // hoặc token bạn đang dùng
         "Content-Type": "application/json"
       }
     });

@@ -24,7 +24,8 @@ const Profile = () => {
 
   useEffect(() => {
     fetchUserProfile();
-  }, [navigate]);
+    // dependency có thể để [] nếu navigate không thay đổi
+  }, []);
 
   const fetchUserProfile = async () => {
     try {

@@ -21,11 +21,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData, token) => {
-    localStorage.setItem("token", `Bearer ${token}`);
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
-    setIsAuthenticated(true);
-  };
+    -  localStorage.setItem("token", `Bearer ${token}`);
+    +  localStorage.setItem("token", token);
+       localStorage.setItem("user", JSON.stringify(userData));
+       setUser(userData);
+       setIsAuthenticated(true);
+    };
 
   const logout = () => {
     localStorage.removeItem("token");
