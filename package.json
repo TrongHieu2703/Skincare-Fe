@@ -19,6 +19,7 @@
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.8",
     "cloudinary": "^2.5.1",
+    "lucide-react": "^0.479.0",
     "package-name": "^0.1.0",
     "prop-types": "^15.8.1",
     "q": "^1.5.1",

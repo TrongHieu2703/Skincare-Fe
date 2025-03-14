@@ -12,6 +12,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Lấy hàm login từ context
@@ -23,7 +24,9 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
+
       // Gọi API lấy userData + token
       const { userData, token } = await loginUser({
         email: formData.email,
@@ -33,8 +36,10 @@ const Login = () => {
       // Dùng hàm login của AuthContext để lưu user + token
       login(userData, token);
 
+
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
+
 
       // Chuyển trang sau 1.5s
       setTimeout(() => {
@@ -47,7 +52,9 @@ const Login = () => {
       }, 1500);
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
-      setMessage(error.message || "Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
+      setMessage("Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,8 +96,8 @@ const Login = () => {
             />
           </div>
 
-          <button type="submit" className="login-button">
-            Đăng nhập
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? "Đang xử lý..." : "Đăng nhập"}
           </button>
 
           <button type="button" className="google-button">

@@ -33,6 +33,7 @@ import PromotionManager from "/admin/admin/pages2/PromotionManager";
 import ProductManager from "/admin/admin/pages2/ProductManager";
 import OrderManager from "/admin/admin/pages2/OrderManager";
 import ContentManager from "/admin/admin/pages2/ContentManager";
+import CustomerManager from "/admin/admin/pages2/CustomerManager";
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
                 <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/promotions" element={<PromotionManager />} />
                 <Route path="/admin/productsmanager" element={<ProductManager />} />
+                <Route path="/admin/customermanager" element={<CustomerManager />} />
                 <Route path="/admin/orders" element={<OrderManager />} />
                 <Route path="/admin/content" element={<ContentManager />} />
 

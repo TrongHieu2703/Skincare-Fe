@@ -34,7 +34,7 @@ const Sidebar = () => {
           <FaClipboardList className={styles.icon} />
           <span>Quản lý đơn hàng</span>
         </li>
-        <li className={styles.item} onClick={() => navigate('/admin/customers')}>
+        <li className={styles.item} onClick={() => navigate('/admin/customermanager')}>
           <FaUsers className={styles.icon} />
           <span>Quản lý khách hàng</span>
         </li>

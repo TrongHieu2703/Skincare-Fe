@@ -1,6 +1,7 @@
 // src/api/authApi.js
 import axiosClient from "./axiosClient";
 
+// Đăng ký tài khoản
 export const registerUser = async (userData) => {
   try {
     const response = await axiosClient.post("/Authentication/register", userData);
@@ -11,10 +12,9 @@ export const registerUser = async (userData) => {
   }
 };
 
+// Đăng nhập tài khoản
 export const loginUser = async (credentials) => {
   try {
-    console.log("🔄 Attempting login with:", credentials.email);
-
     const response = await axiosClient.post("/Authentication/login", credentials);
     console.log("✅ Login API response:", response);
 
@@ -37,22 +37,21 @@ export const loginUser = async (credentials) => {
     // Trả về dữ liệu để component tự gọi login()
     return { userData, token };
   } catch (error) {
-    console.error("❌ Login API error:", error);
+    console.error("Login API error:", error);
     throw error.response ? error.response.data : error.message;
   }
 };
-
 export const logoutUser = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  console.log("User logged out - token and user data removed");
 };
 
+// Kiểm tra trạng thái đăng nhập
 export const checkAuthStatus = () => {
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   return {
     isAuthenticated: !!token && !!user,
-    user: user ? JSON.parse(user) : null
+    user: user ? JSON.parse(user) : null,
   };
 };

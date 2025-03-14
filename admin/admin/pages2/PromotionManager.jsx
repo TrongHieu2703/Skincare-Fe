@@ -1,309 +1,253 @@
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import styles from '/admin/admin/pages2/PromotionManager.module.css';
-import Sidebar from './Sidebar';
-import { getAllVouchers, createVoucher, updateVoucher, deleteVoucher } from '../../../src/api/voucherApi';
+import React, { useEffect, useState } from "react";
+import styles from "./PromotionManager.module.css";
+import { createVoucher, deleteVoucher, getAllVouchers, } from "/src/api/voucherApi";
+import Sidebar from "./Sidebar";
 
-const PromotionManager = ({ orders = [] }) => {
-  const updatePromotionUsage = (promotion) => {
-    const usedInOrders = orders.filter(order => order.promotionCode === promotion.code);
-    const totalDiscount = usedInOrders.reduce((sum, order) => sum + order.discountAmount, 0);
-    return {
-      ...promotion,
-      usageCount: usedInOrders.length,
-      totalDiscount
-    };
-  };
-
+const PromotionManager = () => {
   const [promotions, setPromotions] = useState([]);
   const [newPromotion, setNewPromotion] = useState({
-    code: '',
-    type: 'percentage',
-    value: '',
-    minOrder: '',
-    startDate: '',
-    endDate: '',
-    category: '',
-    usageLimit: '',
-    description: ''
+    code: "",
+    type: "percentage",
+    value: "",
+    minOrder: "",
+    startDate: "",
+    endDate: "",
+    usageLimit: "",
+    description: "",
   });
-  const [selectedPromotion, setSelectedPromotion] = useState(null);
-  const [filterStatus, setFilterStatus] = useState('all');
-
-  useEffect(() => {
-    const fetchVouchers = async () => {
-      try {
-        const response = await getAllVouchers();
-        setPromotions(response.data);
-      } catch (error) {
-        console.error('Error fetching vouchers:', error);
-      }
-    };
-
-    fetchVouchers();
-  }, []);
 
   const promotionTypes = [
-    { value: 'percentage', label: 'Giảm theo %' },
-    { value: 'fixed', label: 'Giảm số tiền cố định' },
-    { value: 'buyXgetY', label: 'Mua X tặng Y' },
-    { value: 'category', label: 'Giảm giá theo danh mục' }
+    { value: "percentage", label: "Giảm theo %" },
+    { value: "fixed", label: "Giảm số tiền cố định" },
   ];
 
-  const addPromotion = async () => {
-    if (validatePromotion(newPromotion)) {
-      try {
-        const response = await createVoucher(newPromotion);
-        setPromotions([...promotions, response]);
-        resetNewPromotion();
-      } catch (error) {
-        console.error('Error creating promotion:', error);
-      }
+  const fetchPromotions = async () => {
+    try {
+      const response = await getAllVouchers();
+      setPromotions(response.data);
+      console.log("Fetched promotions:", response.data); // Log fetched promotions
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách khuyến mãi:", error);
     }
   };
 
-  const validatePromotion = (promo) => {
-    if (!promo.code || !promo.value || !promo.startDate || !promo.endDate) {
-      alert('Vui lòng nhập đầy đủ thông tin khuyến mãi!');
-      return false;
+  const addPromotion = async () => {
+    try {
+      await createVoucher(newPromotion);
+      await fetchPromotions();
+      resetNewPromotion();
+      alert("Tạo mã khuyến mãi thành công!");
+    } catch (error) {
+      console.error("Lỗi khi tạo khuyến mãi:", error);
     }
+  };
 
-    if (promo.type === 'percentage' && (promo.value < 0 || promo.value > 100)) {
-      alert('Phần trăm giảm giá phải từ 0-100%!');
-      return false;
+  const removePromotion = async (id, code) => {
+    console.log("Removing promotion with ID:", id); // Log the ID being removed
+    const confirmed = window.confirm(
+      `Bạn có chắc muốn xoá mã khuyến mãi "${code}" không?`
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteVoucher(id);
+      await fetchPromotions();
+    } catch (error) {
+      console.error("Lỗi khi xoá khuyến mãi:", error);
+      alert("Xoá thất bại.");
     }
-
-    if (new Date(promo.endDate) <= new Date(promo.startDate)) {
-      alert('Ngày kết thúc phải sau ngày bắt đầu!');
-      return false;
-    }
-
-    return true;
   };
 
   const resetNewPromotion = () => {
     setNewPromotion({
-      code: '',
-      type: 'percentage',
-      value: '',
-      minOrder: '',
-      startDate: '',
-      endDate: '',
-      category: '',
-      usageLimit: '',
-      description: ''
+      code: "",
+      type: "percentage",
+      value: "",
+      minOrder: "",
+      startDate: "",
+      endDate: "",
+      usageLimit: "",
+      description: "",
     });
   };
 
-  const deletePromotion = async (id) => {
-    try {
-      await deleteVoucher(id);
-      setPromotions(promotions.filter(p => p.voucherId !== id));
-    } catch (error) {
-      console.error('Error deleting promotion:', error);
-    }
-  };
-
-  const isActive = (promotion) => {
-    const now = new Date();
-    const start = new Date(promotion.startDate);
-    const end = new Date(promotion.endDate);
-    return now >= start && now <= end;
-  };
-
-  const getPromotionStatus = (promotion) => {
-    if (isActive(promotion)) return 'active';
-    if (new Date() < new Date(promotion.startDate)) return 'scheduled';
-    if (new Date() > new Date(promotion.endDate)) return 'expired';
-    if (promotion.usageLimit && promotion.usageCount >= promotion.usageLimit) return 'depleted';
-    return 'inactive';
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-  };
-
-  const filteredPromotions = promotions.filter(promotion =>
-    filterStatus === 'all' || getPromotionStatus(promotion) === filterStatus
-  ).map(updatePromotionUsage);
+  useEffect(() => {
+    fetchPromotions();
+  }, []);
 
   return (
     <>
       <Sidebar />
-      <div className={styles.section}>
-        <h1>Quản lý khuyến mãi</h1>
+      <div className={styles.container}>
+        <h1>Quản lý mã khuyến mãi</h1>
 
-        <div className={styles.form}>
-          <input
-            type="text"
-            placeholder="Mã khuyến mãi"
-            value={newPromotion.code}
-            onChange={(e) => setNewPromotion({ ...newPromotion, code: e.target.value.toUpperCase() })}
-            className={styles.input}
-          />
-          <select
-            value={newPromotion.type}
-            onChange={(e) => setNewPromotion({ ...newPromotion, type: e.target.value })}
-            className={styles.select}
-          >
-            {promotionTypes.map(type => (
-              <option key={type.value} value={type.value}>{type.label}</option>
-            ))}
-          </select>
-          <input
-            type="number"
-            placeholder={newPromotion.type === 'percentage' ? 'Phần trăm giảm (%)' : 'Số tiền giảm (VNĐ)'}
-            value={newPromotion.value}
-            onChange={(e) => setNewPromotion({ ...newPromotion, value: e.target.value })}
-            className={styles.input}
-          />
-          <input
-            type="number"
-            placeholder="Đơn hàng tối thiểu (VNĐ)"
-            value={newPromotion.minOrder}
-            onChange={(e) => setNewPromotion({ ...newPromotion, minOrder: e.target.value })}
-            className={styles.input}
-          />
-          <input
-            type="datetime-local"
-            value={newPromotion.startDate}
-            onChange={(e) => setNewPromotion({ ...newPromotion, startDate: e.target.value })}
-            className={styles.input}
-          />
-          <input
-            type="datetime-local"
-            value={newPromotion.endDate}
-            onChange={(e) => setNewPromotion({ ...newPromotion, endDate: e.target.value })}
-            className={styles.input}
-          />
-          <input
-            type="number"
-            placeholder="Giới hạn sử dụng"
-            value={newPromotion.usageLimit}
-            onChange={(e) => setNewPromotion({ ...newPromotion, usageLimit: e.target.value })}
-            className={styles.input}
-          />
-          <textarea
-            placeholder="Mô tả khuyến mãi"
-            value={newPromotion.description}
-            onChange={(e) => setNewPromotion({ ...newPromotion, description: e.target.value })}
-            className={styles.textarea}
-          />
-          <button onClick={addPromotion} className={styles.button}>Thêm khuyến mãi</button>
+        {/* Form tạo mới */}
+        <div className={styles.formContainer}>
+          <h2>Tạo mã khuyến mãi mới</h2>
+
+          <div className={styles.formRow}>
+            <label>Mã khuyến mãi</label>
+            <input
+              type="text"
+              value={newPromotion.code}
+              onChange={(e) =>
+                setNewPromotion({
+                  ...newPromotion,
+                  code: e.target.value.toUpperCase(),
+                })
+              }
+              placeholder="VD: GIAM10"
+              className={styles.input}
+            />
+          </div>
+
+          <div className={styles.formRow}>
+            <label>Loại khuyến mãi</label>
+            <select
+              value={newPromotion.type}
+              onChange={(e) =>
+                setNewPromotion({ ...newPromotion, type: e.target.value })
+              }
+              className={styles.select}
+            >
+              {promotionTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formRow}>
+            <label>
+              {newPromotion.type === "percentage"
+                ? "Phần trăm giảm (%)"
+                : "Số tiền giảm (VNĐ)"}
+            </label>
+            <input
+              type="number"
+              value={newPromotion.value}
+              onChange={(e) =>
+                setNewPromotion({ ...newPromotion, value: e.target.value })
+              }
+              className={styles.input}
+            />
+          </div>
+
+          <div className={styles.formRow}>
+            <label>Đơn hàng tối thiểu (VNĐ)</label>
+            <input
+              type="number"
+              value={newPromotion.minOrder}
+              onChange={(e) =>
+                setNewPromotion({ ...newPromotion, minOrder: e.target.value })
+              }
+              className={styles.input}
+            />
+          </div>
+
+          <div className={styles.formRow}>
+            <label>Ngày bắt đầu</label>
+            <input
+              type="datetime-local"
+              value={newPromotion.startDate}
+              onChange={(e) =>
+                setNewPromotion({ ...newPromotion, startDate: e.target.value })
+              }
+              className={styles.input}
+            />
+          </div>
+
+          <div className={styles.formRow}>
+            <label>Ngày kết thúc</label>
+            <input
+              type="datetime-local"
+              value={newPromotion.endDate}
+              onChange={(e) =>
+                setNewPromotion({ ...newPromotion, endDate: e.target.value })
+              }
+              className={styles.input}
+            />
+          </div>
+
+          <div className={styles.formRow}>
+            <label>Giới hạn lượt dùng</label>
+            <input
+              type="number"
+              value={newPromotion.usageLimit}
+              onChange={(e) =>
+                setNewPromotion({ ...newPromotion, usageLimit: e.target.value })
+              }
+              className={styles.input}
+            />
+          </div>
+
+          <div className={styles.formRow}>
+            <label>Mô tả</label>
+            <textarea
+              value={newPromotion.description}
+              onChange={(e) =>
+                setNewPromotion({ ...newPromotion, description: e.target.value })
+              }
+              placeholder="Mô tả ngắn về chương trình khuyến mãi..."
+              className={styles.textarea}
+            />
+          </div>
+
+          <div className={styles.buttonRow}>
+            <button onClick={addPromotion} className={styles.button}>
+              Tạo khuyến mãi
+            </button>
+            <button onClick={resetNewPromotion} className={styles.resetButton}>
+              Làm mới
+            </button>
+          </div>
         </div>
 
-        <div className={styles.filterContainer}>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className={styles.filterSelect}
-          >
-            <option value="all">Tất cả khuyến mãi</option>
-            <option value="active">Đang hoạt động</option>
-            <option value="scheduled">Chưa bắt đầu</option>
-            <option value="expired">Đã kết thúc</option>
-            <option value="depleted">Hết lượt dùng</option>
-          </select>
-        </div>
-
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Mã KM</th>
-              <th>Loại</th>
-              <th>Giá trị</th>
-              <th>Thời gian</th>
-              <th>Đã dùng</th>
-              <th>Trạng thái</th>
-              <th>Tổng giảm giá</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPromotions.map(promotion => (
-              <tr key={promotion.voucherId}>
-                <td>{promotion.code}</td>
-                <td>{promotionTypes.find(t => t.value === promotion.type)?.label}</td>
-                <td>{promotion.type === 'percentage' ? `${promotion.value}%` : `${parseInt(promotion.value).toLocaleString()}đ`}</td>
-                <td>{formatDate(promotion.startDate)} - {formatDate(promotion.endDate)}</td>
-                <td>{promotion.usageLimit ? `${promotion.usageCount}/${promotion.usageLimit}` : promotion.usageCount}</td>
-                <td>
-                  <span
-                    className={styles.statusBadge}
-                    style={{
-                      backgroundColor:
-                        getPromotionStatus(promotion) === 'active' ? '#27ae60' :
-                          getPromotionStatus(promotion) === 'scheduled' ? '#3498db' :
-                            getPromotionStatus(promotion) === 'expired' ? '#e74c3c' :
-                              '#95a5a6'
-                    }}
-                  >
-                    {getPromotionStatus(promotion) === 'active' ? 'Đang hoạt động' :
-                      getPromotionStatus(promotion) === 'scheduled' ? 'Chưa bắt đầu' :
-                        getPromotionStatus(promotion) === 'expired' ? 'Đã kết thúc' :
-                          'Hết lượt dùng'}
-                  </span>
-                </td>
-                <td>{promotion.totalDiscount.toLocaleString()}đ</td>
-                <td>
-                  <button onClick={() => setSelectedPromotion(promotion)} className={styles.viewButton}>Chi tiết</button>
-                  <button onClick={() => deletePromotion(promotion.voucherId)} className={styles.deleteButton}>Xóa</button>
-                </td>
+        {/* Danh sách mã khuyến mãi */}
+        <div className={styles.promotionList}>
+          <h2>Danh sách mã khuyến mãi</h2>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Mã</th>
+                <th>Loại</th>
+                <th>Giá trị</th>
+                <th>Đơn tối thiểu</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày kết thúc</th>
+                <th>Lượt dùng</th>
+                <th>Mô tả</th>
+                <th>Thao tác</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {selectedPromotion && (
-          <div className={styles.modal}>
-            <div className={styles.modalContent}>
-              <span className={styles.closeButton} onClick={() => setSelectedPromotion(null)}>&times;</span>
-              <h2>Chi tiết khuyến mãi</h2>
-              <div className={styles.promotionDetails}>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Mã khuyến mãi:</span>
-                  <span className={styles.value}>{selectedPromotion.code}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Mô tả:</span>
-                  <span className={styles.value}>{selectedPromotion.description || '—'}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Đơn hàng tối thiểu:</span>
-                  <span className={styles.value}>{selectedPromotion.minOrder ? `${parseInt(selectedPromotion.minOrder).toLocaleString()}đ` : 'Không giới hạn'}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Lượt sử dụng:</span>
-                  <span className={styles.value}>{selectedPromotion.usageCount}{selectedPromotion.usageLimit ? `/${selectedPromotion.usageLimit}` : ''}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Tổng giảm giá:</span>
-                  <span className={styles.value}>{selectedPromotion.totalDiscount.toLocaleString()}đ</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {filteredPromotions.length === 0 && (
-          <div className={styles.noPromotions}>
-            <p>Không có khuyến mãi nào{filterStatus !== 'all' ? ` ${filterStatus}` : ''}.</p>
-          </div>
-        )}
+            </thead>
+            <tbody>
+              {promotions.map((promo) => (
+                <tr key={promo._id}>
+                  <td>{promo.code}</td>
+                  <td>{promo.type === "percentage" ? "%" : "VNĐ"}</td>
+                  <td>{promo.value}</td>
+                  <td>{promo.minOrder}</td>
+                  <td>{new Date(promo.startDate).toLocaleString()}</td>
+                  <td>{new Date(promo.endDate).toLocaleString()}</td>
+                  <td>{promo.usageLimit}</td>
+                  <td>{promo.description}</td>
+                  <td>
+                    <button
+                      onClick={() => removePromotion(promo._id, promo.code)}
+                      className={styles.deleteBtn}
+                    >
+                      Xoá
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );
-};
-
-PromotionManager.propTypes = {
-  orders: PropTypes.arrayOf(PropTypes.shape({
-    promotionCode: PropTypes.string,
-    discountAmount: PropTypes.number,
-  })).isRequired,
 };
 
 export default PromotionManager;
