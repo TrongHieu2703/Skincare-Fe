@@ -1,9 +1,12 @@
 /* filepath: e:\Skincare-Fe\staff\pages3\StaffProduct.css */
 .dashboard-container {
-    margin-top: 1500px;
+    padding-top: 20px;
+    /* hoặc 60px nếu có header */
+    margin-top: 0;
     display: flex;
     background-color: #ffffff;
 }
+
 
 .dashboard-content {
     margin-left: 20px;

@@ -1,4 +1,5 @@
 .staff-container {
+    padding-top: -1000px;
     display: flex;
 }
 
