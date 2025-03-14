@@ -1,4 +1,7 @@
+import axios from 'axios';
 import axiosClient from './axiosClient';
+
+const API_URL = 'https://localhost:7290/api/Order';
 
 // Fetch all orders
 export const getAllOrders = async () => {
@@ -32,6 +35,6 @@ export const deleteOrder = async (orderId) => {
 
 // Update order status
 export const updateOrderStatus = async (orderId, status) => {
-  const response = await axiosClient.patch(`/Order/${orderId}/status`, { status });
+  const response = await axios.patch(`${API_URL}/${orderId}/status`, { status });
   return response.data;
 };
