@@ -1,7 +1,8 @@
+// src/pages/Profile.jsx
 import React, { useState, useEffect } from "react";
 import { getAccountInfo, updateAccountInfo } from "../api/accountApi";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import coverImage from "/src/assets/images/cover-image.png";
 import defaultAvatar from "/src/assets/images/profile-pic.png";
 import "/src/styles/Profile.css";
@@ -43,7 +44,7 @@ const Profile = () => {
       console.error("Error fetching user profile:", error);
       toast.error("Không thể tải thông tin người dùng");
       if (error.message === "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại") {
-        navigate('/login');
+        navigate("/login");
       }
     } finally {
       setLoading(false);
@@ -52,15 +53,15 @@ const Profile = () => {
 
   const getImageUrl = (avatarPath) => {
     if (!avatarPath) return defaultAvatar;
-    if (avatarPath.startsWith('data:image')) return avatarPath;
+    if (avatarPath.startsWith("data:image")) return avatarPath;
     return `${import.meta.env.VITE_API_URL}${avatarPath}`;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -82,9 +83,9 @@ const Profile = () => {
         const reader = new FileReader();
         reader.onloadend = () => {
           setPreviewImage(reader.result);
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
-            avatar: reader.result
+            avatar: reader.result,
           }));
           toast.success("Đã chọn ảnh mới. Nhấn 'Lưu thay đổi' để cập nhật.");
         };
@@ -102,7 +103,7 @@ const Profile = () => {
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           let width = img.width;
           let height = img.height;
           const maxSize = 800;
@@ -121,15 +122,21 @@ const Profile = () => {
 
           canvas.width = width;
           canvas.height = height;
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, width, height);
 
-          canvas.toBlob((blob) => {
-            resolve(new File([blob], file.name, {
-              type: 'image/jpeg',
-              lastModified: Date.now()
-            }));
-          }, 'image/jpeg', 0.8);
+          canvas.toBlob(
+            (blob) => {
+              resolve(
+                new File([blob], file.name, {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                })
+              );
+            },
+            "image/jpeg",
+            0.8
+          );
         };
         img.src = e.target.result;
       };
@@ -140,8 +147,8 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const hasChanges = Object.keys(formData).some(key =>
-      formData[key] !== originalData[key]
+    const hasChanges = Object.keys(formData).some(
+      (key) => formData[key] !== originalData[key]
     );
 
     if (!hasChanges) {
@@ -156,13 +163,12 @@ const Profile = () => {
       toast.success("Bạn đã thay đổi thông tin thành công!");
 
       setTimeout(() => setShowSuccess(false), 3000);
-
       await fetchUserProfile();
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error(error.message || "Không thể cập nhật thông tin");
       if (error.message === "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại") {
-        navigate('/login');
+        navigate("/login");
       }
     } finally {
       setSaving(false);
@@ -193,12 +199,12 @@ const Profile = () => {
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
             />
             Đổi ảnh
           </label>
         </div>
-        <h2>{formData.username || 'Chưa cập nhật tên'}</h2>
+        <h2>{formData.username || "Chưa cập nhật tên"}</h2>
         <p>{formData.email}</p>
       </div>
 
@@ -250,12 +256,8 @@ const Profile = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          className="save-btn"
-          disabled={saving}
-        >
-          {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
+        <button type="submit" className="save-btn" disabled={saving}>
+          {saving ? "Đang lưu..." : "Lưu thay đổi"}
         </button>
       </form>
     </div>

@@ -1,6 +1,8 @@
+// src/pages/Login.jsx (hoặc tương tự)
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api/authApi"; // loginUser gọi đến API như trên
+import { loginUser } from "../api/authApi";
+import { useAuth } from "../auth/AuthProvider"; // Import Hook từ Context
 import "/src/styles/Login.css";
 import logo from "/src/assets/images/logo.png";
 import googleIcon from "/src/assets/images/googleicon.png";
@@ -13,6 +15,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Lấy hàm login từ context
+  const { login } = useAuth();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -21,20 +26,24 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await loginUser(formData);
 
-      const { data } = response;
-      const { token, role, username, expiration } = data;
+      // Gọi API lấy userData + token
+      const { userData, token } = await loginUser({
+        email: formData.email,
+        password: formData.password
+      });
 
-      // Lưu token và user info vào localStorage
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify({ username, role, expiration }));
+      // Dùng hàm login của AuthContext để lưu user + token
+      login(userData, token);
+
 
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
 
+
+      // Chuyển trang sau 1.5s
       setTimeout(() => {
-        if (role === "Admin") {
+        if (userData.role === "Admin") {
           navigate("/admin/dashboard");
         } else {
           navigate("/");
