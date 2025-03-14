@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api/authApi";
+import { loginUser } from "../api/authApi"; // loginUser gọi đến API như trên
 import "/src/styles/Login.css";
 import logo from "/src/assets/images/logo.png";
 import googleIcon from "/src/assets/images/googleicon.png";
@@ -10,6 +10,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,27 +19,22 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await loginUser({
-        email: formData.email,
-        password: formData.password
-      });
+      const response = await loginUser(formData);
 
-      console.log("Phản hồi đăng nhập:", response);
-      localStorage.setItem("user", JSON.stringify({
-        id: response.id,
-        email: response.email,
-        username: response.username,
-        role: response.role,
-        avatar: response.avatar,
-        phoneNumber: response.phoneNumber,
-        address: response.address
-      }));
+      const { data } = response;
+      const { token, role, username, expiration } = data;
+
+      // Lưu token và user info vào localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify({ username, role, expiration }));
 
       setMessage("Đăng nhập thành công!");
       setShowToast(true);
+
       setTimeout(() => {
-        if (response.role === "Admin") {
+        if (role === "Admin") {
           navigate("/admin/dashboard");
         } else {
           navigate("/");
@@ -47,7 +43,9 @@ const Login = () => {
       }, 1500);
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
-      setMessage(error.message || "Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
+      setMessage("Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,8 +87,8 @@ const Login = () => {
             />
           </div>
 
-          <button type="submit" className="login-button">
-            Đăng nhập
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? "Đang xử lý..." : "Đăng nhập"}
           </button>
 
           <button type="button" className="google-button">
