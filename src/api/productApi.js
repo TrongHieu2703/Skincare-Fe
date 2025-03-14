@@ -5,7 +5,7 @@ const API_URL = "/Product";
 /**
  * Lấy tất cả sản phẩm với phân trang
  */
-export const getAllProducts = (pageNumber = 1, pageSize = 28) => {
+export const getAllProducts = (pageNumber = 1, pageSize = 20) => {
   return axiosClient.get(API_URL, {
     params: { pageNumber, pageSize },
   });
