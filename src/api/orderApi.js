@@ -1,18 +1,26 @@
+// src/api/orderApi.js
 import axios from 'axios';
 import axiosClient from './axiosClient';
 
 const API_URL = 'https://localhost:7290/api/Order';
 
-// Fetch all orders
+// Fetch all orders (Admin hoặc cho mục đích khác)
 export const getAllOrders = async () => {
   const response = await axiosClient.get('/Order');
   return response.data;
 };
 
-// Fetch order details by ID
+// Fetch order details by ID (cho trang chi tiết đơn hàng)
 export const getOrderDetail = async (orderId) => {
-  const response = await axiosClient.get(`/Order/${orderId}`);
-  return response.data;
+  const response = await axiosClient.get(`/Order/detail/${orderId}`);
+  return response.data.data;
+};
+
+// NEW: Fetch orders for the currently logged-in user
+export const getOrdersByUser = async () => {
+  const response = await axiosClient.get('/Order/user');
+  // Giả sử server trả về dạng: { message: "...", data: [...] }
+  return response.data.data;
 };
 
 // Create a new order

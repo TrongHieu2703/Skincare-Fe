@@ -1,7 +1,7 @@
 // src/pages/OrderHistory.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getOrderDetail } from "../api/orderApi"; // Đảm bảo tên hàm đúng
+import { getOrdersByUser } from "../api/orderApi"; // Sử dụng hàm mới
 import { useAuth } from "../auth/AuthProvider";
 import { FaShoppingBag, FaCalendarAlt, FaBox } from "react-icons/fa";
 import "/src/styles/OrderHistory.css";
@@ -22,13 +22,13 @@ const OrderHistory = () => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        // Lấy dữ liệu order trực tiếp vì hàm getOrderDetail trả về data
-        const orderDetail = await getOrderDetail(13);
-        console.log("API order details data:", orderDetail); // debug
-        if (orderDetail && orderDetail.totalAmount) {
-          setOrders([orderDetail]);
+        // Lấy danh sách đơn hàng của user
+        const ordersData = await getOrdersByUser();
+        console.log("API orders data:", ordersData); // Debug log
+        if (Array.isArray(ordersData)) {
+          setOrders(ordersData);
         } else {
-          console.error("Expected order details but received:", orderDetail);
+          console.error("Expected an array of orders but received:", ordersData);
         }
       } catch (err) {
         setError("Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.");
