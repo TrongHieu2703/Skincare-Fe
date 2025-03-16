@@ -53,8 +53,35 @@ export const getAccountInfo = async () => {
         Authorization: `Bearer ${token}`
       }
     });
-    return res.data.data; // Trả về object user info
+    
+    // Đảm bảo token vẫn còn sau khi API call
+    const currentToken = localStorage.getItem('token');
+    if (!currentToken && token) {
+      localStorage.setItem('token', token); // Restore token nếu bị mất
+    }
+    
+    // Cập nhật localStorage với thông tin mới
+    const userData = res.data.data;
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    const updatedUser = {
+      ...currentUser,
+      username: userData.username,
+      email: userData.email,
+      avatar: userData.avatar,
+      phoneNumber: userData.phoneNumber,
+      address: userData.address
+    };
+    
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    return userData; 
   } catch (error) {
+    // Chỉ remove token nếu là lỗi 401 Unauthorized
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      throw new Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+    }
     throw new Error(error.response?.data?.message || "Lỗi khi lấy thông tin tài khoản");
   }
 };
@@ -93,5 +120,67 @@ export const createAccount = async (newAccountData) => {
   } catch (error) {
     console.error("Lỗi khi tạo tài khoản:", error);
     throw new Error(error.response?.data?.message || "Lỗi không xác định khi tạo tài khoản");
+  }
+};
+
+// Thêm hàm mới vào accountApi.js
+export const uploadAvatar = async (avatarFile) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error("Chưa đăng nhập");
+
+    const formData = new FormData();
+    formData.append('avatar', avatarFile);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+
+    const res = await axiosClient.post("/Account/upload-avatar", formData, config);
+    return res.data; // Trả về object chứa avatarUrl
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi upload ảnh đại diện");
+  }
+};
+
+// Thêm hàm update profile với avatar
+export const updateProfileWithAvatar = async (profileData, avatarFile) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error("Chưa đăng nhập");
+
+    const formData = new FormData();
+    formData.append('username', profileData.username || '');
+    formData.append('email', profileData.email || '');
+    formData.append('address', profileData.address || '');
+    formData.append('phoneNumber', profileData.phoneNumber || '');
+    
+    if (avatarFile) {
+      formData.append('avatar', avatarFile);
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+
+    console.log("Sending profile update request", { profileData, hasAvatar: !!avatarFile });
+    const res = await axiosClient.put("/Account/update-profile-with-avatar", formData, config);
+    
+    // Đảm bảo lưu token không bị mất
+    const currentToken = localStorage.getItem('token');
+    if (!currentToken && token) {
+      localStorage.setItem('token', token); // Restore token nếu bị mất
+    }
+    
+    return res.data;
+  } catch (error) {
+    console.error("Profile update error:", error);
+    throw new Error(error.response?.data?.message || "Lỗi khi cập nhật thông tin");
   }
 };

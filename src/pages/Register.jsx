@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../api/authApi";
+import { registerWithAvatar } from "../api/authApi";
 import { toast } from 'react-toastify';
 import { FaUser, FaEnvelope, FaLock, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
 import defaultAvatar from "/src/assets/images/profile-pic.png";
@@ -16,8 +16,8 @@ const Register = () => {
         confirmPassword: "",
         phoneNumber: "",
         address: "",
-        avatar: "",
     });
+    const [avatarFile, setAvatarFile] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
 
     const handleChange = (e) => {
@@ -45,13 +45,11 @@ const Register = () => {
 
             try {
                 const optimizedImage = await resizeImage(file);
+                setAvatarFile(optimizedImage);
+
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     setPreviewImage(reader.result);
-                    setFormData(prev => ({
-                        ...prev,
-                        avatar: reader.result
-                    }));
                     toast.success("Đã chọn ảnh đại diện");
                 };
                 reader.readAsDataURL(optimizedImage);
@@ -113,12 +111,12 @@ const Register = () => {
 
         try {
             setLoading(true);
-            await registerUser(formData);
+            await registerWithAvatar(formData, avatarFile);
             toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
             navigate('/login');
         } catch (error) {
             console.error("Registration error:", error);
-            toast.error(error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.");
+            toast.error(error.message || "Đăng ký thất bại. Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }

@@ -34,6 +34,13 @@ export const loginUser = async (credentials) => {
       address: response.data.data.address
     };
 
+    // Thêm log để debug
+    console.log("Login - Avatar URL:", userData.avatar);
+
+    // Lưu token và user vào localStorage
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
+
     // Trả về dữ liệu để component tự gọi login()
     return { userData, token };
   } catch (error) {
@@ -41,6 +48,7 @@ export const loginUser = async (credentials) => {
     throw error.response ? error.response.data : error.message;
   }
 };
+
 export const logoutUser = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
@@ -54,4 +62,34 @@ export const checkAuthStatus = () => {
     isAuthenticated: !!token && !!user,
     user: user ? JSON.parse(user) : null,
   };
+};
+
+// Thêm hàm mới vào authApi.js
+export const registerWithAvatar = async (userData, avatarFile) => {
+  try {
+    // Tạo FormData object để gửi dữ liệu dạng multipart/form-data
+    const formData = new FormData();
+    formData.append('username', userData.username);
+    formData.append('email', userData.email);
+    formData.append('password', userData.password);
+    formData.append('phoneNumber', userData.phoneNumber || '');
+    formData.append('address', userData.address || '');
+    
+    // Chỉ thêm avatar nếu có file
+    if (avatarFile) {
+      formData.append('avatar', avatarFile);
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+
+    const response = await axiosClient.post("/Authentication/register-with-avatar", formData, config);
+    return response.data;
+  } catch (error) {
+    console.error("Register with avatar error:", error);
+    throw error.response ? error.response.data : error.message;
+  }
 };
