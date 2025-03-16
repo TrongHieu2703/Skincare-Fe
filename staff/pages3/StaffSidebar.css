@@ -1,8 +1,10 @@
 .sidebar {
-    width: 220px;
+    width: 300px;
     height: 100vh;
-    background-color: #165e34b2;
-    color: #fff;
+    background-color: #638d73;
+    /* White background */
+    color: #ffffff;
+    /* Dark green text */
     position: fixed;
     top: 0;
     left: 0;
@@ -26,7 +28,8 @@
 }
 
 .sidebar-menu a {
-    color: #cbd5e1;
+    color: #165e34;
+    /* Dark green text */
     text-decoration: none;
     padding: 8px 12px;
     display: block;
@@ -39,6 +42,8 @@
 
 .sidebar-menu a:hover,
 .sidebar-menu a.active {
-    background-color: #334155;
-    color: #fff;
+    background-color: #e6f4ea;
+    /* Light green hover */
+    color: #165e34;
+    /* Dark green text */
 }

@@ -39,7 +39,7 @@ import CustomerManager from "/admin/admin/pages2/CustomerManager";
 // Staff pages
 import StaffDashboard from "/staff/pages3/StaffDashboard";
 import StaffOrder from "/staff/pages3/StaffOrder";
-import StaffProdcut from "/staff/pages3/StaffProduct";
+import StaffProduct from "/staff/pages3/StaffProduct";
 import StaffUser from "/staff/pages3/StaffUser";
 
 // Memoize AppContent to prevent unnecessary rerenders
@@ -99,7 +99,7 @@ const AppContent = memo(function AppContent() {
             {/* Staff routes */}
             <Route path="/staff/dashboard" element={<StaffDashboard />} />
             <Route path="/staff/orders" element={<StaffOrder />} />
-            <Route path="/staff/products" element={<StaffProdcut />} />
+            <Route path="/staff/products" element={<StaffProduct />} />
             <Route path="/staff/user" element={<StaffUser />} />
             {/* 404 */}
             <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />

@@ -90,3 +90,9 @@ export const clearCart = async () => {
     throw error;
   }
 };
+
+// Xóa toàn bộ giỏ hàng của user
+export const clearCart = async () => {
+  const response = await axiosClient.delete("/cart/clear");
+  return response.data;
+};

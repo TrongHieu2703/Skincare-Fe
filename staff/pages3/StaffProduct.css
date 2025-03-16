@@ -1,9 +1,17 @@
 /* filepath: e:\Skincare-Fe\staff\pages3\StaffProduct.css */
 .dashboard-container {
-    margin-top: 1500px;
+    padding-top: 20px;
+    /* hoặc 60px nếu có header */
+    margin-top: 0;
     display: flex;
     background-color: #ffffff;
+    /* White background */
+    width: 100vw;
+    /* Full width */
+    height: 100vh;
+    /* Full height */
 }
+
 
 .dashboard-content {
     margin-left: 20px;
@@ -19,19 +27,26 @@
 
 .title {
     font-size: 28px;
-    color: #1e293b;
+    color: #165e34;
+    /* Dark green color */
     text-align: center;
     margin-bottom: 20px;
     font-weight: bold;
 }
 
 .product-table {
-    width: 100%;
+    width: 60%;
+    /* Reduced width */
+    /* Slightly smaller table */
     border-collapse: collapse;
     margin-top: 20px;
+    margin-left: auto;
+    margin-right: 20px;
+    /* Further align to the right */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     overflow: hidden;
+    background-color: #ffffff;
 }
 
 .product-table th,
@@ -44,7 +59,8 @@
 }
 
 .product-table th {
-    background-color: #e2e8f0;
+    background-color: #d1e7dd;
+    /* Light green header */
     color: #333;
     font-weight: bold;
 }
@@ -54,7 +70,8 @@
 }
 
 .product-table tr:hover {
-    background-color: #f1f5f9;
+    background-color: #e6f4ea;
+    /* Light green hover */
 }
 
 .product-image {
