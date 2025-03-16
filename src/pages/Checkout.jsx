@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createOrder } from '../api/orderApi';
 import '/src/styles/Checkout.css';
-import { getAccountInfo } from '../api/accountApi';
-import { updateAccountInfo } from '../api/accountApi';
+import { getAccountInfo, updateAccountInfo } from '../api/accountApi';
 import { useAuth } from '../auth/AuthProvider';
+import { useCart } from "../store/CartContext";
 
 // Payment Method Component
 // Add this formatter function at the top after imports
@@ -110,6 +110,9 @@ const Checkout = () => {
 
   // Thêm useAuth
   const { user, isAuthenticated } = useAuth();
+
+  // Thêm useCart
+  const { clearCart } = useCart();
 
   // Cập nhật useEffect
   useEffect(() => {
@@ -273,34 +276,42 @@ const Checkout = () => {
 
       // Giả lập quá trình thanh toán
       await simulatePayment(paymentMethod, orderData);
+      
+      try {
+        // Clear the cart after successful order
+        await clearCart();
+        console.log("Cart cleared successfully after order");
+      } catch (clearError) {
+        console.error("Failed to clear cart, but order was successful:", clearError);
+        // We don't want to block the order success flow if cart clearing fails
+      }
 
       // Sau khi thanh toán thành công, chuyển hướng đến trang chi tiết đơn hàng
       navigate(`/order/${response.id}`, {
         state: {
           orderId: response.id,
-          paymentSuccess: true,
-          paymentMethod: paymentMethod
+          paymentSuccess: true
         }
       });
     } catch (error) {
-      console.error('Error creating order:', error);
-
-      // Xử lý lỗi chi tiết hơn
-      if (error.errors) {
-        const errorMessages = Object.values(error.errors).flat().join(', ');
-        setErrorMessage('Lỗi khi tạo đơn hàng: ' + errorMessages);
-      } else if (error.message) {
-        setErrorMessage('Lỗi khi tạo đơn hàng: ' + error.message);
-      } else {
-        setErrorMessage('Lỗi khi tạo đơn hàng');
-      }
-    } finally {
+      console.error("Error creating order:", error);
+      setErrorMessage(
+        error.response?.data?.message ||
+        "Đã xảy ra lỗi khi đặt hàng. Vui lòng thử lại sau."
+      );
       setLoading(false);
     }
   };
 
   return (
     <div className="order-detail-page">
+      {loading && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <p>Đang xử lý đơn hàng của bạn...</p>
+        </div>
+      )}
+      
       <div className="order-detail-container">
         <div className="order-detail-left">
           <h2>Thông Tin Giao Hàng</h2>

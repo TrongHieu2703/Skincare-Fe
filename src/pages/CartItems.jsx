@@ -1,90 +1,60 @@
 // src/pages/CartItems.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
-import { getCartByUser, updateCart, deleteCartItem } from "../api/cartApi";
+import { useCart } from "../store/CartContext";
 import "/src/styles/CartItems.css";
 
 const CartItems = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { 
+    cartItems, 
+    loading, 
+    error, 
+    subtotal,
+    formatPrice,
+    updateCartItem,
+    removeCartItem,
+    loadCartItems
+  } = useCart();
 
-  const formatVND = (amount) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
-    }).format(amount);
-  };
-
-  // Lấy cart từ server
+  // Load cart items when component mounts - FIX: Add empty dependency array
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const response = await getCartByUser(); // Corrected function name
-        console.log("API cart data:", response.data); // debug
-        if (Array.isArray(response.data)) {
-          setCartItems(response.data); // đảm bảo gán đúng ở đây
-        } else {
-          console.error("Expected an array but received:", response.data);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy giỏ hàng:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCart();
-  }, []);
-
-
-  // Cập nhật số lượng
-  const updateQuantity = async (cartId, productId, change) => {
-    const updatedItems = cartItems.map((item) => {
-      if (item.cartId === cartId) {
-        const newQty = Math.max(1, item.quantity + change);
-        return { ...item, quantity: newQty };
-      }
-      return item;
-    });
-    setCartItems(updatedItems);
-
-    const itemToUpdate = updatedItems.find((item) => item.cartId === cartId);
-    if (itemToUpdate) {
-      try {
-        await updateCart(itemToUpdate.cartId, productId, itemToUpdate.quantity);
-      } catch (err) {
-        console.error("Error updating cart:", err);
-      }
-    }
-  };
-
-  // Xóa item
-  const removeItem = async (cartId) => {
-    try {
-      await deleteCartItem(cartId);
-      setCartItems(cartItems.filter((item) => item.cartId !== cartId));
-    } catch (error) {
-      console.error("Error deleting cart item:", error);
-    }
-  };
-
-  // ✅ Sửa lỗi reduce bằng cách đảm bảo cartItems là mảng
-  const subtotal = cartItems.reduce((sum, item) => {
-    const price = item.product?.price ?? 0;
-    return sum + price * item.quantity;
-  }, 0);
+    // Only load cart items once when component mounts
+    loadCartItems();
+    // Adding empty dependency array to prevent infinite loops
+  }, []); // <-- Empty dependency array ensures this runs only once
 
   const shippingFee = 30000;
   const total = subtotal + shippingFee;
 
+  // Update quantity
+  const updateQuantity = async (cartId, productId, change, currentQuantity) => {
+    const newQuantity = Math.max(1, currentQuantity + change);
+    await updateCartItem(cartId, productId, newQuantity);
+  };
+
+  // Handle checkout
   const handleCheckout = () => {
     navigate("/Checkout", { state: { cartItems, subtotal, shippingFee, total } });
   };
 
   if (loading) {
-    return <h2>Đang tải giỏ hàng...</h2>;
+    return (
+      <div className="loading-container">
+        <h2>Đang tải giỏ hàng...</h2>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Có lỗi xảy ra</h2>
+        <p>{error}</p>
+        <button onClick={loadCartItems}>Thử lại</button>
+      </div>
+    );
   }
 
   return (
@@ -120,27 +90,27 @@ const CartItems = () => {
                     <div className="item-details">
                       <h3>{productName}</h3>
                       <div className="item-price">
-                        {formatVND(productPrice)}
+                        {formatPrice(productPrice)}
                       </div>
                       <div className="item-total">
-                        Thành tiền: {formatVND(productPrice * item.quantity)}
+                        Thành tiền: {formatPrice(productPrice * item.quantity)}
                       </div>
                     </div>
 
                     <div className="item-controls">
                       <div className="quantity-controls">
                         <button
-                          onClick={() => updateQuantity(item.cartId, item.productId, -1)}
+                          onClick={() => updateQuantity(item.cartId, item.productId, -1, item.quantity)}
                           disabled={item.quantity <= 1}
                         >
                           <FaMinus />
                         </button>
                         <span>{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.cartId, item.productId, 1)}>
+                        <button onClick={() => updateQuantity(item.cartId, item.productId, 1, item.quantity)}>
                           <FaPlus />
                         </button>
                       </div>
-                      <button className="remove-button" onClick={() => removeItem(item.cartId)}>
+                      <button className="remove-button" onClick={() => removeCartItem(item.cartId)}>
                         <FaTrash /> Xóa
                       </button>
                     </div>
@@ -153,15 +123,15 @@ const CartItems = () => {
               <h3>Tóm Tắt Đơn Hàng</h3>
               <div className="summary-row">
                 <span>Tổng Tạm Tính</span>
-                <span>{formatVND(subtotal)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
               <div className="summary-row">
                 <span>Phí Vận Chuyển</span>
-                <span>{formatVND(shippingFee)}</span>
+                <span>{formatPrice(shippingFee)}</span>
               </div>
               <div className="summary-row total">
                 <span>Tổng Cộng</span>
-                <span>{formatVND(total)}</span>
+                <span>{formatPrice(total)}</span>
               </div>
               <button
                 className="checkout-button"

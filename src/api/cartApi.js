@@ -24,3 +24,9 @@ export const updateCart = async (cartId, productId, quantity) => {
 export const deleteCartItem = async (cartId) => {
   await axiosClient.delete(`/cart/${cartId}`);
 };
+
+// Xóa toàn bộ giỏ hàng của user
+export const clearCart = async () => {
+  const response = await axiosClient.delete("/cart/clear");
+  return response.data;
+};

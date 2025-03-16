@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUserCircle, FaHistory } from "react-icons/fa";
-import { getCartByUser } from "../api/cartApi";
 import { searchProducts } from "../api/productApi";
+import { useCart } from "../store/CartContext";
+import { useAuth } from "../auth/AuthProvider";
 import "/src/styles/Navbar.css";
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false); // State to track dropdown visibility
-    const [cartCount, setCartCount] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
+    
+    // Use cart context instead of local state
+    const { cartCount, loadCartItems } = useCart();
+    const { isAuthenticated } = useAuth();
 
     useEffect(() => {
         const loggedUser = localStorage.getItem("user");
@@ -23,21 +27,20 @@ const Navbar = () => {
         if (loggedUser && token) {
             const parsedUser = JSON.parse(loggedUser);
             setUser(parsedUser);
-
-            getCartByUser()  // ✅ Gọi đúng tên hàm
-                .then((data) => setCartCount(data.length))
-                .catch((err) => console.error("❌ Error fetching cart:", err));
+            
+            // Load cart items when user is authenticated
+            if (isAuthenticated) {
+                loadCartItems();
+            }
         } else {
             setUser(null);
-            setCartCount(0);
         }
-    }, [location]);
+    }, [location, isAuthenticated, loadCartItems]);
 
     const handleLogout = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         setUser(null);
-        setCartCount(0); // Clear cart count
         navigate("/");
     };
 
