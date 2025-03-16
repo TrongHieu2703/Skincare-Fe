@@ -1,16 +1,22 @@
 .container {
     margin-top: 20px;
-    background-color: #fff;
+    background-color: #ffffff;
+    /* White background */
     padding: 25px;
     border-radius: 10px;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+    width: 100vw;
+    /* Full width */
+    height: 100vh;
+    /* Full height */
 }
 
 h2 {
     text-align: center;
     margin-bottom: 20px;
     font-weight: bold;
-    color: #333;
+    color: #165e34;
+    /* Dark green color */
 }
 
 .table {
@@ -27,8 +33,14 @@ h2 {
 }
 
 .table th {
-    background-color: #f2f2f2;
+    background-color: #d1e7dd;
+    /* Light green header */
     font-weight: 600;
+}
+
+.table tr:hover {
+    background-color: #e6f4ea;
+    /* Light green hover */
 }
 
 .status-badge {
@@ -68,12 +80,14 @@ h2 {
 }
 
 .edit-btn {
-    background-color: #007bff;
+    background-color: #28a745;
+    /* Light green */
     color: white;
 }
 
 .edit-btn:hover {
-    background-color: #0056b3;
+    background-color: #218838;
+    /* Darker green */
 }
 
 .delete-btn {

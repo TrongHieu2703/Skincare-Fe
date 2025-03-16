@@ -1,19 +1,23 @@
 .staff-container {
-    padding-top: -1000px;
+    padding-top: 0;
     display: flex;
+    width: 100vw;
+    height: 100vh;
 }
 
 .staff-content {
     margin-left: 220px;
     padding: 30px;
     width: 100%;
-    background-color: #f8fafc;
+    background-color: #ffffff;
+    /* White background */
     min-height: 100vh;
 }
 
 .staff-content h1 {
     font-size: 28px;
-    color: #1e293b;
+    color: #165e34;
+    /* Dark green color */
 }
 
 .staff-content p {
@@ -22,10 +26,11 @@
 }
 
 .dashboard-container {
-    margin-left: 220px;
-    /* Adjust based on sidebar width */
+    margin-left: 260px;
+    /* Further increase margin to move content to the right */
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
+    /* White background */
     min-height: 100vh;
 }
 
@@ -48,11 +53,13 @@
 .stat-card h3 {
     margin-bottom: 10px;
     font-size: 18px;
-    color: #333;
+    color: #165e34;
+    /* Dark green color */
 }
 
 .stat-card p {
     font-size: 24px;
     font-weight: bold;
     color: #165e34;
+    /* Dark green color */
 }

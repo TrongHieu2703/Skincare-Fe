@@ -1,9 +1,12 @@
+/* Vùng chứa chính */
 .section {
-  margin-top: -1700px;
+  margin-top: 20px;
+  margin-bottom: 40px;
   padding: 20px;
   width: 100%;
 }
 
+/* Form tạo mã */
 .form {
   margin-bottom: 20px;
   display: flex;
@@ -53,6 +56,7 @@
   background-color: #2ecc71;
 }
 
+/* Bộ lọc */
 .filterContainer {
   margin-bottom: 20px;
   display: flex;
@@ -73,6 +77,7 @@
   font-size: 16px;
 }
 
+/* Bảng danh sách */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -95,6 +100,7 @@
   color: #2c3e50;
 }
 
+/* Badge trạng thái */
 .statusBadge {
   padding: 4px 8px;
   border-radius: 12px;
@@ -103,6 +109,7 @@
   display: inline-block;
 }
 
+/* Nút xem / xoá */
 .viewButton,
 .deleteButton {
   padding: 6px 12px;
@@ -131,6 +138,7 @@
   background-color: #c0392b;
 }
 
+/* Modal chi tiết */
 .modal {
   position: fixed;
   top: 0;
@@ -187,6 +195,7 @@
   color: #2c3e50;
 }
 
+/* Khi không có khuyến mãi */
 .noPromotions {
   text-align: center;
   padding: 30px;
