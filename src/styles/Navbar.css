@@ -21,7 +21,8 @@ body {
     width: 100%;
     box-sizing: border-box;
     z-index: 1000;
-    height: 70px; /* Fixed consistent height */
+    height: 70px;
+    /* Fixed consistent height */
     transition: all 0.3s ease;
 }
 
@@ -29,7 +30,8 @@ body {
 .navbar.scrolled {
     background: linear-gradient(to right, rgba(221, 243, 236, 1), rgba(132, 167, 155, 1)) !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    height: 60px; /* Slightly smaller when scrolled */
+    height: 60px;
+    /* Slightly smaller when scrolled */
 }
 
 /* Logo section */
@@ -81,7 +83,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 36px; /* Fixed height for links */
+    height: 36px;
+    /* Fixed height for links */
 }
 
 .nav-links a:hover {
@@ -102,18 +105,18 @@ body {
 .search-container {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0);
     border-radius: 20px;
     padding: 0.5rem 1rem;
-    width: 220px;
-    border: 1px solid rgba(46, 125, 50, 0.2);
+    width: 600px;
+    border: 1px solid rgba(46, 125, 50, 0);
     transition: all 0.3s ease;
 }
 
 .search-container:focus-within {
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
-    width: 240px;
+    background: rgba(181, 216, 189, 0);
+    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0);
+    width: 600px;
 }
 
 .search-icon {
@@ -230,7 +233,8 @@ body {
 
 .cart-popup {
     position: absolute;
-    top: 48px; /* Adjust down from the navbar */
+    top: 48px;
+    /* Adjust down from the navbar */
     right: 0;
     width: 350px;
     background: white;
@@ -307,6 +311,7 @@ body {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -447,6 +452,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

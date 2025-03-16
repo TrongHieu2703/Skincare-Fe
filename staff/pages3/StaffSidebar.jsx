@@ -29,8 +29,13 @@ const StaffSidebar = () => {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/staff/reports">
-                        <FaChartBar /> Báo cáo
+                    <NavLink to="/staff/blogs">
+                        <FaChartBar /> Quản lý bài đăng
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/staff/vounchers">
+                        <FaChartBar /> Quản lý khuyến mãi
                     </NavLink>
                 </li>
                 <li>

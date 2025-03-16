@@ -41,6 +41,8 @@ import StaffDashboard from "/staff/pages3/StaffDashboard";
 import StaffOrder from "/staff/pages3/StaffOrder";
 import StaffProduct from "/staff/pages3/StaffProduct";
 import StaffUser from "/staff/pages3/StaffUser";
+import StaffBlog from "/staff/pages3/StaffBlog";
+import StaffVouncher from "/staff/pages3/StaffVouncher";
 
 // Memoize AppContent to prevent unnecessary rerenders
 const AppContent = memo(function AppContent() {
@@ -101,6 +103,8 @@ const AppContent = memo(function AppContent() {
             <Route path="/staff/orders" element={<StaffOrder />} />
             <Route path="/staff/products" element={<StaffProduct />} />
             <Route path="/staff/user" element={<StaffUser />} />
+            <Route path="/staff/blogs" element={<StaffBlog />} />
+            <Route path="/staff/vounchers" element={<StaffVouncher />} />
             {/* 404 */}
             <Route path="*" element={<h1>404 - Không tìm thấy trang</h1>} />
           </Routes>
@@ -115,7 +119,7 @@ const AppContent = memo(function AppContent() {
 
 function App() {
   console.log("Rendering App component");
-  
+
   return (
     <Router>
       <AuthProvider>
