@@ -2,11 +2,10 @@
 body,
 html {
     background-color: #ffffff;
-    min-height: 100vh;
+    height: 100vh;
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 .title-container {
@@ -23,21 +22,23 @@ html {
 
 /* Container chính */
 .login-container {
-    margin-top: -800px;
+    min-height: 100vh;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    border-radius: 15px;
+    padding: 80px 20px;
+    /* Added top padding to account for navbar */
     background: linear-gradient(to right, #287c6a, #ffffff);
     gap: 40px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    padding: 20px;
 }
 
 .container {
     width: 100%;
     max-width: 100%;
+    padding-top: 60px;
+    /* Added to prevent navbar overlap */
 }
 
 /* Hộp chứa form đăng nhập */
@@ -315,4 +316,33 @@ html {
 .input-group input:focus {
     transform: translateY(-2px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced responsive design for desktop */
+@media (min-width: 1200px) {
+    .login-container {
+        padding: 100px 40px;
+    }
+
+    .login-box {
+        max-width: 450px;
+    }
+
+    .login-image {
+        max-width: 600px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .login-container {
+        padding: 120px 60px;
+    }
+
+    .login-box {
+        max-width: 500px;
+    }
+
+    .login-image {
+        max-width: 700px;
+    }
 }
