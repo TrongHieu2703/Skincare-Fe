@@ -1,43 +1,73 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaSearch, FaShoppingCart, FaUserCircle, FaHistory } from "react-icons/fa";
-import { getCartByUser } from "../api/cartApi";
+import { FaSearch, FaShoppingCart, FaUserCircle, FaHistory, FaTrash, FaEye, FaSpinner } from "react-icons/fa";
 import { searchProducts } from "../api/productApi";
+import { useCart } from "../store/CartContext";
+import { useAuth } from "../auth/AuthProvider";
 import "/src/styles/Navbar.css";
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false); // State to track dropdown visibility
-    const [cartCount, setCartCount] = useState(0);
+    const [cartPopupVisible, setCartPopupVisible] = useState(false); // State for cart popup
+    const [scrolled, setScrolled] = useState(false); // Track scroll position
     const navigate = useNavigate();
     const location = useLocation();
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
+    // State để theo dõi item đang được xóa
+    const [removingItems, setRemovingItems] = useState({});
+    
+    // Use cart context instead of local state
+    const { cartItems, cartData, subtotal, formatPrice, removeCartItem } = useCart();
+    const { isAuthenticated } = useAuth();
+
+    // Add scroll listener to change navbar style on scroll
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY;
+            if (scrollPosition > 50) {
+                setScrolled(true);
+            } else {
+                setScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Debug cart count
+    useEffect(() => {
+        console.log("Navbar - cartItems:", cartItems);
+        console.log("Navbar - cartCount:", cartItems.length);
+    }, [cartItems]);
 
     useEffect(() => {
         const loggedUser = localStorage.getItem("user");
         const token = localStorage.getItem("token");
 
         if (loggedUser && token) {
-            const parsedUser = JSON.parse(loggedUser);
-            setUser(parsedUser);
-
-            getCartByUser()  // ✅ Gọi đúng tên hàm
-                .then((data) => setCartCount(data.length))
-                .catch((err) => console.error("❌ Error fetching cart:", err));
+            try {
+                const parsedUser = JSON.parse(loggedUser);
+                setUser(parsedUser);
+            } catch (error) {
+                console.error("Error parsing user data:", error);
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                setUser(null);
+            }
         } else {
             setUser(null);
-            setCartCount(0);
         }
-    }, [location]);
+    }, [location, isAuthenticated]);
 
     const handleLogout = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         setUser(null);
-        setCartCount(0); // Clear cart count
         navigate("/");
     };
 
@@ -46,16 +76,62 @@ const Navbar = () => {
         setDropdownOpen((prev) => !prev); // Toggle dropdown visibility
     };
 
+    // Toggle cart popup
+    const toggleCartPopup = (e) => {
+        e.preventDefault(); // Prevent navigation to cart page when clicking the icon
+        e.stopPropagation();
+        setCartPopupVisible((prev) => !prev); // Toggle cart popup
+    };
+
     const handleClickOutside = (e) => {
         if (!e.target.closest('.user-menu') && dropdownOpen) {
             setDropdownOpen(false); // Close dropdown if clicked outside
         }
+        
+        // Close cart popup if clicked outside
+        if (!e.target.closest('.cart-popup-container') && cartPopupVisible) {
+            setCartPopupVisible(false);
+        }
+    };
+
+    // Handle cart item view details
+    const handleViewItem = (productId) => {
+        setCartPopupVisible(false);
+        navigate(`/product/${productId}`);
+    };
+
+    // Handle remove item with loading state
+    const handleRemoveItem = async (itemId) => {
+        try {
+            // Set loading state cho item này
+            setRemovingItems(prev => ({ ...prev, [itemId]: true }));
+            
+            // Gọi API để xóa item
+            await removeCartItem(itemId);
+            
+            // Hiển thị thông báo thành công (tùy chọn)
+            // Không cần làm gì thêm vì CartContext đã tự động cập nhật state
+        } catch (error) {
+            console.error("Error removing item:", error);
+            // Có thể hiển thị thông báo lỗi ở đây
+        } finally {
+            // Reset loading state sau khi hoàn thành
+            setTimeout(() => {
+                setRemovingItems(prev => ({ ...prev, [itemId]: false }));
+            }, 300);
+        }
+    };
+
+    // Handle view cart
+    const handleViewCart = () => {
+        setCartPopupVisible(false);
+        navigate('/cart-items');
     };
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [dropdownOpen]);
+    }, [dropdownOpen, cartPopupVisible]);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
@@ -102,7 +178,7 @@ const Navbar = () => {
     }, []);
 
     return (
-        <nav className="navbar">
+        <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
             {/* Logo Section */}
             <div className="navbar-left">
                 <div className="navbar-logo" onClick={() => navigate("/")}>
@@ -170,12 +246,98 @@ const Navbar = () => {
 
             {/* User Actions */}
             <div className="navbar-right">
-                <Link to="/cart-items" className="cart-link">
-                    <div className="cart-icon-container">
+                <div className="cart-popup-container">
+                    <div 
+                        className="cart-icon-container"
+                        onClick={toggleCartPopup}
+                    >
                         <FaShoppingCart className="cart-icon" />
-                        {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                        {cartItems.length > 0 && <span className="cart-count">{cartItems.length}</span>}
                     </div>
-                </Link>
+
+                    {/* Cart Popup */}
+                    {cartPopupVisible && (
+                        <div className="cart-popup">
+                            <div className="cart-popup-header">
+                                <h3>Giỏ hàng của bạn ({cartItems.length})</h3>
+                            </div>
+                            <div className="cart-popup-items">
+                                {cartItems.length === 0 ? (
+                                    <div className="empty-cart-message">
+                                        Giỏ hàng trống
+                                    </div>
+                                ) : (
+                                    <>
+                                        {cartItems.slice(0, 3).map((item) => {
+                                            const isRemoving = removingItems[item.id];
+                                            
+                                            return (
+                                                <div key={item.id} className={`cart-popup-item ${isRemoving ? 'removing' : ''}`}>
+                                                    <div className="item-image">
+                                                        <img 
+                                                            src={item.productImage || "https://via.placeholder.com/50"} 
+                                                            alt={item.productName}
+                                                        />
+                                                    </div>
+                                                    <div className="item-details">
+                                                        <div className="item-name">{item.productName}</div>
+                                                        <div className="item-price-qty">
+                                                            <span>{formatPrice(item.productPrice)}</span>
+                                                            <span>x{item.quantity}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="item-actions">
+                                                        <button 
+                                                            className="action-btn view"
+                                                            onClick={() => handleViewItem(item.productId)}
+                                                            title="Xem chi tiết"
+                                                            disabled={isRemoving}
+                                                        >
+                                                            <FaEye />
+                                                        </button>
+                                                        <button 
+                                                            className="action-btn remove"
+                                                            onClick={() => handleRemoveItem(item.id)}
+                                                            title="Xóa sản phẩm"
+                                                            disabled={isRemoving}
+                                                        >
+                                                            {isRemoving ? <FaSpinner className="spin" /> : <FaTrash />}
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    {/* Overlay for removing items */}
+                                                    {isRemoving && (
+                                                        <div className="removing-overlay">
+                                                            <FaSpinner className="spin" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                        
+                                        {cartItems.length > 3 && (
+                                            <div className="more-items-note">
+                                                + {cartItems.length - 3} sản phẩm khác
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                            <div className="cart-popup-footer">
+                                <div className="cart-popup-total">
+                                    <span>Tạm tính:</span>
+                                    <span className="total-amount">{formatPrice(subtotal)}</span>
+                                </div>
+                                <button 
+                                    className="view-cart-btn"
+                                    onClick={handleViewCart}
+                                >
+                                    Xem giỏ hàng
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 {user ? (
                     <div className="user-menu">

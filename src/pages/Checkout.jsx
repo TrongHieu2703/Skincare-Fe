@@ -3,20 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createOrder } from '../api/orderApi';
 import '/src/styles/Checkout.css';
-import { getAccountInfo } from '../api/accountApi';
-import { updateAccountInfo } from '../api/accountApi';
+import { getAccountInfo, updateAccountInfo } from '../api/accountApi';
 import { useAuth } from '../auth/AuthProvider';
+import { useCart } from "../store/CartContext";
 
-// Payment Method Component
-// Add this formatter function at the top after imports
+// Hàm định dạng tiền tệ VND
 const formatVND = (amount) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'
-  }).format(amount);
+  }).format(amount).replace('₫', 'đ');
 };
 
-// Update PaymentMethodSelector component
+// Cập nhật component chọn phương thức thanh toán để nhỏ gọn hơn
 const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
   return (
     <div className="payment-selection">
@@ -111,6 +110,9 @@ const Checkout = () => {
   // Thêm useAuth
   const { user, isAuthenticated } = useAuth();
 
+  // Thêm useCart
+  const { clearCart } = useCart();
+
   // Cập nhật useEffect
   useEffect(() => {
     if (!isAuthenticated) {
@@ -122,6 +124,10 @@ const Checkout = () => {
       setUserId(user.id || 0);
       fetchUserInfo();
     }
+
+    // Log ra thông tin cart items để debug
+    console.log("Cart items in Checkout:", cartItems);
+
   }, [isAuthenticated, user]);
 
   // Hàm lấy thông tin người dùng
@@ -252,7 +258,7 @@ const Checkout = () => {
       status: 'Pending',
       isPrepaid: paymentMethod !== "Cash", // Đánh dấu đã thanh toán nếu không phải thanh toán tiền mặt
       orderItems: cartItems.map((item) => ({
-        productId: item.product?.id ?? item.productId ?? 0,
+        productId: item.productId ?? 0,
         itemQuantity: item.quantity
       })),
       transactions: [
@@ -273,79 +279,112 @@ const Checkout = () => {
 
       // Giả lập quá trình thanh toán
       await simulatePayment(paymentMethod, orderData);
+      
+      try {
+        // Clear the cart after successful order
+        await clearCart();
+        console.log("Cart cleared successfully after order");
+      } catch (clearError) {
+        console.error("Failed to clear cart, but order was successful:", clearError);
+        // We don't want to block the order success flow if cart clearing fails
+      }
 
       // Sau khi thanh toán thành công, chuyển hướng đến trang chi tiết đơn hàng
-      navigate(`/order/${response.id}`, {
+      // Kiểm tra và lấy orderId đúng cấu trúc từ response
+      const orderId = response.data ? response.data.id : response.id;
+      
+      if (!orderId) {
+        console.error("Order ID not found in response:", response);
+        setErrorMessage("Đặt hàng thành công nhưng không thể hiển thị chi tiết đơn hàng.");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Navigating to order details with ID:", orderId);
+      navigate(`/order/${orderId}`, {
         state: {
-          orderId: response.id,
-          paymentSuccess: true,
-          paymentMethod: paymentMethod
+          orderId: orderId,
+          paymentSuccess: true
         }
       });
     } catch (error) {
-      console.error('Error creating order:', error);
-
-      // Xử lý lỗi chi tiết hơn
-      if (error.errors) {
-        const errorMessages = Object.values(error.errors).flat().join(', ');
-        setErrorMessage('Lỗi khi tạo đơn hàng: ' + errorMessages);
-      } else if (error.message) {
-        setErrorMessage('Lỗi khi tạo đơn hàng: ' + error.message);
-      } else {
-        setErrorMessage('Lỗi khi tạo đơn hàng');
-      }
-    } finally {
+      console.error("Error creating order:", error);
+      setErrorMessage(
+        error.response?.data?.message ||
+        "Đã xảy ra lỗi khi đặt hàng. Vui lòng thử lại sau."
+      );
       setLoading(false);
     }
   };
 
   return (
     <div className="order-detail-page">
+      {loading && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <p>Đang xử lý đơn hàng của bạn...</p>
+        </div>
+      )}
+      
       <div className="order-detail-container">
         <div className="order-detail-left">
           <h2>Thông Tin Giao Hàng</h2>
           <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Họ Và Tên *</label>
-              <input
-                type="text"
-                name="fullName"
-                value={orderInfo.fullName}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Email * (Không Thể Thay Đổi)</label>
-              <input
-                type="email"
-                name="email"
-                value={orderInfo.email}
-                onChange={handleInputChange}
-                required
-                readOnly
-                className="readonly-input"
-              />
-            </div>
-            <div className="form-group">
-              <label>Số Điện Thoại *</label>
-              <input
-                type="tel"
-                name="phone"
-                value={orderInfo.phone}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Địa Chỉ *</label>
-              <input
-                type="text"
-                name="address"
-                value={orderInfo.address}
-                onChange={handleInputChange}
-                required
-              />
+            <div className="user-info-section">
+              <div className="form-group">
+                <label>Họ Và Tên *</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={orderInfo.fullName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Email * (Không Thể Thay Đổi)</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={orderInfo.email}
+                  onChange={handleInputChange}
+                  required
+                  readOnly
+                  className="readonly-input"
+                />
+              </div>
+              <div className="form-group">
+                <label>Số Điện Thoại *</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={orderInfo.phone}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Địa Chỉ *</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={orderInfo.address}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              
+              {/* Nút cập nhật thông tin đặt ngay dưới thông tin người dùng */}
+              <div className="update-profile-section">
+                <button
+                  type="button"
+                  className="update-profile-button"
+                  onClick={handleUpdateProfile}
+                  disabled={isUpdatingProfile}
+                >
+                  {isUpdatingProfile ? 'Đang Cập Nhật...' : 'Cập Nhật Thông Tin'}
+                </button>
+              </div>
             </div>
 
             {/* Thêm component chọn phương thức thanh toán */}
@@ -353,21 +392,6 @@ const Checkout = () => {
               selectedMethod={paymentMethod}
               onChange={setPaymentMethod}
             />
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="update-profile-button"
-                onClick={handleUpdateProfile}
-                disabled={isUpdatingProfile}
-              >
-                {isUpdatingProfile ? 'Đang Cập Nhật...' : 'Cập Nhật Thông Tin'}
-              </button>
-
-              <button type="submit" className="checkout-button" disabled={loading}>
-                {loading ? 'Đang Xử Lý...' : paymentMethod === "Cash" ? 'Đặt Hàng (COD)' : 'Thanh Toán Ngay'}
-              </button>
-            </div>
 
             {errorMessage && <div className="error-message">{errorMessage}</div>}
             {successMessage && <div className="success-message">{successMessage}</div>}
@@ -377,19 +401,36 @@ const Checkout = () => {
           <h3>Tổng Quan Đơn Hàng</h3>
           <div className="cart-items-summary">
             {cartItems.map((item) => {
-              const productName = item.product?.name || 'Product';
-              const productPrice = item.product?.price ?? 0;
+              // Sử dụng trực tiếp các thuộc tính từ API response
+              const productName = item.productName || 'Sản phẩm không xác định';
+              const productPrice = item.productPrice ?? 0;
+              const productImage = item.productImage || 'https://via.placeholder.com/60';
+              
+              // Fix để hiển thị đúng đường dẫn ảnh
+              const imageUrl = productImage.startsWith('http') 
+                ? productImage 
+                : `/src/assets/images/products/${productImage}`;
+              
               return (
-                <div key={item.cartId || item.id} className="cart-item-summary">
-                  <span>{productName}</span>
-                  <span>
-                    {new Intl.NumberFormat('vi-VN').format(productPrice * item.quantity)}đ
-                  </span>
+                <div key={item.id} className="cart-item-summary">
+                  <div className="cart-item-image">
+                    <img src={imageUrl} alt={productName} />
+                  </div>
+                  <div className="cart-item-info">
+                    <div className="cart-item-name">{productName}</div>
+                    <div className="cart-item-details">
+                      <span className="cart-item-price">{formatVND(productPrice)}</span>
+                      <span className="cart-item-quantity">x {item.quantity}</span>
+                    </div>
+                  </div>
+                  <div className="cart-item-total">
+                    {formatVND(productPrice * item.quantity)}
+                  </div>
                 </div>
               );
             })}
           </div>
-          // Update the price details section
+          
           <div className="price-details">
             <div className="price-row">
               <span>Tổng Tạm Tính</span>
@@ -403,6 +444,19 @@ const Checkout = () => {
               <span>Tổng Cộng</span>
               <span>{formatVND(total)}</span>
             </div>
+          </div>
+          
+          {/* Nút đặt hàng được di chuyển đến đây */}
+          <button 
+            onClick={handleSubmit} 
+            className="checkout-button" 
+            disabled={loading}
+          >
+            {loading ? 'Đang Xử Lý...' : paymentMethod === "Cash" ? 'ĐẶT HÀNG (COD)' : 'THANH TOÁN NGAY'}
+          </button>
+          
+          <div className="order-security-note">
+            <p>Mọi thông tin của bạn sẽ được bảo mật theo chính sách bảo mật của chúng tôi.</p>
           </div>
         </div>
       </div>

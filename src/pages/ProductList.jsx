@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllProducts } from "../api/productApi";
-import { addToCart } from "../api/cartApi";
 import { Link, useNavigate } from "react-router-dom";
+import { useCart } from "../store/CartContext";
 import "/src/styles/ProductList.css";
 
 const ProductList = () => {
@@ -13,7 +13,12 @@ const ProductList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [quantities, setQuantities] = useState({});
+  const [addingToCart, setAddingToCart] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+  
+  // Use cart context
+  const { addItemToCart, formatPrice } = useCart();
 
   const fetchProducts = async (page) => {
     try {
@@ -80,14 +85,39 @@ const ProductList = () => {
   };
 
   const handleAddToCart = async (product) => {
+    // Prevent double-clicking or clicking on multiple products at once
+    if (addingToCart[product.id]) return;
+    
     try {
+      // Check if user is logged in
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+        navigate('/login', { state: { from: '/product-list' } });
+        return;
+      }
+      
+      // Set loading state for this specific product
+      setAddingToCart(prev => ({ ...prev, [product.id]: true }));
+      
       const quantity = quantities[product.id];
-      await addToCart(product.id, quantity);
-      alert("✅ Đã thêm vào giỏ hàng thành công!");
-      navigate("/cart-items"); // 👉 chuyển sang trang giỏ hàng
+      const response = await addItemToCart(product.id, quantity);
+      console.log("Product added to cart:", response);
+      
+      // Show success message
+      setSuccessMessage("✅ Đã thêm vào giỏ hàng thành công!");
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      alert("❌ Đăng nhập để thêm vào giỏ hàng nào!");
+      if (error.response?.status === 401) {
+        alert("❌ Vui lòng đăng nhập để thêm vào giỏ hàng!");
+        navigate('/login', { state: { from: '/product-list' } });
+      } else {
+        alert("❌ Thêm vào giỏ hàng thất bại! " + (error.response?.data?.message || error.message || "Vui lòng thử lại sau."));
+      }
+    } finally {
+      // Clear loading state
+      setAddingToCart(prev => ({ ...prev, [product.id]: false }));
     }
   };
 
@@ -100,7 +130,13 @@ const ProductList = () => {
 
   return (
     <div className="product-page full-page">
-      <div className="sidebar animated-slide-in">
+      {successMessage && (
+        <div className="success-message-banner">
+          {successMessage}
+        </div>
+      )}
+      
+      <aside className="sidebar animated-slide-in">
         <div className="filter-box">
           <h3 className="filter-title">BỘ LỌC TÌM KIẾM</h3>
           <div className="filter-group">
@@ -152,10 +188,6 @@ const ProductList = () => {
               <label htmlFor="price4">300.000đ - 500.000đ</label>
             </div>
           </div>
-          <div className="filter-group">
-
-            {/* Add more categories as needed */}
-          </div>
         </div>
         <div className="category-box animated-fade-in">
           <h3 className="category-title">DANH MỤC SẢN PHẨM</h3>
@@ -167,9 +199,9 @@ const ProductList = () => {
             <li><span>🌿</span> Combo Tiết Kiệm</li>
           </ul>
         </div>
-      </div>
+      </aside>
 
-      <div className="product-content">
+      <main className="product-content">
         {loading ? (
           <div className="loading-spinner">Đang tải sản phẩm...</div>
         ) : (
@@ -187,10 +219,7 @@ const ProductList = () => {
                   <div className="product-details">
                     <h3 className="product-name">{product.name}</h3>
                     <p className="product-price">
-                      {new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                      }).format(product.price)}
+                      {formatPrice(product.price)}
                     </p>
                     <div className="quantity-control">
                       <button
@@ -208,10 +237,11 @@ const ProductList = () => {
                       </button>
                     </div>
                     <button
-                      className="add-to-cart-btn"
+                      className={`add-to-cart-btn ${addingToCart[product.id] ? 'loading' : ''}`}
                       onClick={() => handleAddToCart(product)}
+                      disabled={addingToCart[product.id]}
                     >
-                      Thêm vào giỏ
+                      {addingToCart[product.id] ? 'Đang thêm...' : 'Thêm vào giỏ'}
                     </button>
                     <Link
                       to={`/product/${product.id}`}
@@ -224,36 +254,44 @@ const ProductList = () => {
               ))}
             </div>
 
-            <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`page-btn ${currentPage === 1 ? 'disabled' : ''}`}
-              >
-                <span className="nav-text">&lt; Trước</span>
-              </button>
-
-              {[...Array(totalPages)].map((_, index) => (
+            {filteredProducts.length > 0 && (
+              <div className="pagination">
                 <button
-                  key={index + 1}
-                  onClick={() => handlePageChange(index + 1)}
-                  className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`page-btn ${currentPage === 1 ? 'disabled' : ''}`}
                 >
-                  {index + 1}
+                  <span className="nav-text">&lt; Trước</span>
                 </button>
-              ))}
 
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`page-btn ${currentPage === totalPages ? 'disabled' : ''}`}
-              >
-                <span className="nav-text">Sau &gt;</span>
-              </button>
-            </div>
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`page-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+                >
+                  <span className="nav-text">Sau &gt;</span>
+                </button>
+              </div>
+            )}
+            
+            {filteredProducts.length === 0 && !loading && (
+              <div className="no-products-message">
+                Không tìm thấy sản phẩm phù hợp với bộ lọc đã chọn
+              </div>
+            )}
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 };

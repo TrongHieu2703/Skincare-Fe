@@ -80,29 +80,108 @@
 .quantity-controls {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 15px;
-  background: #f8faf9;
-  padding: 10px 15px;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  margin: 0 auto;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .quantity-controls button {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  font-size: 1.2rem;
-  background: linear-gradient(135deg, #4caf50 0%, #216942 100%);
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+.quantity-controls button svg {
+  width: 20px;
+  height: 20px;
+  color: white;
+  fill: white;
+}
+
+.quantity-controls button:hover:not(:disabled) {
+  background: #2e7d32;
+  transform: translateY(-2px);
+}
+
+.quantity-controls button:disabled {
+  background: #bbbbbb;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .quantity-controls span {
-  font-size: 1.2rem;
+  font-size: 18px;
   font-weight: 600;
-  color: #216942;
-  min-width: 40px;
+  min-width: 25px;
   text-align: center;
+}
+
+.remove-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.remove-button svg {
+  width: 18px;
+  height: 18px;
+  color: white;
+  fill: white;
+}
+
+.remove-button span {
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.remove-button:hover:not(:disabled) {
+  background: #d32f2f;
+  transform: translateY(-2px);
+}
+
+.remove-button:disabled {
+  background: #bbbbbb;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.quantity-controls button.text-btn {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.spinner-fallback {
+  font-size: 18px;
+  animation: spin 1s linear infinite;
 }
 
 .cart-summary {
@@ -291,26 +370,43 @@
 
 .quantity-controls button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
+  box-shadow: 0 10px 25px rgba(76, 175, 80, 0.2);
 }
 
 .remove-button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 10px 20px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
   color: white;
   border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.remove-button:hover {
+.remove-button .button-icon,
+.remove-button svg {
+  width: 18px;
+  height: 18px;
+  color: white;
+  fill: white;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+.remove-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e53935, #c62828);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(238, 82, 83, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.remove-button span {
+  color: white;
+  font-weight: 600;
 }
 
 .cart-summary {
@@ -431,4 +527,717 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Add spinner animation styles */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+    display: block !important;
+}
+
+/* Add updating and deleting styles */
+.cart-item.updating {
+    background-color: rgba(232, 245, 233, 0.5);
+}
+
+.cart-item.deleting {
+    position: relative;
+    height: 100px;
+    opacity: 0.7;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 235, 238, 0.5);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.deleting-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #e53935;
+}
+
+.deleting-overlay .spinner-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    animation: spin 1s linear infinite;
+}
+
+/* Disabled buttons */
+.quantity-controls button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Error message styling */
+.local-error-message {
+    background-color: #ffebee;
+    color: #e53935;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid #e53935;
+    font-size: 14px;
+}
+
+/* Cart Page Layout */
+.cart-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cart-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+}
+
+.cart-header h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+.item-count {
+  font-size: 1rem;
+  color: #666;
+  background-color: #f5f5f5;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+}
+
+.cart-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .cart-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .cart-page {
+    padding: 1rem;
+  }
+}
+
+/* Cart Items Styling */
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animation states */
+.cart-item.animate-increase {
+  animation: pulse-increase 0.6s ease;
+}
+
+.cart-item.animate-decrease {
+  animation: pulse-decrease 0.6s ease;
+}
+
+.cart-item.animate-remove {
+  animation: slide-out 0.5s forwards;
+}
+
+/* Animations */
+@keyframes pulse-increase {
+  0% {
+    background-color: #ffffff;
+  }
+  50% {
+    background-color: #e8f5e9;
+  }
+  100% {
+    background-color: #ffffff;
+  }
+}
+
+@keyframes pulse-decrease {
+  0% {
+    background-color: #ffffff;
+  }
+  50% {
+    background-color: #fff8e1;
+  }
+  100% {
+    background-color: #ffffff;
+  }
+}
+
+@keyframes slide-out {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Update and Delete Effects */
+.cart-item.updating {
+  background-color: #f9f9f9;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item.deleting {
+  position: relative;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.deleting-overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.spinner-icon {
+  animation: spin 1s linear infinite;
+  color: #f50057;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.quantity-updating {
+  animation: pulse 1s infinite;
+  font-weight: bold;
+}
+
+.price-updating {
+  animation: fadeInOut 0.8s ease;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+.item-image {
+  display: flex;
+  align-items: center;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.item-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.item-details h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.item-price {
+  font-size: 1.1rem;
+  color: #f50057;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.item-total {
+  font-size: 0.9rem;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.item-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.quantity-controls button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quantity-controls button:hover:not(.disabled) {
+  background-color: #e0e0e0;
+}
+
+.quantity-controls button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-controls span {
+  font-size: 1rem;
+  min-width: 30px;
+  text-align: center;
+}
+
+.remove-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: #f50057;
+  border: 1px solid #f50057;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-button:hover:not(:disabled) {
+  background-color: #fce4ec;
+}
+
+.remove-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Empty Cart */
+.empty-cart {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.empty-cart h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.empty-cart p {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.continue-shopping {
+  padding: 0.75rem 1.5rem;
+  background-color: #f50057;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.continue-shopping:hover {
+  background-color: #c51162;
+}
+
+/* Cart Summary */
+.cart-summary {
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  position: sticky;
+  top: 2rem;
+}
+
+.cart-summary h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+.summary-row.total {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.checkout-button {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  background-color: #f50057;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.checkout-button:hover:not(:disabled) {
+  background-color: #c51162;
+}
+
+.checkout-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Loading and Error States */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.loading-container h2,
+.error-container h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.error-container p {
+  color: #f44336;
+  margin-bottom: 1.5rem;
+}
+
+.error-container button {
+  padding: 0.75rem 1.5rem;
+  background-color: #f50057;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.error-container button:hover {
+  background-color: #c51162;
+}
+
+.local-error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  text-align: center;
+  border-left: 4px solid #f44336;
+}
+
+/* Fallback styling khi icon không load được */
+.spinner-fallback {
+  font-size: 24px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  color: #f50057;
+}
+
+/* Đối với nút + và - khi dùng text thay vì icon */
+.quantity-controls button.text-btn {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.quantity-controls button.minus-btn.text-btn {
+  color: #f44336;
+}
+
+.quantity-controls button.plus-btn.text-btn {
+  color: #4caf50;
+}
+
+/* Style cho icon trong các nút */
+.button-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+.quantity-controls button .button-icon {
+  color: white;
+  fill: white;
+}
+
+.remove-button .button-icon {
+  color: white;
+  fill: white;
+}
+
+/* Đảm bảo span trong remove-button hiển thị đúng */
+.remove-button span {
+  font-weight: 500;
+  color: white;
+}
+
+/* Làm sạch CSS dư thừa */
+.quantity-controls button svg,
+.remove-button svg {
+  color: white;
+  fill: white;
+}
+
+/* Fix hiển thị icon +, - và xóa */
+.cart-item .quantity-controls button,
+.cart-items .quantity-controls button {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 4px !important;
+  background-color: #4caf50 !important;
+  color: white !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.cart-item .quantity-controls button svg,
+.cart-items .quantity-controls button svg,
+.cart-item .quantity-controls button .button-icon,
+.cart-items .quantity-controls button .button-icon {
+  width: 20px !important;
+  height: 20px !important;
+  color: white !important;
+  fill: white !important;
+  display: block !important;
+}
+
+.cart-item .quantity-controls button:hover:not(:disabled),
+.cart-items .quantity-controls button:hover:not(:disabled) {
+  background-color: #388e3c !important;
+  transform: translateY(-2px) !important;
+}
+
+.cart-item .quantity-controls button:disabled,
+.cart-items .quantity-controls button:disabled {
+  background-color: #bdbdbd !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
+.cart-item .quantity-controls span,
+.cart-items .quantity-controls span {
+  display: inline-block !important;
+  min-width: 30px !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+  color: #333 !important;
+}
+
+.cart-item .remove-button,
+.cart-items .remove-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  background-color: #f44336 !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.2s ease !important;
+}
+
+.cart-item .remove-button svg,
+.cart-items .remove-button svg,
+.cart-item .remove-button .button-icon,
+.cart-items .remove-button .button-icon {
+  width: 16px !important;
+  height: 16px !important;
+  color: white !important;
+  fill: white !important;
+  display: block !important;
+}
+
+.cart-item .remove-button span,
+.cart-items .remove-button span {
+  color: white !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+.cart-item .remove-button:hover:not(:disabled),
+.cart-items .remove-button:hover:not(:disabled) {
+  background-color: #d32f2f !important;
+  transform: translateY(-2px) !important;
+}
+
+.cart-item .remove-button:disabled,
+.cart-items .remove-button:disabled {
+  background-color: #bdbdbd !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
+/* Đảm bảo spin animation vẫn hoạt động */
+.cart-items .spin,
+.cart-item .spin {
+  animation: spin 1s linear infinite !important;
+  display: block !important;
+}
+
+/* Thêm CSS đảm bảo các icon hiển thị rõ nét */
+
+/* Đảm bảo icon luôn hiển thị */
+.minus-btn svg,
+.plus-btn svg,
+.remove-button svg {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  margin: auto !important;
+}
+
+/* Style cho cả div cha của quantity-controls */
+.item-controls {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+}
+
+/* Đảm bảo quantity-controls hiển thị đúng */
+.quantity-controls {
+  margin-bottom: 10px !important;
+  background-color: transparent !important;
+}
+
+/* Đảm bảo nút + và - hiển thị tốt */
+.minus-btn, .plus-btn {
+  position: relative !important;
+  overflow: visible !important;
+  z-index: 1 !important;
+}
+
+/* Fix container của button để đảm bảo icon hiển thị */
+.minus-btn svg, .plus-btn svg {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Đảm bảo font chữ của nút xóa */
+.remove-button {
+  white-space: nowrap !important;
+}
+
+.remove-button span {
+  display: inline-block !important;
+  margin-left: 4px !important;
 }
