@@ -1,5 +1,8 @@
 .dashboardContainer {
-  margin-top: 20px; /* Khoảng cách phía trên */
+
+  margin-top: 50px;
+  /* Adjusted margin-top */
+
   display: flex;
   min-height: 100vh;
   background-color: #ffffff;
@@ -16,6 +19,7 @@
 }
 
 .title {
+  margin-top: 50px;
   font-size: 26px;
   font-weight: 600;
   color: #396e63;
@@ -24,12 +28,13 @@
 
 /* Table */
 .productTable {
+
   width: 100%;
   border-collapse: collapse;
   border-radius: 12px;
-  overflow: hidden; /* Để border-radius áp dụng cho table */
-  margin-top: 20px;
-  background-color: #fff;
+  overflow: hidden;
+  margin-top: 400px;
+
 }
 
 .productTable thead {
