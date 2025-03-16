@@ -1,24 +1,22 @@
 /* Container tổng */
 .container {
-    margin-top: 0;
-    margin-left: 0;
+    margin-left: 20px;
+    /* Để chừa khoảng cho sidebar */
     padding: 30px;
     min-height: 100vh;
-    background-color: #ffffff;
-    /* White background */
-    width: 100vw;
-    /* Full width */
-    height: 100vh;
-    /* Full height */
+    background-color: #f8fafc;
+
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 0;
+    /* Ensure the container starts at the top */
 }
 
 /* Tiêu đề */
 .title {
     font-size: 28px;
-    color: #165e34;
+    color: #1e293b;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -43,8 +41,8 @@
 
 .searchInput:focus {
     outline: none;
-    border-color: #588a6c;
-    box-shadow: 0 0 5px rgba(22, 94, 52, 0.3);
+    border-color: #4b4ded;
+    box-shadow: 0 0 5px rgba(75, 77, 237, 0.3);
 }
 
 /* Bảng tài khoản */
@@ -66,8 +64,8 @@
 
 /* Header bảng */
 .customerTable thead {
-    background-color: #d1e7dd;
-    color: rgb(0, 0, 0);
+    background-color: #4b4ded;
+    color: white;
 }
 
 .th,
@@ -79,7 +77,7 @@
 
 /* Dòng bảng */
 .tr:hover {
-    background-color: #e6f4ea;
+    background-color: #f1f5f9;
     transition: 0.2s ease;
 }
 
@@ -110,6 +108,11 @@
     .title {
         font-size: 22px;
     }
+}
 
-    max-width: 100%;
+.fixed-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
 }
