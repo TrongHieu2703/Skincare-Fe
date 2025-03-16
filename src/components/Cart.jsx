@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from 'react-redux';
-import { addCartItemAsync } from '../store/cartSlice'; // Remove unused import
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../store/CartContext';
+import { useAuth } from '../auth/AuthProvider';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -9,51 +10,108 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import "/src/styles/Cart.css";
-import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [cartItems, setCartItems] = useState([]);
+    const { isAuthenticated } = useAuth();
+    const { addItemToCart, formatPrice } = useCart();
+    const [featuredProducts, setFeaturedProducts] = useState([]);
+    const [quantities, setQuantities] = useState({});
+    const [successMessage, setSuccessMessage] = useState("");
+    const [addingToCart, setAddingToCart] = useState({});
 
     useEffect(() => {
-        const fetchCartItems = async () => {
-            // Fetch cart items from the API or local storage
-            // const items = await getAllCarts(); // Commenting out the unused function
-            const items = []; // Placeholder for cart items
-            setCartItems(items);
-        };
-
-        fetchCartItems();
+        // Mock featured products data
+        const mockFeaturedProducts = [
+            {
+                id: 1,
+                name: "Kem Dưỡng Ẩm Avene",
+                price: 450000,
+                image: "/src/assets/images/product1.jpg"
+            },
+            {
+                id: 2,
+                name: "Serum Chống Lão Hóa Innisfree",
+                price: 380000,
+                image: "/src/assets/images/product2.jpg"
+            },
+            {
+                id: 3,
+                name: "Nước Tẩy Trang Bioderma",
+                price: 290000,
+                image: "/src/assets/images/product3.jpg"
+            },
+            {
+                id: 4,
+                name: "Mặt Nạ Dưỡng Ẩm The Face Shop",
+                price: 120000,
+                image: "/src/assets/images/product4.jpg"
+            },
+            {
+                id: 5,
+                name: "Kem Chống Nắng Anessa",
+                price: 520000,
+                image: "/src/assets/images/product5.jpg"
+            }
+        ];
+        
+        setFeaturedProducts(mockFeaturedProducts);
+        
+        // Initialize quantities
+        const initialQuantities = {};
+        mockFeaturedProducts.forEach(product => {
+            initialQuantities[product.id] = 1;
+        });
+        setQuantities(initialQuantities);
     }, []);
 
-    const [successMessage, setSuccessMessage] = useState("");
-
     const handleQuantity = (id, action) => {
-        setCartItems(items =>
-            items.map(item => {
-                if (item.id === id) {
-                    const newQuantity = action === 'increase'
-                        ? item.quantity + 1
-                        : Math.max(1, item.quantity - 1);
-                    return { ...item, quantity: newQuantity };
-                }
-                return item;
-            })
-        );
+        setQuantities(prevQuantities => ({
+            ...prevQuantities,
+            [id]: action === 'increase' 
+                ? prevQuantities[id] + 1 
+                : Math.max(1, prevQuantities[id] - 1)
+        }));
     };
 
     const handleAddToCart = async (item) => {
-        await dispatch(addCartItemAsync(item.productId, item.quantity));
-        setSuccessMessage("✅ Added to cart successfully!");
-        setTimeout(() => setSuccessMessage(""), 2000); // Hide after 2 seconds
+        if (!isAuthenticated) {
+            navigate('/login', { state: { from: '/cart' } });
+            return;
+        }
+        
+        // Prevent multiple clicks
+        if (addingToCart[item.id]) return;
+        
+        try {
+            setAddingToCart(prev => ({ ...prev, [item.id]: true }));
+            const response = await addItemToCart(item.id, quantities[item.id]);
+            console.log("Product added to cart:", response);
+            setSuccessMessage("✅ Đã thêm vào giỏ hàng thành công!");
+            setTimeout(() => setSuccessMessage(""), 3000);
+        } catch (error) {
+            console.error("Error adding to cart:", error);
+            if (error.response?.status === 401) {
+                alert("❌ Vui lòng đăng nhập để thêm vào giỏ hàng!");
+                navigate('/login', { state: { from: '/cart' } });
+            } else {
+                alert("❌ Thêm vào giỏ hàng thất bại! " + (error.response?.data?.message || error.message || "Vui lòng thử lại sau."));
+            }
+        } finally {
+            setAddingToCart(prev => ({ ...prev, [item.id]: false }));
+        }
     };
 
     return (
         <div className="cart-page">
+            {successMessage && (
+                <div className="success-message">
+                    {successMessage}
+                </div>
+            )}
+            
             <div className="cart-section">
                 <h2 className="member-privileges-title">FEATURED PRODUCTS🔥</h2>
-                {successMessage && <div className="success-message">{successMessage}</div>}
                 <Swiper
                     modules={[Navigation, Pagination, Autoplay]}
                     spaceBetween={10}
@@ -63,7 +121,7 @@ const Cart = () => {
                     pagination={{ clickable: true }}
                     className="cart-slider"
                 >
-                    {cartItems.map(item => (
+                    {featuredProducts.map(item => (
                         <SwiperSlide key={item.id}>
                             <div className="cart-item">
                                 <div className="item-image">
@@ -72,18 +130,18 @@ const Cart = () => {
                                 <div className="item-info">
                                     <h3>{item.name}</h3>
                                     <div className="item-price">
-                                        {item.price.toLocaleString()}đ
+                                        {formatPrice(item.price)}
                                     </div>
                                     <div className="quantity-control">
                                         <label>Quantity:</label>
                                         <div className="quantity-buttons">
                                             <button
                                                 onClick={() => handleQuantity(item.id, 'decrease')}
-                                                disabled={item.quantity <= 1}
+                                                disabled={quantities[item.id] <= 1}
                                             >
                                                 <FaMinus />
                                             </button>
-                                            <span>{item.quantity}</span>
+                                            <span>{quantities[item.id]}</span>
                                             <button
                                                 onClick={() => handleQuantity(item.id, 'increase')}
                                             >
@@ -91,8 +149,12 @@ const Cart = () => {
                                             </button>
                                         </div>
                                     </div>
-                                    <button className="add-cart-btn" onClick={() => handleAddToCart(item)}>
-                                        <FaShoppingCart /> Add to Cart
+                                    <button 
+                                        className={`add-cart-btn ${addingToCart[item.id] ? 'loading' : ''}`}
+                                        onClick={() => handleAddToCart(item)}
+                                        disabled={addingToCart[item.id]}
+                                    >
+                                        <FaShoppingCart /> {addingToCart[item.id] ? 'Adding...' : 'Add to Cart'}
                                     </button>
                                 </div>
                             </div>

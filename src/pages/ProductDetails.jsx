@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductById } from "../api/productApi";
-import { addToCart } from "../api/cartApi";
+import { useCart } from "../store/CartContext";
 import "/src/styles/ProductDetails.css";
 
 const ProductDetails = () => {
@@ -13,6 +13,11 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('description');
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  
+  // Use cart context
+  const { addItemToCart, formatPrice } = useCart();
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -33,12 +38,42 @@ const ProductDetails = () => {
   }, [id]);
 
   const handleAddToCart = async () => {
+    if (addingToCart) return; // Prevent multiple clicks
+    
     try {
-      await addToCart(product.id, quantity);
-      alert("✅ Đã thêm vào giỏ hàng thành công!");
+      setAddingToCart(true);
+      
+      // Check if user is logged in
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+        navigate('/login', { state: { from: `/product/${id}` } });
+        return;
+      }
+      
+      const response = await addItemToCart(product.id, quantity);
+      console.log("Product added to cart:", response);
+      setSuccessMessage("✅ Đã thêm vào giỏ hàng thành công!");
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      alert("❌ Thêm vào giỏ hàng thất bại!");
+      if (error.response?.status === 401) {
+        setError("❌ Vui lòng đăng nhập để thêm vào giỏ hàng!");
+        navigate('/login', { state: { from: `/product/${id}` } });
+      } else {
+        setError("❌ Thêm vào giỏ hàng thất bại! " + (error.response?.data?.message || error.message || "Vui lòng thử lại sau."));
+      }
+      
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    } finally {
+      setAddingToCart(false);
     }
   };
 
@@ -74,6 +109,12 @@ const ProductDetails = () => {
 
   return (
     <div className="product-details-container">
+      {successMessage && (
+        <div className="success-message-banner">
+          {successMessage}
+        </div>
+      )}
+      
       <div className="product-details-main">
         <div className="product-images">
           <div className="main-image">
@@ -109,10 +150,7 @@ const ProductDetails = () => {
           </div>
 
           <div className="product-price">
-            {new Intl.NumberFormat('vi-VN', {
-              style: 'currency',
-              currency: 'VND'
-            }).format(product.price)}
+            {formatPrice(product.price)}
           </div>
 
           <div className="quantity-control">
@@ -132,11 +170,15 @@ const ProductDetails = () => {
           </div>
 
           <button 
-            className="add-to-cart-btn"
+            className={`add-to-cart-btn ${addingToCart ? 'loading' : ''}`}
             onClick={handleAddToCart}
-            disabled={product.stock === 0}
+            disabled={product.stock === 0 || addingToCart}
           >
-            {product.stock === 0 ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
+            {addingToCart 
+              ? 'Đang thêm...' 
+              : product.stock === 0 
+                ? 'Hết hàng' 
+                : 'Thêm vào giỏ hàng'}
           </button>
         </div>
       </div>
