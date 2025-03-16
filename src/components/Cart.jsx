@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../store/CartContext';
 import { useAuth } from '../auth/AuthProvider';
@@ -14,11 +14,16 @@ import "/src/styles/Cart.css";
 const Cart = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
-    const { addItemToCart, formatPrice } = useCart();
+    const { addItemToCart, formatPrice, cartItems } = useCart();
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [quantities, setQuantities] = useState({});
     const [successMessage, setSuccessMessage] = useState("");
     const [addingToCart, setAddingToCart] = useState({});
+
+    // Debug cart items
+    useEffect(() => {
+        console.log("Cart component - Current cart items:", cartItems);
+    }, [cartItems]);
 
     useEffect(() => {
         // Mock featured products data
@@ -65,16 +70,18 @@ const Cart = () => {
         setQuantities(initialQuantities);
     }, []);
 
-    const handleQuantity = (id, action) => {
+    // Memoize the handleQuantity function to avoid unnecessary re-renders
+    const handleQuantity = useCallback((id, action) => {
         setQuantities(prevQuantities => ({
             ...prevQuantities,
             [id]: action === 'increase' 
                 ? prevQuantities[id] + 1 
                 : Math.max(1, prevQuantities[id] - 1)
         }));
-    };
+    }, []);
 
-    const handleAddToCart = async (item) => {
+    // Memoize the handleAddToCart function
+    const handleAddToCart = useCallback(async (item) => {
         if (!isAuthenticated) {
             navigate('/login', { state: { from: '/cart' } });
             return;
@@ -100,7 +107,12 @@ const Cart = () => {
         } finally {
             setAddingToCart(prev => ({ ...prev, [item.id]: false }));
         }
-    };
+    }, [isAuthenticated, navigate, addItemToCart, quantities, addingToCart]);
+
+    // Function to view cart
+    const viewCart = () => {
+        navigate('/cart-items');
+    }
 
     return (
         <div className="cart-page">
@@ -112,6 +124,11 @@ const Cart = () => {
             
             <div className="cart-section">
                 <h2 className="member-privileges-title">FEATURED PRODUCTS🔥</h2>
+                <div className="cart-actions">
+                    <button onClick={viewCart} className="view-cart-btn">
+                        <FaShoppingCart /> View My Cart ({cartItems.length})
+                    </button>
+                </div>
                 <Swiper
                     modules={[Navigation, Pagination, Autoplay]}
                     spaceBetween={10}

@@ -136,7 +136,7 @@ const ProductList = () => {
         </div>
       )}
       
-      <div className="sidebar animated-slide-in">
+      <aside className="sidebar animated-slide-in">
         <div className="filter-box">
           <h3 className="filter-title">BỘ LỌC TÌM KIẾM</h3>
           <div className="filter-group">
@@ -188,9 +188,6 @@ const ProductList = () => {
               <label htmlFor="price4">300.000đ - 500.000đ</label>
             </div>
           </div>
-          <div className="filter-group">
-            {/* Add more categories as needed */}
-          </div>
         </div>
         <div className="category-box animated-fade-in">
           <h3 className="category-title">DANH MỤC SẢN PHẨM</h3>
@@ -202,9 +199,9 @@ const ProductList = () => {
             <li><span>🌿</span> Combo Tiết Kiệm</li>
           </ul>
         </div>
-      </div>
+      </aside>
 
-      <div className="product-content">
+      <main className="product-content">
         {loading ? (
           <div className="loading-spinner">Đang tải sản phẩm...</div>
         ) : (
@@ -257,36 +254,44 @@ const ProductList = () => {
               ))}
             </div>
 
-            <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`page-btn ${currentPage === 1 ? 'disabled' : ''}`}
-              >
-                <span className="nav-text">&lt; Trước</span>
-              </button>
-
-              {[...Array(totalPages)].map((_, index) => (
+            {filteredProducts.length > 0 && (
+              <div className="pagination">
                 <button
-                  key={index + 1}
-                  onClick={() => handlePageChange(index + 1)}
-                  className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`page-btn ${currentPage === 1 ? 'disabled' : ''}`}
                 >
-                  {index + 1}
+                  <span className="nav-text">&lt; Trước</span>
                 </button>
-              ))}
 
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`page-btn ${currentPage === totalPages ? 'disabled' : ''}`}
-              >
-                <span className="nav-text">Sau &gt;</span>
-              </button>
-            </div>
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`page-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+                >
+                  <span className="nav-text">Sau &gt;</span>
+                </button>
+              </div>
+            )}
+            
+            {filteredProducts.length === 0 && !loading && (
+              <div className="no-products-message">
+                Không tìm thấy sản phẩm phù hợp với bộ lọc đã chọn
+              </div>
+            )}
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 };

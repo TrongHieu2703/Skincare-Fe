@@ -19,6 +19,10 @@ const OrderDetails = () => {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
   const orderIdToFetch = orderId || (location.state && location.state.orderId);
+  
+  console.log("OrderDetails component - orderId from params:", orderId);
+  console.log("OrderDetails component - location state:", location.state);
+  console.log("OrderDetails component - orderIdToFetch:", orderIdToFetch);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -40,6 +44,7 @@ const OrderDetails = () => {
         const orderData = await getOrderDetail(orderIdToFetch);
         setOrder(orderData);
       } catch (err) {
+        console.error("Error fetching order details:", err);
         setError('Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.');
       } finally {
         setLoading(false);
@@ -175,20 +180,14 @@ const OrderDetails = () => {
   return (
     <div className="order-details-page">
       {showPaymentSuccess && (
-        <div style={successBannerStyle}>
+        <div className="payment-success-banner">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <i className="fas fa-check-circle"></i>
             Đặt hàng thành công! Cảm ơn bạn đã mua sắm.
           </div>
           <button
             onClick={() => setShowPaymentSuccess(false)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'white',
-              cursor: 'pointer',
-              padding: '5px'
-            }}
+            className="close-button"
           >
             <i className="fas fa-times"></i>
           </button>
@@ -214,7 +213,7 @@ const OrderDetails = () => {
               <h3>Thông tin khách hàng</h3>
               <div className="info-content">
                 <p><strong>Tên khách hàng:</strong> {order.customerInfo?.username || ''}</p>
-                <p><strong>Email:</strong> {order.customerInfo?.email || 'Email không có sẵn'}</p> {/* Display email */}
+                <p><strong>Email:</strong> {order.customerInfo?.email || 'Email không có sẵn'}</p>
                 <p><strong>Số điện thoại:</strong> {order.customerInfo?.phoneNumber || ''}</p>
               </div>
             </div>
@@ -232,7 +231,7 @@ const OrderDetails = () => {
               <h3>Thông tin thanh toán</h3>
               <div className="info-content">
                 <p>
-                  <strong>Phương thức thanh toán:</strong>
+                  <strong>Phương thức thanh toán:</strong>{' '}
                   {order.paymentInfo?.paymentMethod === 'Cash'
                     ? 'Tiền mặt khi nhận hàng (COD)'
                     : order.paymentInfo?.paymentMethod === 'Credit'
@@ -243,7 +242,7 @@ const OrderDetails = () => {
                   }
                 </p>
                 <p>
-                  <strong>Trạng thái thanh toán:</strong>
+                  <strong>Trạng thái thanh toán:</strong>{' '}
                   {order.paymentInfo?.status === 'Completed' ? 'Đã thanh toán' :
                     order.isPrepaid ? 'Đang xử lý thanh toán' : 'Thanh toán khi nhận hàng'}
                 </p>
@@ -269,13 +268,18 @@ const OrderDetails = () => {
               <div className="order-items-body">
                 {order.orderItems && order.orderItems.map((item, index) => {
                   const product = getProductInfo(item.productId);
+                  const productImage = item.productImage || 'placeholder.jpg';
+                  const imageUrl = productImage.startsWith('http') 
+                    ? productImage 
+                    : `/src/assets/images/products/${productImage}`;
+                    
                   return (
                     <div className="order-item-row" key={index}>
                       <div className="item-col product-col">
                         <div className="product-info">
                           <div className={`product-image ${!item.productImage ? 'placeholder' : ''}`}>
                             {item.productImage ?
-                              <img src={item.productImage} alt={item.productName} /> :
+                              <img src={imageUrl} alt={item.productName} /> :
                               <i className="fas fa-box"></i>
                             }
                           </div>
@@ -299,52 +303,54 @@ const OrderDetails = () => {
             </div>
           </div>
 
-          <div className="order-summary">
-            <h3>Tổng cộng</h3>
-            <div className="summary-details">
-              <div className="summary-row">
-                <span>Tạm tính:</span>
-                <span>{formatPrice(order.totalPrice || 0)}</span>
-              </div>
-              <div className="summary-row">
-                <span>Phí vận chuyển:</span>
-                <span>{formatPrice(30000)}</span>
-              </div>
-              {order.discountPrice && order.discountPrice > 0 && (
-                <div className="summary-row discount">
-                  <span>Giảm giá:</span>
-                  <span>-{formatPrice(order.discountPrice)}</span>
+          <div className="order-summary-section">
+            <div className="order-actions">
+              <button className="btn-secondary" onClick={handlePrintOrder}>
+                In đơn hàng
+              </button>
+              <button className="btn-primary" onClick={navigateToProducts}>
+                Tiếp tục mua sắm
+              </button>
+            </div>
+            
+            <div className="order-summary">
+              <h3>Tổng cộng</h3>
+              <div className="summary-details">
+                <div className="summary-row">
+                  <span>Tạm tính:</span>
+                  <span>{formatPrice(order.totalPrice || 0)}</span>
                 </div>
-              )}
-              <div className="summary-row total">
-                <span>Tổng thanh toán:</span>
-                <span>{formatPrice(order.totalAmount || (order.totalPrice + 30000))}</span>
+                <div className="summary-row">
+                  <span>Phí vận chuyển:</span>
+                  <span>{formatPrice(30000)}</span>
+                </div>
+                {order.discountPrice && order.discountPrice > 0 && (
+                  <div className="summary-row discount">
+                    <span>Giảm giá:</span>
+                    <span>-{formatPrice(order.discountPrice)}</span>
+                  </div>
+                )}
+                <div className="summary-row total">
+                  <span>Tổng thanh toán:</span>
+                  <span>{formatPrice(order.totalAmount || (order.totalPrice + 30000))}</span>
+                </div>
+                
+                {order.voucher && (
+                  <div className="voucher-info">
+                    <p>
+                      <strong>Voucher áp dụng:</strong>
+                      <span className="voucher-code">{order.voucher.code}</span>
+                      <span className="voucher-value">
+                        {order.voucher.isPercent
+                          ? `(Giảm ${order.voucher.value}%)`
+                          : `(Giảm ${formatPrice(order.voucher.value)})`}
+                      </span>
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-
-          {order.voucher && (
-            <div className="voucher-info">
-              <p>
-                <strong>Voucher áp dụng:</strong>
-                <span className="voucher-code">{order.voucher.code}</span>
-                <span className="voucher-value">
-                  {order.voucher.isPercent
-                    ? `(Giảm ${order.voucher.value}%)`
-                    : `(Giảm ${formatPrice(order.voucher.value)})`}
-                </span>
-              </p>
-            </div>
-          )}
-        </div>
-
-        <div className="order-actions">
-          <button className="btn-secondary" onClick={handlePrintOrder}>
-            In đơn hàng
-          </button>
-          <button className="btn-primary" onClick={navigateToProducts}>
-            Tiếp tục mua sắm
-          </button>
         </div>
       </div>
     </div>

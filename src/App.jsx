@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -42,10 +42,13 @@ import StaffOrder from "/staff/pages3/StaffOrder";
 import StaffProduct from "/staff/pages3/StaffProduct";
 import StaffUser from "/staff/pages3/StaffUser";
 
-function AppContent() {
+// Memoize AppContent to prevent unnecessary rerenders
+const AppContent = memo(function AppContent() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
   const isStaffPage = location.pathname.startsWith("/staff");
+
+  console.log("Rendering AppContent at path:", location.pathname);
 
   return (
     <div className="app-container">
@@ -108,17 +111,19 @@ function AppContent() {
       {!isAdminPage && !isStaffPage && <Footer />}
     </div>
   );
-}
+});
 
 function App() {
+  console.log("Rendering App component");
+  
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
+    <Router>
+      <AuthProvider>
+        <CartProvider>
           <AppContent />
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+        </CartProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
