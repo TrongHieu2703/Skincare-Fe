@@ -209,13 +209,18 @@ const ProductDetails = () => {
           {activeTab === 'description' && (
             <div className="description-content">
               <h3>Thông tin sản phẩm:</h3>
-              <p>{product.description}</p>
+              <p>{product.description || "Đang cập nhật thông tin chi tiết sản phẩm..."}</p>
               
               <h3>Ưu điểm nổi bật:</h3>
               <ul>
-                {product.features?.map((feature, idx) => (
-                  <li key={idx}>{feature}</li>
-                ))}
+                {product.skinTypes && product.skinTypes.length > 0 ? (
+                  <>
+                    <li>Phù hợp với các loại da: {product.skinTypes.join(', ')}</li>
+                    <li>Loại sản phẩm: {product.productTypeName || "Đang cập nhật"}</li>
+                  </>
+                ) : (
+                  <li>Đang cập nhật thông tin chi tiết...</li>
+                )}
               </ul>
             </div>
           )}
@@ -223,14 +228,19 @@ const ProductDetails = () => {
           {activeTab === 'specification' && (
             <div className="specification-content">
               <h3>Thông số kỹ thuật:</h3>
-              {/* Thêm thông số kỹ thuật của sản phẩm nếu có */}
+              <ul>
+                <li><strong>Tên sản phẩm:</strong> {product.name || "Đang cập nhật"}</li>
+                <li><strong>Thương hiệu:</strong> {product.productBrandName || "Đang cập nhật"}</li>
+                <li><strong>Loại sản phẩm:</strong> {product.productTypeName || "Đang cập nhật"}</li>
+                <li><strong>Phù hợp với da:</strong> {product.skinTypes && product.skinTypes.length > 0 ? product.skinTypes.join(', ') : 'Đang cập nhật'}</li>
+              </ul>
             </div>
           )}
 
           {activeTab === 'reviews' && (
             <div className="reviews-content">
               <h3>Đánh giá từ khách hàng:</h3>
-              {/* Thêm phần đánh giá sản phẩm nếu có */}
+              <p>Chưa có đánh giá nào cho sản phẩm này.</p>
             </div>
           )}
         </div>

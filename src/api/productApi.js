@@ -17,7 +17,17 @@ export const getAllProducts = (pageNumber = 1, pageSize = 20) => {
 export const getProductById = async (id) => {
   try {
     const response = await axiosClient.get(`${API_URL}/${id}`);
-    return response;
+    console.log("Raw API response:", response);
+    
+    // The API response might be nested like { message: "...", data: { product details } }
+    // Return the correct structure based on the response format
+    if (response.data && response.data.data) {
+      // API returns { message: "...", data: { product details } }
+      return response.data;
+    } else {
+      // API directly returns the product data
+      return { data: response.data };
+    }
   } catch (error) {
     console.error(`Error fetching product with ID ${id}:`, error);
     throw error;
