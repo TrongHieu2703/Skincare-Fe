@@ -590,3 +590,18 @@ body {
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
+/* Thêm vào Navbar.css */
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2e7d32;
+}
+
+/* Cải thiện cho avatar trong dropdown */
+.dropdown-menu .user-avatar {
+    width: 40px;
+    height: 40px;
+}

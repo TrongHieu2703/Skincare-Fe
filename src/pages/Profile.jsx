@@ -1,6 +1,6 @@
 // src/pages/Profile.jsx
 import React, { useState, useEffect } from "react";
-import { getAccountInfo, updateAccountInfo } from "../api/accountApi";
+import { getAccountInfo, updateProfileWithAvatar } from "../api/accountApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import coverImage from "/src/assets/images/cover-image.png";
@@ -18,19 +18,62 @@ const Profile = () => {
     address: "",
     avatar: "",
   });
+  const [avatarFile, setAvatarFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [originalData, setOriginalData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [successNotification, setSuccessNotification] = useState("");
+
+  const getImageUrl = (avatarPath) => {
+    if (!avatarPath) return defaultAvatar;
+    
+    // Kiểm tra URL Google Drive và thay đổi format
+    if (avatarPath.includes("drive.google.com")) {
+        // Nếu URL có dạng uc?id=
+        if (avatarPath.includes("uc?id=")) {
+            const fileId = avatarPath.split("uc?id=")[1].split("&")[0];
+            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+        }
+        // Nếu URL có dạng /d/
+        else if (avatarPath.includes("/d/")) {
+            const fileId = avatarPath.split("/d/")[1].split("/")[0];
+            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+        }
+    }
+    
+    // Nếu là URL http(s) khác, giữ nguyên
+    if (avatarPath.startsWith("http")) {
+        return avatarPath;
+    }
+    
+    // Fallback cho base64
+    if (avatarPath.startsWith("data:image")) {
+        return avatarPath;
+    }
+    
+    return defaultAvatar;
+  };
 
   useEffect(() => {
     fetchUserProfile();
     // dependency có thể để [] nếu navigate không thay đổi
   }, []);
 
+  useEffect(() => {
+    if (formData.avatar) {
+      console.log("Profile - Original Avatar URL:", formData.avatar);
+      console.log("Profile - Transformed Avatar URL:", getImageUrl(formData.avatar));
+    }
+  }, [formData.avatar]);
+
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
       const userData = await getAccountInfo();
+      
+      console.log("Fetched profile data:", userData);
+      
       const data = {
         username: userData.username || "",
         email: userData.email || "",
@@ -41,21 +84,28 @@ const Profile = () => {
       setFormData(data);
       setOriginalData(data);
       setPreviewImage(getImageUrl(userData.avatar));
+      setImageError(false);
+      
+      window.dispatchEvent(new CustomEvent('user-profile-updated'));
     } catch (error) {
       console.error("Error fetching user profile:", error);
-      toast.error("Không thể tải thông tin người dùng");
-      if (error.message === "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại") {
-        navigate("/login");
+      
+      // Kiểm tra nếu lỗi liên quan đến hết hạn token
+      if (error.message?.includes("Phiên đăng nhập đã hết hạn") || 
+          error.message?.includes("Chưa đăng nhập")) {
+        setSuccessNotification("Phiên đăng nhập đã hết hạn, đang chuyển hướng...");
+        
+        // Delay redirect để người dùng thấy thông báo
+        setTimeout(() => {
+          navigate("/login", { state: { returnUrl: "/profile" } });
+        }, 2000);
+      } else {
+        setSuccessNotification("❌ Không thể tải thông tin người dùng");
+        setTimeout(() => setSuccessNotification(""), 3000);
       }
     } finally {
       setLoading(false);
     }
-  };
-
-  const getImageUrl = (avatarPath) => {
-    if (!avatarPath) return defaultAvatar;
-    if (avatarPath.startsWith("data:image")) return avatarPath;
-    return `${import.meta.env.VITE_API_URL}${avatarPath}`;
   };
 
   const handleChange = (e) => {
@@ -81,13 +131,11 @@ const Profile = () => {
 
       try {
         const optimizedImage = await resizeImage(file);
+        setAvatarFile(optimizedImage);
+
         const reader = new FileReader();
         reader.onloadend = () => {
           setPreviewImage(reader.result);
-          setFormData((prev) => ({
-            ...prev,
-            avatar: reader.result,
-          }));
           toast.success("Đã chọn ảnh mới. Nhấn 'Lưu thay đổi' để cập nhật.");
         };
         reader.readAsDataURL(optimizedImage);
@@ -148,40 +196,66 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const hasChanges = Object.keys(formData).some(
-      (key) => formData[key] !== originalData[key]
-    );
+    const hasChanges = 
+        avatarFile !== null || 
+        formData.username !== originalData.username ||
+        formData.phoneNumber !== originalData.phoneNumber || 
+        formData.address !== originalData.address;
 
     if (!hasChanges) {
-      toast.info("Không có thay đổi nào để cập nhật");
-      return;
+        toast.info("Không có thay đổi nào để cập nhật");
+        return;
     }
 
     try {
-      setSaving(true);
-      await updateAccountInfo(formData);
-      setShowSuccess(true);
-      toast.success("Bạn đã thay đổi thông tin thành công!");
-
-      setTimeout(() => setShowSuccess(false), 3000);
-      await fetchUserProfile();
+        setSaving(true);
+        
+        // Gọi API cập nhật profile với avatar
+        const response = await updateProfileWithAvatar(formData, avatarFile);
+        
+        // Cập nhật URL avatar từ response nếu có
+        if (response.avatarUrl) {
+            console.log("New avatar URL:", response.avatarUrl);
+            setFormData(prev => ({
+                ...prev,
+                avatar: response.avatarUrl
+            }));
+            
+            // Cập nhật localStorage ngay lập tức
+            const userJson = localStorage.getItem('user');
+            if (userJson) {
+                const user = JSON.parse(userJson);
+                user.avatar = response.avatarUrl;
+                user.username = formData.username;
+                user.phoneNumber = formData.phoneNumber;
+                user.address = formData.address;
+                localStorage.setItem('user', JSON.stringify(user));
+                
+                // Dispatch custom event thay vì storage event
+                window.dispatchEvent(new CustomEvent('user-profile-updated'));
+            }
+        }
+        
+        setSuccessNotification("✅ Thông tin đã được cập nhật thành công!");
+        setTimeout(() => setSuccessNotification(""), 3000);
+        
+        // Không cần gọi fetchUserProfile lại vì đã cập nhật state và localStorage
     } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error(error.message || "Không thể cập nhật thông tin");
-      if (error.message === "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại") {
-        navigate("/login");
-      }
+        console.error("Error updating profile:", error);
+        toast.error(error.message || "Không thể cập nhật thông tin");
+        if (error.message === "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại") {
+            navigate("/login");
+        }
     } finally {
-      setSaving(false);
+        setSaving(false);
     }
   };
 
   return (
     <div className="profile-container">
-      {showSuccess && (
-        <div className="success-message">
-          <span className="success-icon">✓</span>
-          Bạn đã thay đổi thông tin thành công!
+      {successNotification && (
+        <div className="success-message-banner">
+          {successNotification}
         </div>
       )}
       <div className="cover-photo">
@@ -191,9 +265,10 @@ const Profile = () => {
       <div className="profile-section">
         <div className="profile-image-container">
           <img
-            src={previewImage || getImageUrl(formData.avatar)}
+            src={imageError ? defaultAvatar : (previewImage || getImageUrl(formData.avatar))}
             alt="Profile"
             className="profile-image"
+            onError={() => setImageError(true)}
           />
           <label className="change-photo-button">
             <input

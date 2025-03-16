@@ -19,6 +19,7 @@ const Navbar = () => {
     const [isSearching, setIsSearching] = useState(false);
     // State để theo dõi item đang được xóa
     const [removingItems, setRemovingItems] = useState({});
+    const [avatarError, setAvatarError] = useState(false);
     
     // Use cart context instead of local state
     const { cartItems, cartData, subtotal, formatPrice, removeCartItem } = useCart();
@@ -52,6 +53,8 @@ const Navbar = () => {
         if (loggedUser && token) {
             try {
                 const parsedUser = JSON.parse(loggedUser);
+                console.log("Navbar - User from localStorage:", parsedUser);
+                console.log("Navbar - Avatar URL:", parsedUser.avatar);
                 setUser(parsedUser);
             } catch (error) {
                 console.error("Error parsing user data:", error);
@@ -63,6 +66,37 @@ const Navbar = () => {
             setUser(null);
         }
     }, [location, isAuthenticated]);
+
+    // Thêm event listener để cập nhật khi profile được sửa
+    useEffect(() => {
+        const handleProfileUpdate = () => {
+            const loggedUser = localStorage.getItem("user");
+            const token = localStorage.getItem("token");
+
+            if (loggedUser && token) {
+                try {
+                    const parsedUser = JSON.parse(loggedUser);
+                    console.log("Navbar update after profile change - New avatar:", parsedUser.avatar);
+                    // Force re-render với một đối tượng mới
+                    setUser({...parsedUser});
+                    // Reset avatar error khi có cập nhật mới
+                    setAvatarError(false);
+                } catch (error) {
+                    console.error("Error parsing user data:", error);
+                }
+            }
+        };
+
+        // Lắng nghe custom event
+        window.addEventListener('user-profile-updated', handleProfileUpdate);
+        // Vẫn giữ lại storage event để xử lý các thay đổi khác
+        window.addEventListener('storage', handleProfileUpdate);
+        
+        return () => {
+            window.removeEventListener('user-profile-updated', handleProfileUpdate);
+            window.removeEventListener('storage', handleProfileUpdate);
+        };
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("user");
@@ -176,6 +210,40 @@ const Navbar = () => {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
+
+    // Thêm helper function để lấy đúng URL ảnh
+    const getAvatarUrl = (avatarPath) => {
+        if (!avatarPath) return "/src/assets/images/profile-pic.png";
+        
+        // Kiểm tra URL Google Drive và thay đổi format
+        if (avatarPath.includes("drive.google.com")) {
+            // Nếu URL có dạng uc?id=
+            if (avatarPath.includes("uc?id=")) {
+                const fileId = avatarPath.split("uc?id=")[1].split("&")[0];
+                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+            }
+            // Nếu URL có dạng /d/
+            else if (avatarPath.includes("/d/")) {
+                const fileId = avatarPath.split("/d/")[1].split("/")[0];
+                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+            }
+        }
+        
+        // Nếu là URL http(s) khác, giữ nguyên
+        if (avatarPath.startsWith("http")) {
+            return avatarPath;
+        }
+        
+        // Fallback cho base64
+        if (avatarPath.startsWith("data:image")) {
+            return avatarPath;
+        }
+        
+        return "/src/assets/images/profile-pic.png";
+    };
+
+    // Đảm bảo có mặc định khi user null
+    const userAvatar = user && user.avatar ? getAvatarUrl(user.avatar) : "/src/assets/images/profile-pic.png";
 
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
@@ -342,7 +410,12 @@ const Navbar = () => {
                 {user ? (
                     <div className="user-menu">
                         <div className="user-info" onClick={toggleDropdown}>
-                            <FaUserCircle className="user-icon" />
+                            <img 
+                                src={avatarError ? "/src/assets/images/profile-pic.png" : userAvatar} 
+                                alt={user.username}
+                                className="user-avatar" 
+                                onError={() => setAvatarError(true)}
+                            />
                             <span className="username">{user.username}</span>
                         </div>
 
