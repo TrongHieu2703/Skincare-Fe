@@ -21,7 +21,7 @@ body {
     width: 100%;
     box-sizing: border-box;
     z-index: 1000;
-    height: 70px;
+    height: 90px;
     /* Fixed consistent height */
     transition: all 0.3s ease;
 }
@@ -195,13 +195,14 @@ body {
 
 .register-btn,
 .login-btn {
+    text-align: center;
     padding: 0.4rem 0.8rem;
     border-radius: 8px;
     border: none;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    height: 36px;
+    height: 50px;
 }
 
 .register-btn {
