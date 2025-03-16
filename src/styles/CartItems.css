@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 .cart-page {
-  margin-top: 60px;
+
   /* Adjust margin to prevent navbar overlap */
-  background: linear-gradient(135deg, #f8faf9 0%, #e8f5e9 100%);
+  background: white;
   min-height: 100vh;
   padding: 60px 40px;
   font-family: 'Montserrat', sans-serif;
@@ -11,17 +11,19 @@
 }
 
 .cart-container {
+  margin-top: 200px;
   max-width: 1400px;
   margin: auto;
   padding: 40px;
   border-radius: 30px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 20px 50px rgba(76, 175, 80, 0.15);
+  background: rgba(255, 255, 255, 0);
+  box-shadow: 0 20px 50px rgba(76, 175, 79, 0);
   animation: slideIn 0.6s ease-out;
   backdrop-filter: blur(10px);
 }
 
 .cart-header h1 {
+
   font-family: 'Playfair Display', serif;
   font-size: 3rem;
   background: linear-gradient(135deg, #216942 0%, #4caf50 100%);
@@ -170,8 +172,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .quantity-controls button.text-btn {
@@ -531,66 +538,67 @@
 
 /* Add spinner animation styles */
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spin {
-    animation: spin 1s linear infinite;
-    display: block !important;
+  animation: spin 1s linear infinite;
+  display: block !important;
 }
 
 /* Add updating and deleting styles */
 .cart-item.updating {
-    background-color: rgba(232, 245, 233, 0.5);
+  background-color: rgba(232, 245, 233, 0.5);
 }
 
 .cart-item.deleting {
-    position: relative;
-    height: 100px;
-    opacity: 0.7;
-    margin: 10px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 235, 238, 0.5);
-    border-radius: 8px;
-    overflow: hidden;
+  position: relative;
+  height: 100px;
+  opacity: 0.7;
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 235, 238, 0.5);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .deleting-overlay {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #e53935;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #e53935;
 }
 
 .deleting-overlay .spinner-icon {
-    font-size: 24px;
-    margin-bottom: 8px;
-    animation: spin 1s linear infinite;
+  font-size: 24px;
+  margin-bottom: 8px;
+  animation: spin 1s linear infinite;
 }
 
 /* Disabled buttons */
 .quantity-controls button.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Error message styling */
 .local-error-message {
-    background-color: #ffebee;
-    color: #e53935;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    border-left: 4px solid #e53935;
-    font-size: 14px;
+  background-color: #ffebee;
+  color: #e53935;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 4px solid #e53935;
+  font-size: 14px;
 }
 
 /* Cart Page Layout */
@@ -640,7 +648,7 @@
   .cart-content {
     grid-template-columns: 1fr;
   }
-  
+
   .cart-page {
     padding: 1rem;
   }
@@ -684,9 +692,11 @@
   0% {
     background-color: #ffffff;
   }
+
   50% {
     background-color: #e8f5e9;
   }
+
   100% {
     background-color: #ffffff;
   }
@@ -696,9 +706,11 @@
   0% {
     background-color: #ffffff;
   }
+
   50% {
     background-color: #fff8e1;
   }
+
   100% {
     background-color: #ffffff;
   }
@@ -709,6 +721,7 @@
     transform: translateX(0);
     opacity: 1;
   }
+
   100% {
     transform: translateX(100%);
     opacity: 0;
@@ -719,8 +732,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Update and Delete Effects */
@@ -769,9 +787,11 @@
   0% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     opacity: 0.6;
   }
@@ -781,9 +801,11 @@
   0% {
     opacity: 0.7;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     opacity: 0.7;
   }
@@ -1220,14 +1242,16 @@
 }
 
 /* Đảm bảo nút + và - hiển thị tốt */
-.minus-btn, .plus-btn {
+.minus-btn,
+.plus-btn {
   position: relative !important;
   overflow: visible !important;
   z-index: 1 !important;
 }
 
 /* Fix container của button để đảm bảo icon hiển thị */
-.minus-btn svg, .plus-btn svg {
+.minus-btn svg,
+.plus-btn svg {
   position: relative !important;
   z-index: 2 !important;
 }

@@ -43,27 +43,9 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    <div className="footer-section">
-                        <h4>Công Ty</h4>
-                        <ul>
-                            <li><a href="#">Về Chúng Tôi</a></li>
-                            <li><a href="#">Blog</a></li>
-                            <li><a href="#">Tuyển Dụng</a></li>
-                            <li><a href="#">Báo Chí</a></li>
-                            <li><a href="#">Quà Tặng</a></li>
-                        </ul>
-                    </div>
 
-                    <div className="footer-section">
-                        <h4>Chính Sách</h4>
-                        <ul>
-                            <li><a href="#">Bảo Mật</a></li>
-                            <li><a href="#">Điều Khoản</a></li>
-                            <li><a href="#">Cookie</a></li>
-                            <li><a href="#">Đổi Trả</a></li>
-                            <li><a href="#">Vận Chuyển</a></li>
-                        </ul>
-                    </div>
+
+
                 </div>
             </div>
 

@@ -9,6 +9,7 @@ body {
 
 /* Header */
 header {
+    margin-top: 1500px;
     text-align: center;
     padding: 30px;
     font-family: 'Playfair Display', serif;
