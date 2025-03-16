@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllAccounts, deleteAccount, updateAccountInfo } from '/src/api/accountApi';
+import { getAllAccounts, deleteAccount, updateAccountInfo, createAccount } from '/src/api/accountApi';
 import { Trash2, Pencil } from 'lucide-react';
 import Sidebar from './Sidebar';
 import styles from './CustomerManager.module.css';
@@ -8,6 +8,14 @@ const CustomerManager = () => {
   const [accounts, setAccounts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editAccount, setEditAccount] = useState(null);
+  const [newAccount, setNewAccount] = useState({
+    username: '',
+    email: '',
+    address: '',
+    phoneNumber: '',
+    status: 'active',
+    role: 'customer'
+  });
 
   const fetchAccounts = async () => {
     try {
@@ -45,6 +53,33 @@ const CustomerManager = () => {
       } catch (error) {
         console.error('Error updating account:', error);
         alert('Cập nhật thông tin tài khoản thất bại.');
+      }
+    } else {
+      alert('Vui lòng nhập đầy đủ thông tin!');
+    }
+  };
+
+  const handleNewAccountChange = (field, value) => {
+    setNewAccount(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleCreateAccount = async () => {
+    if (newAccount.username && newAccount.email) {
+      try {
+        const createdAccount = await createAccount(newAccount);
+        setAccounts([...accounts, createdAccount]);
+        setNewAccount({
+          username: '',
+          email: '',
+          address: '',
+          phoneNumber: '',
+          status: 'active',
+          role: 'customer'
+        });
+        alert('Tạo tài khoản thành công');
+      } catch (error) {
+        console.error('Error creating account:', error);
+        alert('Tạo tài khoản thất bại.');
       }
     } else {
       alert('Vui lòng nhập đầy đủ thông tin!');
@@ -127,6 +162,61 @@ const CustomerManager = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Form tạo tài khoản mới */}
+        <div className={styles.newAccountForm}>
+          <h2 className={styles.formHeader}>Tạo tài khoản mới</h2>
+          <input
+            type="text"
+            placeholder="Tên đăng nhập"
+            value={newAccount.username}
+            onChange={e => handleNewAccountChange('username', e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={newAccount.email}
+            onChange={e => handleNewAccountChange('email', e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="text"
+            placeholder="Địa chỉ"
+            value={newAccount.address}
+            onChange={e => handleNewAccountChange('address', e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="text"
+            placeholder="Số điện thoại"
+            value={newAccount.phoneNumber}
+            onChange={e => handleNewAccountChange('phoneNumber', e.target.value)}
+            className={styles.input}
+          />
+          <select
+            value={newAccount.status}
+            onChange={e => handleNewAccountChange('status', e.target.value)}
+            className={styles.select}
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <select
+            value={newAccount.role}
+            onChange={e => handleNewAccountChange('role', e.target.value)}
+            className={styles.select}
+          >
+            <option value="customer">Customer</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button
+            onClick={handleCreateAccount}
+            className={`${styles.button} ${styles.create}`}
+          >
+            Tạo tài khoản
+          </button>
         </div>
       </div>
 
