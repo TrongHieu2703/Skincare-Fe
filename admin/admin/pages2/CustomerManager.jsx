@@ -210,6 +210,7 @@ const CustomerManager = () => {
           >
             <option value="customer">Customer</option>
             <option value="admin">Admin</option>
+            <option value="admin">Staff</option>
           </select>
           <button
             onClick={handleCreateAccount}
@@ -271,6 +272,7 @@ const CustomerManager = () => {
               >
                 <option value="customer">Customer</option>
                 <option value="admin">Admin</option>
+                <option value="admin">Staff</option>
               </select>
             </div>
 
