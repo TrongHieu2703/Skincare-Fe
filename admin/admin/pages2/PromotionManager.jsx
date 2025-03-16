@@ -1,31 +1,34 @@
 import React, { useEffect, useState } from "react";
 import styles from "./PromotionManager.module.css";
-import { createVoucher, deleteVoucher, getAllVouchers, } from "/src/api/voucherApi";
+import { createVoucher, deleteVoucher, getAllVouchers } from "/src/api/voucherApi";
 import Sidebar from "./Sidebar";
 
 const PromotionManager = () => {
   const [promotions, setPromotions] = useState([]);
   const [newPromotion, setNewPromotion] = useState({
+    name: "",
     code: "",
-    type: "percentage",
-    value: "",
-    minOrder: "",
-    startDate: "",
-    endDate: "",
-    usageLimit: "",
-    description: "",
+    isPercent: true,
+    minOrderValue: 0,
+    value: 0,
+    maxDiscountValue: 0,
+    startedAt: "",
+    expiredAt: "",
+    isInfinity: true,
+    quantity: 0,
+    pointCost: 0,
   });
 
   const promotionTypes = [
-    { value: "percentage", label: "Giảm theo %" },
-    { value: "fixed", label: "Giảm số tiền cố định" },
+    { value: true, label: "Giảm theo %" },
+    { value: false, label: "Giảm số tiền cố định" },
   ];
 
   const fetchPromotions = async () => {
     try {
       const response = await getAllVouchers();
       setPromotions(response.data);
-      console.log("Fetched promotions:", response.data); // Log fetched promotions
+      console.log("Fetched promotions:", response.data);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách khuyến mãi:", error);
     }
@@ -43,9 +46,9 @@ const PromotionManager = () => {
   };
 
   const removePromotion = async (id, code) => {
-    console.log("Removing promotion with ID:", id); // Log the ID being removed
+    console.log("Removing promotion with ID:", id);
     const confirmed = window.confirm(
-      `Bạn có chắc muốn xoá mã khuyến mãi "${code}" không?`
+      `Bạn có chắc muốn xoá mã khuyến mãi ${code} không?`
     );
     if (!confirmed) return;
 
@@ -60,14 +63,17 @@ const PromotionManager = () => {
 
   const resetNewPromotion = () => {
     setNewPromotion({
+      name: "",
       code: "",
-      type: "percentage",
-      value: "",
-      minOrder: "",
-      startDate: "",
-      endDate: "",
-      usageLimit: "",
-      description: "",
+      isPercent: true,
+      minOrderValue: 0,
+      value: 0,
+      maxDiscountValue: 0,
+      startedAt: "",
+      expiredAt: "",
+      isInfinity: true,
+      quantity: 0,
+      pointCost: 0,
     });
   };
 
@@ -84,6 +90,22 @@ const PromotionManager = () => {
         {/* Form tạo mới */}
         <div className={styles.formContainer}>
           <h2>Tạo mã khuyến mãi mới</h2>
+
+          <div className={styles.formRow}>
+            <label>Tên khuyến mãi</label>
+            <input
+              type="text"
+              value={newPromotion.name}
+              onChange={(e) =>
+                setNewPromotion({
+                  ...newPromotion,
+                  name: e.target.value,
+                })
+              }
+              placeholder="VD: Giảm 10k"
+              className={styles.input}
+            />
+          </div>
 
           <div className={styles.formRow}>
             <label>Mã khuyến mãi</label>
@@ -104,9 +126,9 @@ const PromotionManager = () => {
           <div className={styles.formRow}>
             <label>Loại khuyến mãi</label>
             <select
-              value={newPromotion.type}
+              value={newPromotion.isPercent}
               onChange={(e) =>
-                setNewPromotion({ ...newPromotion, type: e.target.value })
+                setNewPromotion({ ...newPromotion, isPercent: e.target.value === "true" })
               }
               className={styles.select}
             >
@@ -120,7 +142,7 @@ const PromotionManager = () => {
 
           <div className={styles.formRow}>
             <label>
-              {newPromotion.type === "percentage"
+              {newPromotion.isPercent
                 ? "Phần trăm giảm (%)"
                 : "Số tiền giảm (VNĐ)"}
             </label>
@@ -138,9 +160,9 @@ const PromotionManager = () => {
             <label>Đơn hàng tối thiểu (VNĐ)</label>
             <input
               type="number"
-              value={newPromotion.minOrder}
+              value={newPromotion.minOrderValue}
               onChange={(e) =>
-                setNewPromotion({ ...newPromotion, minOrder: e.target.value })
+                setNewPromotion({ ...newPromotion, minOrderValue: e.target.value })
               }
               className={styles.input}
             />
@@ -150,9 +172,9 @@ const PromotionManager = () => {
             <label>Ngày bắt đầu</label>
             <input
               type="datetime-local"
-              value={newPromotion.startDate}
+              value={newPromotion.startedAt}
               onChange={(e) =>
-                setNewPromotion({ ...newPromotion, startDate: e.target.value })
+                setNewPromotion({ ...newPromotion, startedAt: e.target.value })
               }
               className={styles.input}
             />
@@ -162,9 +184,9 @@ const PromotionManager = () => {
             <label>Ngày kết thúc</label>
             <input
               type="datetime-local"
-              value={newPromotion.endDate}
+              value={newPromotion.expiredAt}
               onChange={(e) =>
-                setNewPromotion({ ...newPromotion, endDate: e.target.value })
+                setNewPromotion({ ...newPromotion, expiredAt: e.target.value })
               }
               className={styles.input}
             />
@@ -174,9 +196,9 @@ const PromotionManager = () => {
             <label>Giới hạn lượt dùng</label>
             <input
               type="number"
-              value={newPromotion.usageLimit}
+              value={newPromotion.quantity}
               onChange={(e) =>
-                setNewPromotion({ ...newPromotion, usageLimit: e.target.value })
+                setNewPromotion({ ...newPromotion, quantity: e.target.value })
               }
               className={styles.input}
             />
@@ -223,18 +245,18 @@ const PromotionManager = () => {
             </thead>
             <tbody>
               {promotions.map((promo) => (
-                <tr key={promo._id}>
+                <tr key={promo.voucherId}>
                   <td>{promo.code}</td>
-                  <td>{promo.type === "percentage" ? "%" : "VNĐ"}</td>
+                  <td>{promo.isPercent ? "%" : "VNĐ"}</td>
                   <td>{promo.value}</td>
-                  <td>{promo.minOrder}</td>
-                  <td>{new Date(promo.startDate).toLocaleString()}</td>
-                  <td>{new Date(promo.endDate).toLocaleString()}</td>
-                  <td>{promo.usageLimit}</td>
+                  <td>{promo.minOrderValue}</td>
+                  <td>{new Date(promo.startedAt).toLocaleString()}</td>
+                  <td>{new Date(promo.expiredAt).toLocaleString()}</td>
+                  <td>{promo.quantity}</td>
                   <td>{promo.description}</td>
                   <td>
                     <button
-                      onClick={() => removePromotion(promo._id, promo.code)}
+                      onClick={() => removePromotion(promo.voucherId, promo.code)}
                       className={styles.deleteBtn}
                     >
                       Xoá
