@@ -27,13 +27,32 @@ const StaffProduct = () => {
         }
     };
 
+    const handleEdit = (productId) => {
+        // Implement edit functionality
+        console.log('Edit product:', productId);
+    };
+
+    const handleDelete = (productId) => {
+        // Implement delete functionality
+        console.log('Delete product:', productId);
+    };
+
+    const handleAddProduct = () => {
+        // Implement add product functionality
+        console.log('Add new product');
+    };
+
     return (
         <div className="dashboard-container">
             <StaffSidebar />
 
             <main className="dashboard-content">
-                <h1 className="title">Quản lý sản phẩm</h1>
-                <p>Tất cả sản phẩm ở dưới đây!</p>
+                <div className="product-header">
+                    <h1 className="title">Quản lý sản phẩm</h1>
+                    <button className="add-product-btn" onClick={handleAddProduct}>
+                        Thêm sản phẩm mới
+                    </button>
+                </div>
 
                 {loading ? (
                     <p>Đang tải sản phẩm...</p>
@@ -41,13 +60,14 @@ const StaffProduct = () => {
                     <table className="product-table">
                         <thead>
                             <tr>
-                                <th>stt</th>
+                                <th>STT</th>
                                 <th>Hình ảnh</th>
                                 <th>Tên</th>
                                 <th>Mô tả</th>
                                 <th>Giá</th>
                                 <th>Thương hiệu</th>
                                 <th>Loại</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,6 +93,20 @@ const StaffProduct = () => {
                                     </td>
                                     <td>{product.productBrandName}</td>
                                     <td>{product.productTypeName}</td>
+                                    <td className="action-buttons">
+                                        <button
+                                            className="edit-btn"
+                                            onClick={() => handleEdit(product.id)}
+                                        >
+                                            Sửa
+                                        </button>
+                                        <button
+                                            className="delete-btn"
+                                            onClick={() => handleDelete(product.id)}
+                                        >
+                                            Xóa
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

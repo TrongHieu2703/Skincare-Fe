@@ -1,44 +1,43 @@
 .dashboardContainer {
-
-  margin-top: 50px;
-  /* Adjusted margin-top */
-
   display: flex;
   min-height: 100vh;
   background-color: #ffffff;
   font-family: 'Segoe UI', sans-serif;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .dashboardContent {
   flex: 1;
-  padding: 30px;
+  width: 100%;
+  padding: 20px;
   background-color: #fff;
   border-radius: 12px;
-  margin: 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 .title {
-  margin-top: 50px;
   font-size: 26px;
   font-weight: 600;
   color: #396e63;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  margin-top: 0;
+  /* Bỏ margin top */
 }
 
 /* Table */
 .productTable {
-
   width: 100%;
-  border-collapse: collapse;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-top: 400px;
-
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 20px;
+  /* Giảm margin-top */
 }
 
 .productTable thead {
-  background-color: #8cc5af; /* Màu nền cho tiêu đề cột */
+  background-color: #8cc5af;
+  /* Màu nền cho tiêu đề cột */
 }
 
 .productTable th {
@@ -86,19 +85,25 @@
 }
 
 .editIcon {
-  background-color: #0d6efd; /* Xanh dương */
+  background-color: #0d6efd;
+  /* Xanh dương */
   color: #fff;
 }
+
 .editIcon:hover {
-  background-color: #0b5ed7; /* Hover đậm hơn */
+  background-color: #0b5ed7;
+  /* Hover đậm hơn */
 }
 
 .deleteIcon {
-  background-color: #dc3545; /* Đỏ */
+  background-color: #dc3545;
+  /* Đỏ */
   color: #fff;
 }
+
 .deleteIcon:hover {
-  background-color: #c82333; /* Hover đậm hơn */
+  background-color: #c82333;
+  /* Hover đậm hơn */
 }
 
 /* Form chỉnh sửa (nếu có) */
@@ -146,7 +151,8 @@
 
 /* Nút lưu, v.v. */
 .button {
-  background-color: #28a745; /* Xanh lá */
+  background-color: #28a745;
+  /* Xanh lá */
   color: #fff;
   padding: 0.5rem 1.2rem;
   border: none;
@@ -157,4 +163,177 @@
 
 .button:hover {
   background-color: #218838;
+}
+
+/* Add these styles to your CSS module file */
+.formGroup {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.formLabel {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.subLabel {
+  display: block;
+  font-size: 0.9em;
+  margin-bottom: 3px;
+  color: #555;
+}
+
+.textInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.imageInputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.imageUrlInput {
+  width: 100%;
+}
+
+.fileUploadContainer {
+  margin: 10px 0;
+}
+
+.fileInputLabel {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f1f1f1;
+  color: #333;
+  padding: 8px 15px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fileInputLabel:hover {
+  background-color: #e0e0e0;
+}
+
+.uploadIcon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.hiddenFileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.imagePreviewContainer {
+  margin-top: 15px;
+}
+
+.previewBox {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.previewLabel {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 200px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Progress bar styles */
+.progressContainer {
+  width: 100%;
+  height: 20px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin: 15px 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBar {
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #333;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Thêm media queries để đảm bảo responsive */
+@media (max-width: 1200px) {
+  .dashboardContainer {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    margin-left: 0;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .dashboardContent {
+    padding: 10px;
+  }
+}
+
+/* Thêm styles cho form modal để đảm bảo hiển thị đúng */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }

@@ -39,8 +39,8 @@
 /* Profile Image */
 .profile-image-container {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     margin: 0 auto;
     border-radius: 50%;
     overflow: hidden;
@@ -278,8 +278,45 @@
 }
 
 @keyframes fadeInOut {
-    0% { opacity: 0; }
-    15% { opacity: 1; }
-    85% { opacity: 1; }
-    100% { opacity: 0; }
+    0% {
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* CSS cho nút chuyển đổi ảnh Google Drive */
+.migrate-photo-button {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.migrate-photo-button:hover {
+    background-color: #f57c00;
+}
+
+.migrate-photo-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }

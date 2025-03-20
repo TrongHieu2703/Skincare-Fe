@@ -215,18 +215,19 @@ const Navbar = () => {
     const getAvatarUrl = (avatarPath) => {
         if (!avatarPath) return "/src/assets/images/profile-pic.png";
         
-        // Kiểm tra URL Google Drive và thay đổi format
+        // URL tương đối từ wwwroot (bắt đầu bằng /avatar-images/)
+        if (avatarPath.startsWith("/avatar-images/")) {
+            // Thêm timestamp để tránh cache browser
+            const timestamp = new Date().getTime();
+            // Sử dụng API_BASE_URL từ .env
+            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "https://localhost:7290";
+            return `${apiBaseUrl}${avatarPath}?t=${timestamp}`;
+        }
+        
+        // Nếu là ảnh Google Drive, sử dụng ảnh mặc định
         if (avatarPath.includes("drive.google.com")) {
-            // Nếu URL có dạng uc?id=
-            if (avatarPath.includes("uc?id=")) {
-                const fileId = avatarPath.split("uc?id=")[1].split("&")[0];
-                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-            }
-            // Nếu URL có dạng /d/
-            else if (avatarPath.includes("/d/")) {
-                const fileId = avatarPath.split("/d/")[1].split("/")[0];
-                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-            }
+            console.warn("Navbar: Google Drive image detected. Should be migrated to local.");
+            return "/src/assets/images/profile-pic.png";
         }
         
         // Nếu là URL http(s) khác, giữ nguyên

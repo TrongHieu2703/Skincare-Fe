@@ -7,6 +7,10 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100vw;
+    /* Make the body full width */
+    height: 100vh;
+    /* Make the body full height */
 }
 
 .title-container {
@@ -23,12 +27,17 @@ html {
 
 /* Container chính */
 .login-container {
-    margin-top: -800px;
+    width: 120vw;
+    /* Make the container full width */
+    height: calc(100vh - 60px);
+    /* Adjust height to account for navbar */
+    margin-top: 500px;
+    /* Add margin to push below navbar */
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    border-radius: 15px;
+    border-radius: 0;
+    /* Remove border-radius for full size */
     background: linear-gradient(to right, #287c6a, #ffffff);
     gap: 40px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);

@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// Để đảm bảo URL nhất quán trong toàn bộ ứng dụng
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7290";
+
 const axiosClient = axios.create({
-  baseURL: 'https://localhost:7290/api', // Chỉ đến /api
+  baseURL: `${API_BASE_URL}/api`,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -35,8 +38,14 @@ axiosClient.interceptors.response.use(
       localStorage.removeItem('user');
       // Không redirect tự động để tránh vòng lặp vô hạn
     }
+    if (error.response?.status === 403) {
+      console.log('Permission denied: Admin role required');
+      // You can also redirect to login or show a message
+    }
     return Promise.reject(error);
   }
 );
 
+// Export thêm API_BASE_URL để sử dụng cho URL tĩnh
+export { API_BASE_URL };
 export default axiosClient;

@@ -11,30 +11,26 @@ export const getAllOrders = async () => {
 };
 
 // Fetch order details by ID (cho trang chi tiết đơn hàng)
-export const getOrderDetail = async (orderId) => {
-  if (!orderId) {
-    console.error('getOrderDetail called with undefined or null orderId');
-    throw new Error('Order ID is required');
-  }
-  
+export const getOrderDetail = async (id) => {
   try {
-    console.log(`Fetching order details for ID: ${orderId}`);
-    const response = await axiosClient.get(`/Order/detail/${orderId}`);
-    console.log('Order details response:', response);
+    console.log(`Fetching order details for ID: ${id}`);
+    const response = await axiosClient.get(`/Order/detail/${id}`);
     
-    // Kiểm tra response và trả về dữ liệu order
-    if (response && response.data) {
-      if (response.data.data) {
-        return response.data.data;
-      } else {
-        console.warn('Order data structure unexpected:', response.data);
-        return response.data; // Trả về trực tiếp nếu không có data.data
-      }
+    console.log("Raw order detail response:", response);
+    
+    // Check response structure and return data
+    if (response.data && response.data.data) {
+      console.log("Returning response.data.data:", response.data.data);
+      return response.data.data;
+    } else if (response.data) {
+      console.log("Returning response.data:", response.data);
+      return response.data;
     } else {
-      throw new Error('Invalid response format from server');
+      console.error("Invalid response format:", response);
+      throw new Error('Invalid response format');
     }
   } catch (error) {
-    console.error(`Error fetching order details for ID ${orderId}:`, error);
+    console.error(`Error fetching order detail for ID ${id}:`, error);
     throw error;
   }
 };
@@ -61,7 +57,21 @@ export const createOrder = async (orderData) => {
     return response.data;
   } catch (error) {
     console.error('Error creating order:', error);
-    throw error;
+    
+    // Handle specific error cases
+    if (error.response?.data) {
+      const errorData = error.response.data;
+      throw {
+        type: errorData.errorCode || 'ORDER_ERROR',
+        message: errorData.message || 'Đã xảy ra lỗi khi tạo đơn hàng',
+        details: errorData.details || null
+      };
+    }
+    
+    throw {
+      type: 'ORDER_ERROR',
+      message: error.message || 'Đã xảy ra lỗi khi tạo đơn hàng'
+    };
   }
 };
 
@@ -94,6 +104,20 @@ export const updateOrderStatus = async (orderId, status) => {
     return response.data;
   } catch (error) {
     console.error(`Error updating status for order ${orderId}:`, error);
+    throw error;
+  }
+};
+
+// Add/update this function in your orderApi.js file
+
+// Fetch order by ID
+export const getOrderById = async (id) => {
+  try {
+    const response = await axiosClient.get(`/Order/${id}`);
+    console.log("Order by ID response:", response);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching order with ID ${id}:`, error);
     throw error;
   }
 };

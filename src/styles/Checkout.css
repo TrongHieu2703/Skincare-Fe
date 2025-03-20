@@ -17,7 +17,8 @@
 
 .loading-overlay .loading-spinner {
   border: 5px solid #f3f3f3;
-  border-top: 5px solid #4CAF50; /* Green */
+  border-top: 5px solid #4CAF50;
+  /* Green */
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -32,8 +33,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Message styles */
@@ -59,6 +65,7 @@
 
 /* Reset layout tổng thể để giảm cuộn */
 .order-detail-page {
+  padding-top: 1000px;
   padding: 5rem 2rem 2rem;
   background: linear-gradient(135deg, #f8faf9 0%, #e8f5e9 100%);
   min-height: 100vh;
@@ -67,6 +74,7 @@
 }
 
 .order-detail-container {
+  padding-top: 300px;
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
@@ -470,12 +478,12 @@
   .order-detail-container {
     grid-template-columns: 1fr;
   }
-  
+
   .order-detail-right {
     position: static;
     max-height: none;
   }
-  
+
   .payment-methods {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -485,20 +493,20 @@
   .order-detail-page {
     padding: 20px 12px;
   }
-  
+
   .payment-methods {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .cart-item-summary {
     grid-template-columns: 40px 1fr auto;
   }
-  
+
   .cart-item-image {
     width: 40px;
     height: 40px;
   }
-  
+
   .cart-item-name {
     max-width: 120px;
   }

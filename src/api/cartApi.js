@@ -38,6 +38,15 @@ export const addToCart = async (productId, quantity) => {
     return response.data;
   } catch (error) {
     console.error(`❌ [${callId}] POST /cart - ERROR`, error);
+    
+    // Handle specific error cases
+    if (error.response?.status === 400 && error.response?.data?.errorCode === "INSUFFICIENT_INVENTORY") {
+      throw {
+        type: "INSUFFICIENT_INVENTORY",
+        message: error.response.data.message
+      };
+    }
+    
     throw error;
   }
 };
@@ -48,15 +57,23 @@ export const updateCart = async (cartItemId, quantity) => {
   console.log(`🛒 [${callId}] PUT /cart/item/${cartItemId} - START`, { quantity });
   
   try {
-    // Gửi đúng format cho UpdateCartItemDTO - productId không cần thiết
     const response = await axiosClient.put(`/cart/item/${cartItemId}`, { 
-      cartItemId,  // CartItemId đã được gửi trong path param
+      cartItemId,
       quantity 
     });
     console.log(`✅ [${callId}] PUT /cart/item/${cartItemId} - SUCCESS`, response.data);
     return response.data;
   } catch (error) {
     console.error(`❌ [${callId}] PUT /cart/item/${cartItemId} - ERROR`, error);
+    
+    // Handle specific error cases
+    if (error.response?.status === 400 && error.response?.data?.errorCode === "INSUFFICIENT_INVENTORY") {
+      throw {
+        type: "INSUFFICIENT_INVENTORY",
+        message: error.response.data.message
+      };
+    }
+    
     throw error;
   }
 };

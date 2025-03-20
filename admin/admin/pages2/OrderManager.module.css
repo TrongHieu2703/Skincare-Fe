@@ -1,146 +1,65 @@
-/* Layout chính */
-.container {
-  padding: 24px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-  font-family: 'Segoe UI', sans-serif;
+/* Reset & base */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
 }
 
-/* Tiêu đề trang */
-h2 {
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #2f4858;
-  text-align: center;
+/* Sidebar bên phải */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 180px;
+  /* Làm nhỏ lại */
+  height: 100vh;
+  background-color: #cde3d1;
+  padding: 20px 10px;
+  box-sizing: border-box;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
-/* Table styling */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 10px;
-  overflow: hidden;
+/* Nội dung chính - không bị sidebar che */
+.main-content {
+  margin-right: 180px;
+  /* Phù hợp với width của sidebar */
+  padding: 20px;
+  flex: 1;
+  box-sizing: border-box;
 }
 
-.table thead {
-  background-color: #f4f6f8;
+/* Tùy chỉnh menu item trong sidebar nếu cần */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.table th {
-  color: #2f4858;
-  font-weight: 600;
-  padding: 12px;
-  text-align: center;
-}
-
-.table td {
-  text-align: center;
-  padding: 12px;
-  vertical-align: middle;
-  color: #333;
-}
-
-.table tbody tr {
-  transition: background-color 0.2s ease;
-}
-
-.table tbody tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-.table tbody tr:hover {
-  background-color: #f1faff;
-}
-
-/* Buttons */
-.action-btn {
-  padding: 6px 14px;
+.sidebar li {
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
   font-size: 14px;
-  font-weight: 500;
-  border-radius: 6px;
-  border: none;
-  margin: 0 4px;
-  transition: 0.2s ease;
-  color: #fff;
-  cursor: pointer;
 }
 
-.edit-btn {
-  background-color: #0d6efd;
+.sidebar li svg {
+  margin-right: 8px;
 }
 
-.edit-btn:hover {
-  background-color: #0b5ed7;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-}
-
-.delete-btn:hover {
-  background-color: #c82333;
-}
-
-/* Badge */
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 500;
-  font-size: 13px;
-  display: inline-block;
-}
-
-.status-pending {
-  background-color: #ffc107;
-  color: #212529;
-}
-
-.status-delivered {
-  background-color: #28a745;
-  color: #fff;
-}
-
-.status-shipped {
-  background-color: #17a2b8;
-  color: #fff;
-}
-
-/* Responsive Table */
+/* Responsive */
 @media (max-width: 768px) {
-  .table thead {
-    display: none;
-  }
-
-  .table,
-  .table tbody,
-  .table tr,
-  .table td {
-    display: block;
+  .sidebar {
     width: 100%;
-  }
-
-  .table tr {
-    margin-bottom: 15px;
-    background-color: #fff;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .table td {
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
-  }
-
-  .table td::before {
-    content: attr(data-label);
+    height: auto;
     position: absolute;
-    left: 15px;
-    top: 12px;
-    font-weight: bold;
-    color: #6c757d;
-    text-align: left;
+    top: auto;
+    bottom: 0;
+  }
+
+  .main-content {
+    margin-right: 0;
+    padding-bottom: 220px;
   }
 }

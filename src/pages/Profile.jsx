@@ -1,11 +1,12 @@
 // src/pages/Profile.jsx
 import React, { useState, useEffect } from "react";
-import { getAccountInfo, updateProfileWithAvatar } from "../api/accountApi";
+import { getAccountInfo, updateProfileWithAvatar, migrateGoogleDriveAvatar, forceMigrateGoogleDriveAvatar } from "../api/accountApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import coverImage from "/src/assets/images/cover-image.png";
 import defaultAvatar from "/src/assets/images/profile-pic.png";
 import "/src/styles/Profile.css";
+import { API_BASE_URL } from "../api/axiosClient";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -24,22 +25,27 @@ const Profile = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [successNotification, setSuccessNotification] = useState("");
+  const [isGoogleDriveAvatar, setIsGoogleDriveAvatar] = useState(false);
+  const [migratingAvatar, setMigratingAvatar] = useState(false);
 
   const getImageUrl = (avatarPath) => {
     if (!avatarPath) return defaultAvatar;
     
-    // Kiểm tra URL Google Drive và thay đổi format
+    // THAY ĐỔI: Nếu là ảnh Google Drive, trả về ảnh mặc định để buộc phải di chuyển
     if (avatarPath.includes("drive.google.com")) {
-        // Nếu URL có dạng uc?id=
-        if (avatarPath.includes("uc?id=")) {
-            const fileId = avatarPath.split("uc?id=")[1].split("&")[0];
-            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-        }
-        // Nếu URL có dạng /d/
-        else if (avatarPath.includes("/d/")) {
-            const fileId = avatarPath.split("/d/")[1].split("/")[0];
-            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-        }
+      setIsGoogleDriveAvatar(true);
+      // Không hiển thị ảnh Google Drive nữa, để cưỡng chế chuyển sang local
+      console.warn("Google Drive image detected. Must be migrated to local.");
+      return defaultAvatar;
+    } else {
+      setIsGoogleDriveAvatar(false);
+    }
+    
+    // URL tương đối từ wwwroot (bắt đầu bằng /avatar-images/ hoặc /product-images/)
+    if (avatarPath.startsWith("/avatar-images/") || avatarPath.startsWith("/product-images/")) {
+      // Thêm timestamp để tránh cache browser
+      const timestamp = new Date().getTime();
+      return `${API_BASE_URL}${avatarPath}?t=${timestamp}`;
     }
     
     // Nếu là URL http(s) khác, giữ nguyên
@@ -56,8 +62,21 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    fetchUserProfile();
-    // dependency có thể để [] nếu navigate không thay đổi
+    fetchUserProfile().then(async () => {
+      // Nếu có ảnh Google Drive, tự động di chuyển bằng force
+      if (formData.avatar && formData.avatar.includes('drive.google.com')) {
+        try {
+          setMigratingAvatar(true);
+          await forceMigrateGoogleDriveAvatar();
+          // Tải lại thông tin người dùng
+          await fetchUserProfile();
+        } catch (err) {
+          console.error("Error auto-migrating avatar:", err);
+        } finally {
+          setMigratingAvatar(false);
+        }
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -251,6 +270,24 @@ const Profile = () => {
     }
   };
 
+  const handleMigrateAvatar = async () => {
+    if (!isGoogleDriveAvatar) return;
+    
+    try {
+      setMigratingAvatar(true);
+      // Sử dụng force migrate thay vì migrate thông thường
+      await forceMigrateGoogleDriveAvatar();
+      toast.success("Chuyển đổi ảnh đại diện thành công!");
+      // Tải lại thông tin người dùng
+      await fetchUserProfile();
+    } catch (error) {
+      console.error("Error migrating avatar:", error);
+      toast.error(error.message || "Không thể chuyển đổi ảnh đại diện");
+    } finally {
+      setMigratingAvatar(false);
+    }
+  };
+
   return (
     <div className="profile-container">
       {successNotification && (
@@ -279,6 +316,17 @@ const Profile = () => {
             />
             Đổi ảnh
           </label>
+          
+          {/* Hiển thị nút di chuyển nếu phát hiện ảnh từ Google Drive */}
+          {isGoogleDriveAvatar && (
+            <button 
+              className="migrate-photo-button" 
+              onClick={handleMigrateAvatar}
+              disabled={migratingAvatar}
+            >
+              {migratingAvatar ? "Đang chuyển đổi..." : "Chuyển đổi sang Local"}
+            </button>
+          )}
         </div>
         <h2>{formData.username || "Chưa cập nhật tên"}</h2>
         <p>{formData.email}</p>

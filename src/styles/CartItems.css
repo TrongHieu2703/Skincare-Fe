@@ -1,19 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 .cart-page {
-
-  /* Adjust margin to prevent navbar overlap */
+  margin-top: 100px;
   background: white;
   min-height: 100vh;
-  padding: 60px 40px;
+  padding: 200px 40px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   font-family: 'Montserrat', sans-serif;
   animation: fadeIn 0.8s ease-out;
 }
 
 .cart-container {
-  margin-top: 200px;
-  max-width: 1400px;
-  margin: auto;
+  padding-top: 1000px;
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
   padding: 40px;
   border-radius: 30px;
   background: rgba(255, 255, 255, 0);
@@ -23,6 +26,7 @@
 }
 
 .cart-header h1 {
+  padding-top: 300px;
 
   font-family: 'Playfair Display', serif;
   font-size: 3rem;

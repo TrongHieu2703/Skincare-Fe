@@ -20,10 +20,16 @@ const StaffOrderManager = () => {
         }
     };
 
-    const handleUpdate = async (id, status) => {
+    const handleUpdate = async (id, currentStatus) => {
         try {
-            await updateOrderStatus(id, status);
-            fetchOrders(); // Refresh orders after update
+            // Determine the next status based on the current status
+            const updatedStatus = currentStatus === 'pending' ? 'shipped' : 'delivered';
+            
+            // Update the order status using the correct API endpoint
+            await updateOrderStatus(id, updatedStatus);
+            
+            // Refresh orders after update
+            fetchOrders();
         } catch (err) {
             console.error('Lỗi khi cập nhật trạng thái đơn hàng:', err);
         }

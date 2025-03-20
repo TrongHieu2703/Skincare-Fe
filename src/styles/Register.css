@@ -14,6 +14,7 @@ html.signup-page {
 
 /* 2) Chia trang làm 2 cột: .register-left (ảnh) và .register-right (form) */
 .register-page-container {
+  margin-top: 1000px;
   display: flex;
   min-height: 100vh;
   width: 100%;

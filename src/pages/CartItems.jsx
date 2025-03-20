@@ -3,7 +3,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash, FaSpinner } from "react-icons/fa";
 import { useCart } from "../store/CartContext";
+import { getInventoryByProductId } from "../api/inventoryApi"; // Import the inventory API function
 import "/src/styles/CartItems.css";
+import { formatProductImageUrl } from "../utils/imageUtils";
 
 // Thêm style nội tuyến để ghi đè lên các animation không cần thiết
 const overrideStyles = {
@@ -72,6 +74,7 @@ const CartItems = () => {
   const [deletingItems, setDeletingItems] = useState({});
   const [localError, setLocalError] = useState(null);
   const [iconsLoaded, setIconsLoaded] = useState(true);
+  const [inventoryData, setInventoryData] = useState({}); // State to hold inventory data
   
   // Refs cho theo dõi thay đổi và tạo hiệu ứng
   const prevQuantitiesRef = useRef({});
@@ -111,6 +114,22 @@ const CartItems = () => {
     prevQuantitiesRef.current = newQuantities;
   }, [cartItems, cartData]);
 
+  useEffect(() => {
+    const fetchInventoryData = async () => {
+      const inventoryPromises = cartItems.map(item => 
+        getInventoryByProductId(item.productId).then(response => {
+          setInventoryData(prev => ({
+            ...prev,
+            [item.productId]: response.data // Store inventory data by product ID
+          }));
+        })
+      );
+      await Promise.all(inventoryPromises);
+    };
+
+    fetchInventoryData();
+  }, [cartItems]);
+
   const shippingFee = 30000;
   const total = subtotal + shippingFee;
 
@@ -132,6 +151,14 @@ const CartItems = () => {
       
       // Cập nhật prevQuantitiesRef sau khi thành công
       prevQuantitiesRef.current[itemId] = newQuantity;
+
+      // Update inventory data if quantity changes
+      if (inventoryData[productId]) {
+        const availableStock = inventoryData[productId].reduce((acc, inv) => acc + inv.quantity, 0);
+        if (newQuantity > availableStock) {
+          setLocalError("Số lượng yêu cầu vượt quá số lượng có sẵn trong kho.");
+        }
+      }
     } catch (error) {
       console.error("Error updating item quantity:", error);
       setLocalError("Không thể cập nhật số lượng. Vui lòng thử lại!");
@@ -175,6 +202,11 @@ const CartItems = () => {
     navigate("/Checkout", { state: { cartItems, subtotal, shippingFee, total } });
   };
 
+  // Add function to handle product click
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   if (globalLoading) {
     return (
       <div className="loading-container">
@@ -191,6 +223,10 @@ const CartItems = () => {
         <button onClick={loadCartItems}>Thử lại</button>
       </div>
     );
+  }
+
+  if (cartItems.length === 0) {
+    return <div>Giỏ hàng của bạn đang trống.</div>;
   }
 
   return (
@@ -221,12 +257,13 @@ const CartItems = () => {
               {cartItems.map((item) => {
                 const productPrice = item.productPrice ?? 0;
                 const productName = item.productName || "Unnamed product";
-                const productImage = item.productImage || "https://via.placeholder.com/150";
                 const isUpdating = updatingItems[item.id];
                 const isDeleting = deletingItems[item.id];
                 const animationState = animatingItemsRef.current[item.id] || "";
+                const availableStock = inventoryData[item.productId] 
+                  ? inventoryData[item.productId].reduce((acc, inv) => acc + inv.quantity, 0) 
+                  : 0;
 
-                // Không hiển thị item nếu đang trong quá trình xóa
                 if (isDeleting) {
                   return (
                     <div key={item.id} className="cart-item deleting">
@@ -243,21 +280,29 @@ const CartItems = () => {
                 }
 
                 return (
-                  <div 
-                    key={item.id} 
-                    className="cart-item"
-                  >
-                    <div className="item-image">
-                      <img src={productImage} alt={productName} />
+                  <div key={item.id} className="cart-item">
+                    <div className="item-image" onClick={() => handleProductClick(item.productId)} style={{ cursor: 'pointer' }}>
+                      <img 
+                        src={formatProductImageUrl(item.productImage)} 
+                        alt={productName}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/src/assets/images/placeholder.png";
+                        }}
+                      />
                     </div>
-
                     <div className="item-details">
-                      <h3>{productName}</h3>
+                      <h3 onClick={() => handleProductClick(item.productId)} style={{ cursor: 'pointer' }}>
+                        {productName}
+                      </h3>
                       <div className="item-price">
                         {formatPrice(productPrice)}
                       </div>
                       <div className="item-total">
                         Thành tiền: {calculateItemTotal(item, isUpdating)}
+                      </div>
+                      <div className="item-stock">
+                        <strong>Tình trạng kho:</strong> {availableStock > 0 ? `Còn ${availableStock} sản phẩm` : "Hết hàng"}
                       </div>
                     </div>
 
@@ -279,7 +324,7 @@ const CartItems = () => {
                         <span>{item.quantity}</span>
                         <button 
                           onClick={() => handleUpdateQuantity(item.id, item.productId, 1, item.quantity)}
-                          disabled={isUpdating}
+                          disabled={isUpdating || item.quantity >= availableStock}
                           className="plus-btn"
                           aria-label="Tăng số lượng"
                           type="button"

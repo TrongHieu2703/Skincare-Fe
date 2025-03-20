@@ -36,7 +36,7 @@ body {
 }
 
 .carousel-container {
-    margin-top: 120px;
+    margin-top: 1000px;
     /* Adjusted to ensure the carousel is not covered by the navbar */
     width: 100%;
     height: calc(100vh - 80px);
@@ -48,7 +48,7 @@ body {
 }
 
 .carousel-wrapper {
-    margin-top: 600px;
+    margin-top: 1000px;
     width: 100%;
     max-width: 1400px;
     padding: 0 20px;

@@ -103,7 +103,7 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (formData.password !== formData.confirmPassword) {
             toast.error("Mật khẩu xác nhận không khớp");
             return;
@@ -126,13 +126,13 @@ const Register = () => {
         <div className="register-container">
             <div className="register-form">
                 <h2>Đăng ký tài khoản</h2>
-                
+
                 {/* Avatar Upload */}
                 <div className="avatar-upload">
                     <div className="avatar-preview">
-                        <img 
-                            src={previewImage || defaultAvatar} 
-                            alt="Avatar Preview" 
+                        <img
+                            src={previewImage || defaultAvatar}
+                            alt="Avatar Preview"
                             className="preview-image"
                         />
                     </div>
@@ -220,8 +220,8 @@ const Register = () => {
                         />
                     </div>
 
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className="register-button"
                         disabled={loading}
                     >

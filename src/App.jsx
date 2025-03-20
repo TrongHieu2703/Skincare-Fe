@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "./App.css";
+// import "./App.css";
 import { AuthProvider } from './auth/AuthProvider';
 import { CartProvider } from './store/CartContext';
 import PrivateRoute from './auth/PrivateRoute';
@@ -27,6 +27,8 @@ import ProductDetails from "/src/pages/ProductDetails";
 import AboutUs from "/src/components/Aboutus";
 import AboutSkincare from "/src/pages/AboutSkincare";
 import OrderHistory from './pages/OrderHistory';
+import ProductForm from './components/ProductForm';
+import AdminProducts from './pages/AdminProducts';
 
 // Admin pages
 import Dashboard from "/admin/admin/pages2/Dashboard";
@@ -97,6 +99,9 @@ const AppContent = memo(function AppContent() {
             <Route path="/admin/customermanager" element={<CustomerManager />} />
             <Route path="/admin/orders" element={<OrderManager />} />
             <Route path="/admin/content" element={<ContentManager />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/products/new" element={<ProductForm />} />
+            <Route path="/admin/products/edit/:id" element={<ProductForm />} />
 
             {/* Staff routes */}
             <Route path="/staff/dashboard" element={<StaffDashboard />} />
