@@ -126,7 +126,7 @@
 
 /* Filter Bar: lọc theo loại da và giá */
 .filter-bar {
-  margin-top: 1400px;
+  margin-top: 1000px;
   display: flex;
   gap: 16px;
   justify-content: flex-start;
