@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "./App.css";
+// import "./App.css";
 import { AuthProvider } from './auth/AuthProvider';
 import { CartProvider } from './store/CartContext';
 import PrivateRoute from './auth/PrivateRoute';
