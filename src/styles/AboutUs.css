@@ -1,129 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
-
+/* Tổng thể section */
 .about-us {
-    background-color: #ffffff;
-    padding: 40px 20px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-top: -1000px;
+    padding: 60px 0;
+    color: #333;
+    background-color: white;
 }
 
+/* Tiêu đề chính */
 .about-header {
+    margin-top: -1500px;
     text-align: center;
     margin-bottom: 40px;
 }
 
 .title {
-    font-family: 'Playfair Display', serif;
-    color: #216942;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
-    margin-bottom: 15px;
+    color: #2c3e50;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    gap: 12px;
 }
 
 .title-icon {
-    color: #4caf50;
-    animation: float 3s ease-in-out infinite;
+    color: #27ae60;
+    font-size: 1.5em;
 }
 
 .subtitle {
-    font-family: 'Montserrat', sans-serif;
-    color: #4caf50;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    color: #27ae60;
+    margin-top: 8px;
     font-weight: 500;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
 
+/* Đoạn mô tả */
 .description {
-    font-family: 'Montserrat', sans-serif;
-    max-width: 800px;
-    margin: 0 auto 40px;
-    line-height: 1.8;
-    color: #555;
     text-align: center;
+    max-width: 880px;
+    margin: 0 auto;
     font-size: 1.1rem;
-}
-
-.description strong {
-    color: #216942;
-    font-weight: 600;
-}
-
-.about-card {
-    background: linear-gradient(145deg, #f8fff8, #ffffff);
-    padding: 30px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    margin-bottom: 25px;
-    border: 1px solid rgba(76, 175, 80, 0.1);
-    cursor: pointer;
-}
-
-.about-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(76, 175, 80, 0.1);
-    border-color: #4caf50;
-}
-
-.card-icon {
-    font-size: 2.5rem;
-    color: #4caf50;
-    margin-bottom: 20px;
-    transition: transform 0.3s ease;
-}
-
-.about-card:hover .card-icon {
-    transform: scale(1.1);
-}
-
-.about-card h5 {
-    font-family: 'Playfair Display', serif;
-    color: #216942;
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.about-card p {
-    font-family: 'Montserrat', sans-serif;
-    color: #666;
-    font-size: 0.95rem;
     line-height: 1.6;
-    margin: 0;
 }
 
+/* Logo ở giữa */
 .about-logo {
-    width: 220px;
+    max-width: 160px;
     height: auto;
-    transition: transform 0.3s ease;
+    animation: pulse 3s infinite;
+    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.1));
 }
 
-.pulse {
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
+/* Hiệu ứng nhẹ cho logo */
 @keyframes pulse {
     0% {
         transform: scale(1);
     }
 
     50% {
-        transform: scale(1.05);
+        transform: scale(1.06);
     }
 
     100% {
@@ -131,28 +68,63 @@
     }
 }
 
+/* Card thông tin */
+.about-card {
+    background-color: #f6fef8;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.about-card:hover {
+    background-color: #eafaf0;
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.about-card h5 {
+    font-size: 1.15rem;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-top: 12px;
+    margin-bottom: 10px;
+}
+
+.about-card p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Biểu tượng trong card */
+.card-icon {
+    font-size: 1.8rem;
+    color: #27ae60;
+}
+
+/* Responsive cho mobile */
 @media (max-width: 768px) {
-    .about-us {
-        padding: 30px 15px;
+    .about-card {
+        margin-bottom: 20px;
     }
 
     .title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .subtitle {
         font-size: 1rem;
     }
 
+    .description {
+        font-size: 1rem;
+        padding: 0 16px;
+    }
+
     .about-logo {
-        width: 180px;
-    }
-
-    .about-card {
-        padding: 25px;
-    }
-
-    .card-icon {
-        font-size: 2rem;
+        max-width: 120px;
     }
 }

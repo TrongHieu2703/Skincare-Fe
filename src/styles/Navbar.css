@@ -1,13 +1,6 @@
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -278,10 +271,18 @@ body {
 
 .cart-popup-item {
     display: flex;
-    padding: 10px 0;
+    padding: 10px;
     border-bottom: 1px solid #f0f0f0;
     position: relative;
     transition: opacity 0.3s, background-color 0.3s;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.cart-popup-item:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Styles for removing animation */
@@ -344,6 +345,12 @@ body {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    transition: color 0.2s;
+}
+
+.cart-popup-item:hover .item-name {
+    color: #2e7d32;
+    text-decoration: underline;
 }
 
 .cart-popup-item .item-price-qty {
@@ -364,12 +371,15 @@ body {
     gap: 4px;
     align-items: center;
     justify-content: center;
+    z-index: 5; /* Ensure buttons are above the clickable area */
+    margin-left: 8px;
+    min-width: 40px; /* Ensure minimum width for the action area */
 }
 
 .cart-popup-item .action-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -377,6 +387,9 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 12px;
+    position: relative; /* Ensure the button stays on top */
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .cart-popup-item .action-btn.view {
@@ -385,17 +398,58 @@ body {
 }
 
 .cart-popup-item .action-btn.remove {
-    background: #ffebee;
-    color: #e53935;
+    background: #f44336;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(244, 67, 54, 0.3);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+}
+
+/* Add specific style to make sure the FaTrash icon displays properly */
+.cart-popup-item .action-btn.remove svg,
+.cart-popup-item .action-btn.remove .trash-icon {
+    width: 22px;
+    height: 22px;
+    color: white;
+    fill: white;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Additional style specifically for the trash icon */
+.trash-icon {
+    font-size: 22px !important;
+    display: block !important;
+}
+
+/* Add hover effects for the remove button */
+.cart-popup-item .action-btn.remove:hover {
+    background: #d32f2f;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(244, 67, 54, 0.4);
+}
+
+/* Emphasize the button when the cursor is on the entire cart item */
+.cart-popup-item:hover .action-btn.remove {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.25);
 }
 
 .cart-popup-item .action-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background: #bbbbbb;
 }
 
 .cart-popup-item .action-btn:not(:disabled):hover {
-    transform: scale(1.1);
+    transform: scale(1.05) translateY(-2px);
 }
 
 .cart-popup-footer {

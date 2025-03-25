@@ -1,17 +1,5 @@
 /* Tổng thể trang đăng nhập */
-body,
-html {
-    background-color: #ffffff;
-    min-height: 100vh;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    /* Make the body full width */
-    height: 100vh;
-    /* Make the body full height */
-}
+
 
 .title-container {
     margin-top: 20px;
@@ -31,7 +19,6 @@ html {
     /* Make the container full width */
     height: calc(100vh - 60px);
     /* Adjust height to account for navbar */
-    margin-top: 500px;
     /* Add margin to push below navbar */
     display: flex;
     align-items: center;
@@ -39,9 +26,7 @@ html {
     border-radius: 0;
     /* Remove border-radius for full size */
     background: linear-gradient(to right, #287c6a, #ffffff);
-    gap: 40px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    padding: 20px;
 }
 
 .container {

@@ -39,11 +39,37 @@ export const getOrderDetail = async (id) => {
 export const getOrdersByUser = async () => {
   try {
     const response = await axiosClient.get('/Order/user');
-    console.log('User orders response:', response);
-    // Giả sử server trả về dạng: { message: "...", data: [...] }
-    return response.data.data || [];
+    console.log('Raw user orders response:', response);
+    
+    // Check response structure and return data
+    if (response.data && response.data.data) {
+      const orderData = response.data.data;
+      console.log('Processed order data:', orderData);
+      
+      // Enhance the data if needed
+      return orderData.map(order => {
+        // Ensure orderItems is always an array
+        if (!order.orderItems) {
+          order.orderItems = [];
+        }
+        
+        // Log each order's items for debugging
+        console.log(`Order #${order.id} items:`, order.orderItems);
+        
+        return order;
+      });
+    } else if (Array.isArray(response.data)) {
+      console.log('Direct array response:', response.data);
+      return response.data;
+    } else {
+      console.error("Invalid response format:", response);
+      return []; // Return empty array on invalid format
+    }
   } catch (error) {
     console.error('Error fetching user orders:', error);
+    if (error.response?.status === 401) {
+      throw new Error('Unauthorized: Please log in');
+    }
     throw error;
   }
 };

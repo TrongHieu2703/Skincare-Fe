@@ -213,7 +213,7 @@ const OrderDetails = () => {
 
         <div className="order-body">
           <div className="order-info-grid">
-            <div className="customer-info info-card">
+            <div className="info-card">
               <h3>Thông tin khách hàng</h3>
               <div className="info-content">
                 <p><strong>Tên khách hàng:</strong> {order.customer?.username || ''}</p>
@@ -222,7 +222,7 @@ const OrderDetails = () => {
               </div>
             </div>
 
-            <div className="shipping-info info-card">
+            <div className="info-card">
               <h3>Thông tin giao hàng</h3>
               <div className="info-content">
                 <p><strong>Địa chỉ:</strong> {order.customer?.address || ''}</p>
@@ -231,7 +231,7 @@ const OrderDetails = () => {
               </div>
             </div>
 
-            <div className="payment-info info-card">
+            <div className="info-card">
               <h3>Thông tin thanh toán</h3>
               <div className="info-content">
                 <p>

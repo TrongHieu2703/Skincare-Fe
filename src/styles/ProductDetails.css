@@ -1,17 +1,12 @@
 /* src/styles/ProductDetails.css */
 
-body,
-html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #f5fff5;
-  font-family: "Segoe UI", sans-serif;
-}
-
 .product-details-container {
-  padding: 550px 60px 40px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 20px 40px 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-details-main {
@@ -184,4 +179,96 @@ html {
 
 .tab-content li {
   margin-bottom: 6px;
+}
+
+/* Success message banner */
+.success-message-banner {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(76, 175, 80, 0.9);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Loading and error containers */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  padding-top: 100px;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4CAF50;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .product-details-container {
+    padding: 100px 15px 30px 15px;
+  }
+  
+  .product-details-main {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .product-images,
+  .product-info {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .product-name {
+    font-size: 24px;
+  }
+  
+  .product-price {
+    font-size: 22px;
+  }
+  
+  .tabs {
+    gap: 10px;
+  }
+  
+  .tab {
+    font-size: 14px;
+    padding: 8px 0;
+  }
 }

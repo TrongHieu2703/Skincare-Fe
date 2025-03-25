@@ -40,11 +40,17 @@ export const addToCart = async (productId, quantity) => {
     console.error(`❌ [${callId}] POST /cart - ERROR`, error);
     
     // Handle specific error cases
-    if (error.response?.status === 400 && error.response?.data?.errorCode === "INSUFFICIENT_INVENTORY") {
-      throw {
-        type: "INSUFFICIENT_INVENTORY",
-        message: error.response.data.message
-      };
+    if (error.response?.status === 400) {
+      if (error.response?.data?.errorCode === "INSUFFICIENT_INVENTORY" || 
+          (error.response?.data?.message && 
+           (error.response.data.message.includes("Không đủ số lượng") ||
+            error.response.data.message.includes("hết hàng")))
+      ) {
+        throw {
+          type: "INSUFFICIENT_INVENTORY",
+          message: error.response.data.message || "Không đủ số lượng trong kho"
+        };
+      }
     }
     
     throw error;
@@ -67,11 +73,17 @@ export const updateCart = async (cartItemId, quantity) => {
     console.error(`❌ [${callId}] PUT /cart/item/${cartItemId} - ERROR`, error);
     
     // Handle specific error cases
-    if (error.response?.status === 400 && error.response?.data?.errorCode === "INSUFFICIENT_INVENTORY") {
-      throw {
-        type: "INSUFFICIENT_INVENTORY",
-        message: error.response.data.message
-      };
+    if (error.response?.status === 400) {
+      if (error.response?.data?.errorCode === "INSUFFICIENT_INVENTORY" || 
+          (error.response?.data?.message && 
+           (error.response.data.message.includes("Không đủ số lượng") ||
+            error.response.data.message.includes("hết hàng")))
+      ) {
+        throw {
+          type: "INSUFFICIENT_INVENTORY",
+          message: error.response.data.message || "Không đủ số lượng trong kho"
+        };
+      }
     }
     
     throw error;

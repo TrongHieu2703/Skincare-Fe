@@ -143,8 +143,16 @@ export const CartProvider = ({ children }) => {
       console.error("Error adding item to cart:", err);
       
       // Handle specific error types
-      if (err.type === "INSUFFICIENT_INVENTORY") {
-        throw new Error(err.message);
+      if (err.type === "INSUFFICIENT_INVENTORY" || 
+          (err.response?.data?.message && err.response.data.message.includes("Không đủ số lượng") ||
+           err.response?.data?.message && err.response.data.message.includes("hết hàng"))) {
+        const errorMessage = err.message || err.response?.data?.message || "Không đủ số lượng trong kho";
+        const error = {
+          type: "INSUFFICIENT_INVENTORY",
+          message: errorMessage,
+          productId: productId
+        };
+        throw error;
       }
       
       // Handle unauthorized errors
@@ -154,7 +162,7 @@ export const CartProvider = ({ children }) => {
       }
       
       setError("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
-      throw new Error("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
+      throw new Error(err.response?.data?.message || "Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
     }
   }, [isAuthenticated, loadCartItems]);
 
@@ -210,15 +218,21 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       console.error("Error updating cart item:", err);
       
-      // Handle specific error types
-      if (err.type === "INSUFFICIENT_INVENTORY") {
+      // Handle specific error types - including stock errors
+      if (err.type === "INSUFFICIENT_INVENTORY" ||
+          (err.response?.data?.message && (
+           err.response.data.message.includes("Không đủ số lượng") ||
+           err.response.data.message.includes("hết hàng")))) {
         // Rollback the optimistic update
         await loadCartItems();
+        
+        // Get the actual error message from the response if available
+        const errorMessage = err.message || err.response?.data?.message || "Không đủ số lượng trong kho";
         
         // Re-throw with custom error type for component handling
         throw {
           type: "INSUFFICIENT_INVENTORY",
-          message: err.message,
+          message: errorMessage,
           productId: productId // Pass productId for inventory refetch
         };
       }
@@ -233,7 +247,7 @@ export const CartProvider = ({ children }) => {
       
       // Rollback the optimistic update by reloading only in case of error
       await loadCartItems();
-      throw new Error("Không thể cập nhật giỏ hàng. Vui lòng thử lại.");
+      throw new Error(err.response?.data?.message || "Không thể cập nhật giỏ hàng. Vui lòng thử lại.");
     }
   }, [isAuthenticated, loadCartItems, cartItems, cartData]);
 

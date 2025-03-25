@@ -1,0 +1,65 @@
+.routine-page {
+    padding: 4rem 1rem;
+    background: linear-gradient(to bottom, #eaf6f6, #ffffff);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.routine-card {
+    max-width: 800px;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.skin-type {
+    color: #2c3e50;
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.routine-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.step-icon {
+    font-size: 24px;
+    min-width: 32px;
+    margin-top: 2px;
+}
+
+.step-desc {
+    color: #333;
+    font-size: 15px;
+    line-height: 1.6;
+}

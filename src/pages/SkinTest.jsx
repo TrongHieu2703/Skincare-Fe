@@ -1,478 +1,106 @@
-import React, { useState } from "react";
-import "/src/styles/SkinTest.css";
-import { FaCheck } from "react-icons/fa";
+import React, { useState } from 'react';
+import questions from '/src/store/question';
+import '../styles/Skintest.css';
+import { CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const SkinTest = () => {
-  const [buttonColor, setButtonColor] = useState("#008080"); // State for button color
+  const [answers, setAnswers] = useState({});
+  const [result, setResult] = useState(null);
+  const [image, setImage] = useState('');
+  const navigate = useNavigate();
 
-  const changeButtonColor = () => {
-    setButtonColor("#ff5733"); // Change to a new color on click
+  const handleSelect = (qId, optionIndex) => {
+    setAnswers({ ...answers, [qId]: optionIndex });
   };
 
-  const [answers, setAnswers] = useState({
-    q1: "",
-    q2: "",
-    q3: "",
-    q4: "",
-    q5: "",
-    q6: "",
-    q7: "",
-    q8: "",
-    q9: "",
-  });
+  const calculateResult = () => {
+    const scores = { dry: 0, oily: 0, normal: 0, combination: 0 };
+    questions.forEach((q) => {
+      const selectedIndex = answers[q.id];
+      if (selectedIndex !== undefined) {
+        const selectedOption = q.options[selectedIndex];
+        for (const key in selectedOption.score) {
+          scores[key] += selectedOption.score[key];
+        }
+      }
+    });
 
-  const [submitted, setSubmitted] = useState(false);
-  const [skinType, setSkinType] = useState("");
+    const skinType = Object.keys(scores).reduce((a, b) =>
+      scores[a] > scores[b] ? a : b
+    );
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAnswers({ ...answers, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const points = calculatePoints(answers);
-    const type = determineSkinType(points);
-    setSkinType(type);
-    setSubmitted(true);
-  };
-
-  const calculatePoints = (answers) => {
-    let points = 0;
-    const pointMap = {
-      Dry: 1,
-      Oily: 2,
-      Mixed: 3,
-      Smooth: 1,
-      Flaky: 2,
-      Acne: 3,
-      Wrinkle: 1,
-      Lines: 2,
-      NoLines: 3,
-      Moisturizing: 1,
-      AcneCare: 2,
-      Quick: 3,
-      Tzone: 2,
-      Better: 3,
-      LessSpots: 1,
-      MoreWrinkles: 2,
-      BetterCare: 3,
-      Male: 1,
-      Female: 2,
-      Under25: 1,
-      "25to40": 2,
-      "40to50": 3,
-      Over50: 4,
+    const skinLabel = {
+      dry: 'Da khô',
+      oily: 'Da dầu',
+      normal: 'Da thường',
+      combination: 'Da hỗn hợp',
     };
 
-    for (const key in answers) {
-      points += pointMap[answers[key]] || 0;
-    }
+    const imageMap = {
+      dry: 'https://cdn-icons-png.flaticon.com/512/2721/2721084.png',
+      oily: 'https://cdn-icons-png.flaticon.com/512/2721/2721103.png',
+      normal: 'https://cdn-icons-png.flaticon.com/512/2721/2721056.png',
+      combination: 'https://cdn-icons-png.flaticon.com/512/2721/2721066.png',
+    };
 
-    return points;
+    setResult({ type: skinType, label: skinLabel[skinType] });
+    setImage(imageMap[skinType]);
   };
 
-  const determineSkinType = (points) => {
-    if (points <= 15) {
-      return "Da khô";
-    } else if (points <= 25) {
-      return "Da dầu";
-    } else {
-      return "Da hỗn hợp";
+  const handleGoToRoutine = () => {
+    if (result?.type) {
+      navigate(`/routine/${result.type}`);
     }
   };
 
   return (
-    <div className="skin-test-container">
-      <div className="test-content">
-        <div className="test-header">
-          <h1>BÀI KIỂM TRA DA NHANH</h1>
-          <p>Khám phá loại da của bạn để chọn sản phẩm phù hợp</p>
+    <div>
+      <div className="skin-test-page">
+        <h1 className="title">🖊️ Kiểm Tra Loại Da</h1>
+
+        <div className="questions">
+          {questions.map((q) => (
+            <div key={q.id} className="question">
+              <p className="questionText">{q.question}</p>
+              {q.options.map((opt, idx) => (
+                <label key={idx} className="option">
+                  <input
+                    type="radio"
+                    name={`question-${q.id}`}
+                    checked={answers[q.id] === idx}
+                    onChange={() => handleSelect(q.id, idx)}
+                  />
+                  {opt.answer}
+                </label>
+              ))}
+            </div>
+          ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="test-form">
-          {/* Câu hỏi 1 */}
-          <div className="question-card">
-            <h3>Q1: Da của bạn thường trông như thế nào?</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q1"
-                  value="Dry"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Khô</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q1"
-                  value="Oily"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Nhờn</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q1"
-                  value="Mixed"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Hỗn hợp</span>
-                </span>
-              </label>
-            </div>
-          </div>
+        <button className="submitBtn" onClick={calculateResult}>
+          Xem Kết Quả
+        </button>
 
-          {/* Câu hỏi 2 */}
-          <div className="question-card">
-            <h3>Q2: Vùng trán của bạn trông như thế nào?</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q2"
-                  value="Dry"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da khá phẳng mịn, với một vài nếp nhăn.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q2"
-                  value="Oily"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Tôi thấy một vài vết bong tróc theo đường chân tóc, lông mày và giữa hai bên lông mày.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q2"
-                  value="Acne"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da bóng nhờn hoặc mịn màng nhưng có một số mụn đầu đen và mụn trứng cá.</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Câu hỏi 3 */}
-          <div className="question-card">
-            <h3>Q3: Hãy mô tả phần má và vùng dưới mắt của bạn.</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q3"
-                  value="Smooth"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Hầu như không có vết nhân để nhận diện nào. Chỉ có một số vùng da khô có thể nhìn ra.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q3"
-                  value="Flaky"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da kích ứng và khô. Có cảm giác da bị căng.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q3"
-                  value="Oily"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da chần long nơi má có khuyết điểm dạng mụn đầu đen hay đốm mụn trắng.</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Câu hỏi 4 */}
-          <div className="question-card">
-            <h3>Q4: Da của bạn có dễ hình thành các vết hằn và nếp nhăn?</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q4"
-                  value="Wrinkle"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Tôi bị một vài vết hằn do da khô.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q4"
-                  value="Lines"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Có, tôi bị các nếp nhăn quanh vùng mắt và/hoặc ở khóe miệng.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q4"
-                  value="NoLines"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Không hẳn, da của tôi lão hóa tương đối chậm.</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Câu hỏi 5 */}
-          <div className="question-card">
-            <h3>Q5: Hiện giờ điều gì là quan trọng nhất với bạn khi lựa chọn một sản phẩm chăm sóc da?</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q5"
-                  value="Moisturizing"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Sản phẩm giúp tôi đối phó với sự bóng dầu nhưng vẫn có tác dụng dưỡng ẩm.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q5"
-                  value="AcneCare"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Sản phẩm giúp làm dịu và nuôi dưỡng làm da của tôi sáng lên bên trong.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q5"
-                  value="Quick"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Sản phẩm có khả năng thẩm thấu nhanh và cải thiện làn da của tôi một cách nhanh chóng.</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Câu hỏi 6 */}
-          <div className="question-card">
-            <h3>Q6: Da mặt bạn đã thay đổi ra sao trong 5 năm trở lại đây?</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q6"
-                  value="Tzone"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da tôi bị bóng dầu nhiều hơn ở vùng chữ T (trán, mũi và cằm).</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q6"
-                  value="Dry"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da tôi dễ bong tróc hơn và thường cảm thấy căng.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q6"
-                  value="Better"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da tôi vẫn ở tình trạng tốt và dễ dàng chăm sóc.</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Câu hỏi 7 */}
-          <div className="question-card">
-            <h3>Q7: Da của bạn có thay đổi trong 5 năm trở lại đây?</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q7"
-                  value="LessSpots"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da tôi ít bóng dầu hơn nhiều ở vùng chữ T.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q7"
-                  value="MoreWrinkles"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da tôi có nhiều khuyết điểm hơn so với trước đây.</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q7"
-                  value="BetterCare"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Da tôi vẫn ở tình trạng tốt và dễ dàng chăm sóc.</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Câu hỏi 8 */}
-          <div className="question-card">
-            <h3>Q8: Giới tính của bạn là?</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q8"
-                  value="Male"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Nam</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q8"
-                  value="Female"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Nữ</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Câu hỏi 9 */}
-          <div className="question-card">
-            <h3>Q9: Độ tuổi của bạn là?</h3>
-            <div className="options">
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q9"
-                  value="Under25"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Dưới 25</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q9"
-                  value="25to40"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Từ 25 tới 40</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q9"
-                  value="40to50"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Từ 40 tới 50</span>
-                </span>
-              </label>
-              <label className="option-label">
-                <input
-                  type="radio"
-                  name="q9"
-                  value="Over50"
-                  onChange={handleChange}
-                />
-                <span className="option-content">
-                  <span>Trên 50</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="submit-button"
-            style={{ backgroundColor: buttonColor }} // Apply dynamic color
-            onClick={changeButtonColor} // Change color on click
-          >
-            Xem kết quả
-
-          </button>
-        </form>
-
-        {submitted && (
-          <div className="success-message">
-            <div className="success-content">
-              <FaCheck className="success-icon" />
-              <h2>Phân tích hoàn tất!</h2>
-              <p>Loại da của bạn là: <strong>{skinType}</strong></p>
-            </div>
+        {result && (
+          <div className="resultBox">
+            <CheckCircle color="green" size={24} />
+            <span className="resultText">
+              Kết quả: <strong>{result.label}</strong>
+            </span>
+            {image && <img src={image} alt={result.label} className="resultImage" />}
+            <p className="summary">
+              Bạn giống như một cây bút – mỗi loại da đều có nét riêng và cần được chọn đúng cách để phát huy tốt nhất ✨
+            </p>
+            <button className="routineBtn" onClick={handleGoToRoutine}>
+              Xem đề xuất lộ trình
+            </button>
           </div>
         )}
       </div>
-    </div >
+      <Footer />
+    </div>
   );
 };
 

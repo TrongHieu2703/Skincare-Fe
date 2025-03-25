@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ProductManager.module.css";
 import Sidebar from "./Sidebar";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaBox } from "react-icons/fa";
 import axios from "axios";
 import { formatProductImageUrl } from "../../../src/utils/imageUtils";
-
+import { message, Button, Form, Input, Select, Checkbox } from "antd";
 
 // Các hàm API cho Product
 import {
   getAllProducts,
   createProduct,
   updateProduct,
-  updateProductWithImage,
   deleteProduct,
+  getAllProductTypes,
+  getAllSkinTypes
 } from "/src/api/productApi";
 
 // Giả lập hàm API cho brand & product type
@@ -22,13 +23,6 @@ async function getAllBrands() {
   return [
     { id: 1, name: "Brand A" },
     { id: 2, name: "Brand B" },
-  ];
-}
-async function getAllProductTypes() {
-  // return axiosClient.get("/ProductType"); ...
-  return [
-    { id: 10, name: "Type X" },
-    { id: 20, name: "Type Y" },
   ];
 }
 
@@ -158,11 +152,11 @@ const formatProductImageUr = (imagePath) => {
   return `${API_BASE_URL}${imagePath}`;
 };
 
-
 const ProductManager = () => {
   const [products, setProducts] = useState([]);
   const [brandList, setBrandList] = useState([]);
   const [typeList, setTypeList] = useState([]);
+  const [skinTypeList, setSkinTypeList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -170,12 +164,37 @@ const ProductManager = () => {
     totalPages: 1,
     totalItems: 0
   });
+  
+  // Add submitting state to track form submission
+  const [submitting, setSubmitting] = useState(false);
+  
+  // Add showForm state to control form visibility
+  const [showForm, setShowForm] = useState(false);
+  // Add editMode state to track if we're editing an existing product
+  const [editMode, setEditMode] = useState(false);
+  
+  // Add success notification state
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
 
   // productInForm: state cho form (dùng chung cho cả create & edit)
-  const [productInForm, setProductInForm] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    productTypeId: "",
+    productBrandId: "",
+    skinTypeIds: [],
+    quantity: "",
+    stock: "",
+    branchId: "",
+    isAvailable: true,
+    image: null,
+    imageFile: null
+  });
 
-  // Xác định form đang ở chế độ "Create" hay "Edit"
-  const isEditMode = productInForm?.id != null;
+  // Track selected skin types
+  const [selectedSkinTypes, setSelectedSkinTypes] = useState([]);
 
   // Add a state for tracking upload progress
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -203,6 +222,7 @@ const ProductManager = () => {
       setLoading(true);
       console.log(`Fetching data for page ${page}`);
 
+      // Fetch products with pagination
       const { products: productData, pagination: paginationData } = await getAllProducts(page);
 
       // Update products with timestamp for images
@@ -219,14 +239,34 @@ const ProductManager = () => {
         setPagination(paginationData);
       }
 
-      // Fetch brands and types only on first load
-      if (page === 1) {
-        const [brands, types] = await Promise.all([
-          getAllBrands(),
-          getAllProductTypes()
-        ]);
-        setBrandList(brands);
-        setTypeList(types);
+      // Fetch data only on first load or if lists are empty
+      if (page === 1 || typeList.length === 0 || skinTypeList.length === 0) {
+        try {
+          // Use the real APIs to fetch product types and skin types
+          const [types, skinTypes] = await Promise.all([
+            getAllProductTypes(),
+            getAllSkinTypes()
+          ]);
+          
+          console.log("Fetched skin types:", skinTypes);
+          setTypeList(types);
+          setSkinTypeList(skinTypes);
+          
+          // For now, keep the mock brand data
+          setBrandList([
+            { id: 1, name: "Brand A" },
+            { id: 2, name: "Brand B" },
+          ]);
+        } catch (skinTypeError) {
+          console.error("Error fetching skin types:", skinTypeError);
+          // Set default skin types if API call fails
+          setSkinTypeList([
+            { id: 1, name: "Da khô" },
+            { id: 2, name: "Da dầu" },
+            { id: 3, name: "Da nhạy cảm" },
+            { id: 4, name: "Da hỗn hợp" }
+          ]);
+        }
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -246,7 +286,7 @@ const ProductManager = () => {
 
   // Mở form tạo sản phẩm mới
   const handleOpenCreateForm = () => {
-    setProductInForm({
+    setFormData({
       id: null,
       name: "",
       description: "",
@@ -254,31 +294,98 @@ const ProductManager = () => {
       isAvailable: true,
       productTypeId: 0,
       productBrandId: 0,
-      imageFile: null, // Initialize imageFile state
+      imageFile: null,
+      quantity: 0,
+      stock: 0,
+      branchId: 1, // Default branch ID
+      skinTypeIds: [] // Initialize empty array for skin type IDs
     });
+    setSelectedSkinTypes([]);
+    setEditMode(false);
+    setShowForm(true);
   };
 
   // Mở form edit
   const handleOpenEditForm = (product) => {
-    setProductInForm({
+    console.log("Opening edit form with product data:", product);
+    
+    // Convert skinTypeIds to numbers if they're strings
+    let skinIds = [];
+    if (product.skinTypeIds && Array.isArray(product.skinTypeIds)) {
+      skinIds = product.skinTypeIds.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
+    }
+    
+    setFormData({
       id: product.id,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      isAvailable: product.isAvailable,
-      productTypeId: product.productTypeId,
-      productBrandId: product.productBrandId,
-      imageFile: null, // Reset imageFile for edit
+      name: product.name || "",
+      description: product.description || "",
+      price: product.price || "",
+      productTypeId: product.productTypeId || "",
+      productBrandId: product.productBrandId || "",
+      skinTypeIds: skinIds,
+      quantity: product.quantity || "",
+      stock: product.stock || "",
+      branchId: product.branchId || "",
+      isAvailable: product.isAvailable !== undefined ? product.isAvailable : true,
+      image: product.image || "",
+      imageUrl: formatProductImageUrl(product.image) || ""
     });
+    
+    setEditMode(true);
+    setShowForm(true);
   };
 
   // Xử lý khi thay đổi input
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProductInForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, type, checked } = e.target;
+    
+    // For checkboxes
+    if (type === "checkbox") {
+      setFormData({
+        ...formData,
+        [name]: checked
+      });
+      return;
+    }
+    
+    // For price field - convert to number
+    if (name === "price" || name === "quantity" || name === "stock") {
+      const numericValue = value.replace(/[^\d.]/g, "");
+      setFormData({
+        ...formData,
+        [name]: numericValue
+      });
+      return;
+    }
+    
+    // For other fields
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  // Handle skin type selection/deselection
+  const handleSkinTypeChange = (skinTypeId, isChecked) => {
+    const currentSkinTypeIds = [...formData.skinTypeIds];
+    
+    if (isChecked) {
+      // Add the skin type ID if it's not already in the array
+      if (!currentSkinTypeIds.includes(skinTypeId)) {
+        currentSkinTypeIds.push(skinTypeId);
+      }
+    } else {
+      // Remove the skin type ID
+      const index = currentSkinTypeIds.indexOf(skinTypeId);
+      if (index !== -1) {
+        currentSkinTypeIds.splice(index, 1);
+      }
+    }
+    
+    setFormData({
+      ...formData,
+      skinTypeIds: currentSkinTypeIds
+    });
   };
 
   // Update the handleFileChange function to include image preview
@@ -286,7 +393,7 @@ const ProductManager = () => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file); // Create a preview URL
-      setProductInForm((prev) => ({
+      setFormData((prev) => ({
         ...prev,
         imageFile: file, // Store the selected file
         imagePreview: imageUrl // Store the preview URL
@@ -294,50 +401,97 @@ const ProductManager = () => {
     }
   };
 
+  // Function to show success notification
+  const showSuccess = (message) => {
+    setSuccessMessage(message);
+    setShowNotification(true);
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
+  };
+
   const handleSave = async () => {
     try {
-      if (!productInForm) return;
+      // Validation
+      if (!formData.name.trim()) {
+        alert("Tên sản phẩm là bắt buộc!");
+        return;
+      }
 
-      console.log("Saving product with data:", productInForm);
+      if (!formData.price || formData.price <= 0) {
+        alert("Giá phải lớn hơn 0!");
+        return;
+      }
 
-      // Prepare product data
-      const updatedProductData = {
-        name: productInForm.name,
-        description: productInForm.description,
-        price: productInForm.price,
-        isAvailable: productInForm.isAvailable,
-        productTypeId: productInForm.productTypeId > 0 ? productInForm.productTypeId : null,
-        productBrandId: productInForm.productBrandId > 0 ? productInForm.productBrandId : null,
-      };
+      // Required fields for new products
+      if (!editMode && !formData.imageFile) {
+        alert("Vui lòng chọn hình ảnh cho sản phẩm mới!");
+        return;
+      }
 
-      // Add image file if selected
-      if (productInForm.imageFile) {
-        console.log("Including image file in update:", productInForm.imageFile.name);
-        updatedProductData.imageFile = productInForm.imageFile;
+      setSubmitting(true);
+
+      // Prepare form data for API
+      const productData = new FormData();
+      
+      // Append normal fields
+      productData.append("Name", formData.name);
+      productData.append("Description", formData.description);
+      productData.append("Price", formData.price);
+      productData.append("ProductBrandId", formData.productBrandId);
+      productData.append("ProductTypeId", formData.productTypeId);
+      productData.append("IsAvailable", formData.isAvailable);
+      
+      // Append quantity and stock fields
+      if (formData.quantity) productData.append("Quantity", formData.quantity);
+      if (formData.stock) productData.append("Stock", formData.stock);
+      if (formData.branchId) productData.append("BranchId", formData.branchId);
+      
+      // Append all selected skin type IDs
+      formData.skinTypeIds.forEach(id => {
+        productData.append("SkinTypeIds", id);
+      });
+      
+      // For edit mode, append product ID
+      if (editMode) {
+        productData.append("Id", formData.id);
+      }
+      
+      // Append image file if selected
+      if (formData.imageFile) {
+        productData.append("Image", formData.imageFile);
       }
 
       let response;
-      if (isEditMode) {
-        console.log("Updating product with ID:", productInForm.id);
-        response = await updateProduct(productInForm.id, updatedProductData);
-        console.log("Update response:", response);
+      
+      if (editMode) {
+        // Update existing product
+        response = await updateProduct(formData.id, productData);
+        if (response) {
+          // Show success notification
+          showSuccess("Cập nhật sản phẩm thành công!");
+          fetchAllData(pagination.currentPage);
+        }
       } else {
-        console.log("Creating new product");
-        response = await createProduct(updatedProductData);
-        console.log("Create response:", response);
+        // Create new product
+        response = await createProduct(productData);
+        if (response) {
+          // Show success notification
+          showSuccess("Tạo sản phẩm mới thành công!");
+          fetchAllData(1);
+        }
       }
 
-      // Close form and show success message
-      setProductInForm(null);
-      alert(isEditMode ? "Sản phẩm đã được cập nhật thành công!" : "Sản phẩm mới đã được tạo!");
-
-      // Immediately refresh the data
-      await fetchAllData();
-      console.log("Data refreshed successfully after update");
-
+      // Close form after successful save
+      if (response) {
+        setShowForm(false);
+      }
     } catch (error) {
       console.error("Error saving product:", error);
-      alert("Có lỗi khi lưu sản phẩm: " + error.message);
+      alert(`Lỗi: ${error.message || "Không thể lưu sản phẩm"}`);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -348,24 +502,43 @@ const ProductManager = () => {
     return `${API_BASE_URL}${imageUrl}`;
   };
 
-
-
-
   // Đóng form
   const handleCloseForm = () => {
-    setProductInForm(null);
+    // Reset all form state
+    setFormData({
+      name: "",
+      description: "",
+      price: "",
+      productTypeId: "",
+      productBrandId: "",
+      skinTypeIds: [],
+      quantity: "",
+      stock: "",
+      branchId: "",
+      isAvailable: true,
+      image: null,
+      imageFile: null
+    });
+    setSelectedSkinTypes([]);
+    setShowForm(false);
+    setEditMode(false);
   };
 
   // Xóa
   const handleDelete = async (product) => {
-    if (window.confirm(`Bạn có chắc muốn xóa sản phẩm: ${product.name}?`)) {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${product.name}"?`)) {
       try {
+        setLoading(true);
         await deleteProduct(product.id);
-        alert("Sản phẩm đã được xóa thành công.");
-        fetchAllData();
+        // Show success notification
+        showSuccess("Đã xóa sản phẩm thành công!");
+        // Refetch the current page data
+        fetchAllData(pagination.currentPage);
       } catch (error) {
         console.error("Error deleting product:", error);
-        alert("Có lỗi khi xóa sản phẩm.");
+        alert(`Lỗi: ${error.message || "Không thể xóa sản phẩm"}`);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -508,13 +681,22 @@ const ProductManager = () => {
   };
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className={styles.container}>
       <Sidebar />
-      <main className={styles.dashboardContent}>
-        <h1 className={styles.title}>Quản lý sản phẩm</h1>
-        <div style={{ marginBottom: "1rem" }}>
-          <button onClick={handleOpenCreateForm} className={styles.createBtn}>
-            <FaPlus /> Tạo sản phẩm
+      <div className={styles.content}>
+        <h1>Quản lý sản phẩm</h1>
+        
+        {/* Success notification banner */}
+        {showNotification && (
+          <div className={styles.successNotification}>
+            <span>{successMessage}</span>
+            <button onClick={() => setShowNotification(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px' }}>×</button>
+          </div>
+        )}
+        
+        <div className={styles.actions}>
+          <button className={styles.addButton} onClick={handleOpenCreateForm}>
+            <FaPlus /> Thêm sản phẩm mới
           </button>
         </div>
 
@@ -522,70 +704,78 @@ const ProductManager = () => {
           <p>Đang tải sản phẩm...</p>
         ) : (
           <>
-            <table className={styles.productTable}>
-              <thead>
-                <tr>
-                  <th>STT</th>
-                  <th>Hình ảnh</th>
-                  <th>Tên</th>
-                  <th>Mô tả</th>
-                  <th>Giá</th>
-                  <th>Thương hiệu</th>
-                  <th>Loại</th>
-                  <th>Còn hàng?</th>
-                  <th>Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product, index) => (
-                  <tr key={product.id}>
-                    <td>{(pagination.currentPage - 1) * pagination.pageSize + index + 1}</td>
-                    <td>
-                      <img
-                        src={formatProductImageUrl(product.image)}
-                        alt={product.name}
-                        width="60"
-                        height="60"
-                        className={styles.productImage}
-                        loading="lazy"
-                        onError={(e) => {
-                          console.error('Image load error:', e.target.src);
-                          e.target.onerror = null;
-                          e.target.src = "../src/assets/images/aboutus.jpg";
-                        }}
-                      />
-                    </td>
-                    <td>{product.name}</td>
-                    <td>{product.description}</td>
-                    <td>
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(product.price)}
-                    </td>
-                    <td>{product.productBrandName || product.productBrandId}</td>
-                    <td>{product.productTypeName || product.productTypeId}</td>
-                    <td>{product.isAvailable ? "✔" : "✖"}</td>
-                    <td>
-                      <button
-                        className={`${styles.iconButton} ${styles.editIcon}`}
-                        onClick={() => handleOpenEditForm(product)}
-                        title="Cập nhật"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        className={`${styles.iconButton} ${styles.deleteIcon}`}
-                        onClick={() => handleDelete(product)}
-                        title="Xóa"
-                      >
-                        <FaTrash />
-                      </button>
-                    </td>
+            <div className={styles.tableWrapper}>
+              <table className={styles.productTable}>
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Hình ảnh</th>
+                    <th>Tên</th>
+                    <th>Mô tả</th>
+                    <th>Giá</th>
+                    <th>SL</th>
+                    <th>Thương hiệu</th>
+                    <th>Loại</th>
+                    <th>Hàng?</th>
+                    <th>Thao tác</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {products.map((product, index) => (
+                    <tr key={product.id}>
+                      <td>{(pagination.currentPage - 1) * pagination.pageSize + index + 1}</td>
+                      <td>
+                        <img
+                          src={formatProductImageUrl(product.image)}
+                          alt={product.name}
+                          className={styles.productImage}
+                          loading="lazy"
+                          onError={(e) => {
+                            console.error('Image load error:', e.target.src);
+                            e.target.onerror = null;
+                            e.target.src = "../src/assets/images/aboutus.jpg";
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <span className={styles.truncate} title={product.name}>{product.name}</span>
+                      </td>
+                      <td>
+                        <span className={styles.description} title={product.description}>{product.description}</span>
+                      </td>
+                      <td>
+                        {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(product.price)}
+                      </td>
+                      <td>{product.quantity || 0}</td>
+                      <td>{product.productBrandName || product.productBrandId}</td>
+                      <td>{product.productTypeName || product.productTypeId}</td>
+                      <td>{product.isAvailable ? "✔" : "✖"}</td>
+                      <td>
+                        <div className={styles.actionButtons}>
+                          <button
+                            className={styles.editButton}
+                            onClick={() => handleOpenEditForm(product)}
+                            title="Cập nhật"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDelete(product)}
+                            title="Xóa"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <Pagination />
             <div className={styles.paginationInfo}>
               Hiển thị {(pagination.currentPage - 1) * pagination.pageSize + 1} - {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalItems)} / {pagination.totalItems} sản phẩm
@@ -594,184 +784,227 @@ const ProductManager = () => {
         )}
 
         {/* Form (Create/Edit) */}
-        {productInForm && (
-          <div style={modalOverlayStyle}>
-            <div style={modalContentStyle}>
-              <h2>{isEditMode ? "Cập nhật sản phẩm" : "Tạo sản phẩm mới"}</h2>
+        {showForm && (
+          <div className={styles.modalOverlay} onClick={(e) => {
+            if (e.target.className === styles.modalOverlay) {
+              handleCloseForm();
+            }
+          }}>
+            <div className={styles.modalContent}>
+              <h2 className={styles.modalTitle}>{editMode ? "Cập nhật sản phẩm" : "Tạo sản phẩm mới"}</h2>
 
-              <label>Tên</label>
-              <input
-                type="text"
-                name="name"
-                value={productInForm.name}
-                onChange={handleInputChange}
-              />
-
-              <label>Mô tả</label>
-              <textarea
-                name="description"
-                rows={2}
-                value={productInForm.description}
-                onChange={handleInputChange}
-              />
-
-              <label>Giá</label>
-              <input
-                type="number"
-                name="price"
-                value={productInForm.price}
-                onChange={handleInputChange}
-              />
-
-              {/* Properly structured image upload section */}
-              <label>Hình ảnh</label>
-              <div>
-                <div style={{ marginBottom: "15px" }}>
-                  <label
-                    style={{
-                      display: "inline-block",
-                      padding: "8px 15px",
-                      background: "#f0f0f0",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      border: "1px solid #ddd"
-                    }}
-                  >
-                    Chọn file ảnh
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      id="productImageInput"
-                      style={{
-                        position: "absolute",
-                        width: "1px",
-                        height: "1px",
-                        padding: 0,
-                        margin: "-1px",
-                        overflow: "hidden",
-                        clip: "rect(0, 0, 0, 0)",
-                        border: 0
-                      }}
-                    />
-                  </label>
-                </div>
-
-                {/* Image preview */}
-                {productInForm.imagePreview && (
-                  <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                    <p>Ảnh đã chọn:</p>
-                    <img
-                      src={productInForm.imagePreview}
-                      alt="Preview"
-                      style={{ maxWidth: '200px', maxHeight: '200px' }}
-                    />
-                  </div>
-                )}
-
-                {/* Or show existing image */}
-                {!productInForm.imagePreview && productInForm.image && (
-                  <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                    <p>Ảnh hiện tại:</p>
-                    <img
-                      src={productInForm.image}
-                      alt="Current"
-                      style={{ maxWidth: '200px', maxHeight: '200px' }}
-                    />
-                  </div>
-                )}
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Tên</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className={styles.textInput}
+                  placeholder="Nhập tên sản phẩm"
+                  required
+                />
               </div>
 
-              <label>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Mô tả</label>
+                <textarea
+                  name="description"
+                  rows={4}
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className={styles.textInput}
+                  placeholder="Nhập mô tả sản phẩm"
+                  required
+                  style={{ resize: "vertical", minHeight: "100px" }}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Giá</label>
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  className={styles.textInput}
+                  placeholder="Nhập giá sản phẩm"
+                  min="0"
+                  required
+                />
+              </div>
+
+              {/* Inventory Information */}
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Số lượng</label>
+                <input
+                  type="number"
+                  name="quantity"
+                  value={formData.quantity}
+                  onChange={handleInputChange}
+                  className={styles.textInput}
+                  placeholder="Nhập số lượng tồn kho"
+                  min="0"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Tồn kho</label>
+                <input
+                  type="number"
+                  name="stock"
+                  value={formData.stock}
+                  onChange={handleInputChange}
+                  className={styles.textInput}
+                  placeholder="Nhập số lượng tồn kho"
+                  min="0"
+                />
+              </div>
+
+              {/* Improved image upload section */}
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Hình ảnh {!editMode && <span style={{ color: "red" }}>*</span>}</label>
+                <div className={styles.imageInputContainer}>
+                  <div className={styles.fileUploadContainer}>
+                    <label className={styles.fileInputLabel}>
+                      <span className={styles.uploadIcon}>📷</span>
+                      Chọn file ảnh
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className={styles.hiddenFileInput}
+                        required={!editMode}
+                      />
+                    </label>
+                    {formData.imageFile && (
+                      <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
+                        Đã chọn: {formData.imageFile.name}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Image preview section with consistent styling */}
+                  {(formData.imagePreview || formData.image) && (
+                    <div className={styles.imagePreviewContainer}>
+                      <div className={styles.previewBox}>
+                        <p className={styles.previewLabel}>
+                          {formData.imagePreview ? "Ảnh đã chọn:" : "Ảnh hiện tại:"}
+                        </p>
+                        <img
+                          src={formData.imagePreview || formatProductImageUrl(formData.image)}
+                          alt="Product preview"
+                          className={styles.previewImage}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className={styles.formGroup} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <input
                   type="checkbox"
+                  id="isAvailable"
                   name="isAvailable"
-                  checked={productInForm.isAvailable}
-                  onChange={handleInputChange}
+                  checked={formData.isAvailable}
+                  onChange={(e) => setFormData({...formData, isAvailable: e.target.checked})}
+                  style={{ width: "auto", margin: 0 }}
                 />
-                Còn hàng?
-              </label>
-
-              <label>Thương hiệu</label>
-              <select
-                name="productBrandId"
-                value={productInForm.productBrandId}
-                onChange={handleInputChange}
-              >
-                <option value={0}>-- Chọn thương hiệu --</option>
-                {brandList.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name}
-                  </option>
-                ))}
-              </select>
-
-              <label>Loại sản phẩm</label>
-              <select
-                name="productTypeId"
-                value={productInForm.productTypeId}
-                onChange={handleInputChange}
-              >
-                <option value={0}>-- Chọn loại --</option>
-                {typeList.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-
-              <div style={{ marginTop: "20px" }}>
-                <button onClick={handleSave} style={{ marginRight: "10px" }}>
-                  {isEditMode ? "Cập nhật" : "Tạo mới"}
-                </button>
-                <button onClick={handleCloseForm}>Hủy</button>
+                <label htmlFor="isAvailable" style={{ margin: 0 }}>Còn hàng?</label>
               </div>
 
-              <button
-                type="button"
-                onClick={testImageUpload}
-                style={{ marginTop: '10px', background: '#f0ad4e', color: 'white' }}
-              >
-                Test Upload
-              </button>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Thương hiệu</label>
+                <select
+                  name="productBrandId"
+                  value={formData.productBrandId}
+                  onChange={handleInputChange}
+                  className={styles.textInput}
+                >
+                  <option value={0}>-- Chọn thương hiệu --</option>
+                  {brandList.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-              {/* Upload progress indicator */}
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Loại sản phẩm</label>
+                <select
+                  name="productTypeId"
+                  value={formData.productTypeId}
+                  onChange={handleInputChange}
+                  className={styles.textInput}
+                >
+                  <option value={0}>-- Chọn loại --</option>
+                  {typeList.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Skin Types Section */}
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Loại da phù hợp</label>
+                <div className={styles.checkboxGroup}>
+                  {skinTypeList && skinTypeList.length > 0 ? (
+                    skinTypeList.map((skinType) => (
+                      <div key={skinType.id} className={styles.checkboxItem}>
+                        <input
+                          type="checkbox"
+                          id={`skinType-${skinType.id}`}
+                          checked={formData.skinTypeIds.includes(skinType.id)}
+                          onChange={(e) => handleSkinTypeChange(skinType.id, e.target.checked)}
+                          className={styles.checkbox}
+                        />
+                        <label htmlFor={`skinType-${skinType.id}`}>{skinType.name}</label>
+                      </div>
+                    ))
+                  ) : (
+                    <div>Loading skin types...</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Upload progress indicator with improved styling */}
               {uploadProgress > 0 && (
-                <div style={{ width: "100%", marginTop: "15px" }}>
-                  <div style={{
-                    height: "20px",
-                    background: "#f0f0f0",
-                    borderRadius: "4px",
-                    overflow: "hidden",
-                    position: "relative"
-                  }}>
-                    <div style={{
-                      width: `${uploadProgress}%`,
-                      height: "100%",
-                      background: "#4caf50",
-                      transition: "width 0.3s"
-                    }}></div>
-                    <div style={{
-                      position: "absolute",
-                      top: "0",
-                      left: "0",
-                      width: "100%",
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#333",
-                      fontSize: "12px"
-                    }}>
-                      {uploadProgress}% Uploaded
-                    </div>
+                <div className={styles.progressContainer}>
+                  <div 
+                    className={styles.progressBar} 
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                  <div className={styles.progressText}>
+                    {uploadProgress}% Uploaded
                   </div>
                 </div>
               )}
+
+              <div className={styles.modalFooter}>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={handleCloseForm}
+                  type="button"
+                >
+                  Hủy
+                </button>
+                <button
+                  className={`${styles.saveButton} ${submitting ? styles.loading : ''}`}
+                  onClick={handleSave}
+                  disabled={submitting}
+                  type="button"
+                >
+                  {editMode ? "Cập nhật" : "Tạo mới"}
+                </button>
+              </div>
             </div>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 };

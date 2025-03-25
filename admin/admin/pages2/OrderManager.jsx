@@ -3,7 +3,7 @@ import { getAllOrders, deleteOrder, updateOrder, getOrderById } from '/src/api/o
 import Swal from 'sweetalert2';
 import Sidebar from './Sidebar';
 import styles from './OrderManager.module.css';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 const ManagerOrder = () => {
@@ -204,146 +204,162 @@ const ManagerOrder = () => {
   };
 
   return (
-    <>
+    <div className={styles.container}>
       <Sidebar />
-      <div className={`container ${styles.container}`}>
-        <h2>Quản lý đơn hàng</h2>
-        <table className={`table ${styles.table}`}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Trạng thái</th>
-              <th>Tổng tiền</th>
-              <th>Thanh toán</th>
-              <th>Ngày cập nhật</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.length === 0 ? (
+      <div className={styles.content}>
+        <h1>Quản lý đơn hàng</h1>
+        
+        <div className={styles.tableWrapper}>
+          <table className={styles.productTable}>
+            <thead>
               <tr>
-                <td colSpan="6">Không có đơn hàng</td>
+                <th>ID</th>
+                <th>Trạng thái</th>
+                <th>Tổng tiền</th>
+                <th>Thanh toán</th>
+                <th>Ngày cập nhật</th>
+                <th>Hành động</th>
               </tr>
-            ) : (
-              orders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>
-                    <span className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td>{order.totalAmount.toLocaleString()}đ</td>
-                  <td>{order.isPrepaid ? 'Đã thanh toán' : 'Chưa thanh toán'}</td>
-                  <td>{formatDate(order.updatedAt)}</td>
-                  <td>
-                    <button 
-                      className={`${styles.actionBtn} ${styles.editBtn}`} 
-                      onClick={() => handleUpdate(order.id)}
-                    >
-                      <FaEdit /> Sửa
-                    </button>
-                    <button 
-                      className={`${styles.actionBtn} ${styles.deleteBtn}`} 
-                      onClick={() => handleDelete(order.id)}
-                      disabled={['Delivered', 'Processing', 'Shipped'].includes(order.status)}
-                    >
-                      <FaTrash /> Xóa
-                    </button>
-                  </td>
+            </thead>
+            <tbody>
+              {orders.length === 0 ? (
+                <tr>
+                  <td colSpan="6">Không có đơn hàng</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                orders.map((order) => (
+                  <tr key={order.id}>
+                    <td>{order.id}</td>
+                    <td>
+                      <span className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td>{order.totalAmount.toLocaleString()}đ</td>
+                    <td>{order.isPrepaid ? 'Đã thanh toán' : 'Chưa thanh toán'}</td>
+                    <td>{formatDate(order.updatedAt)}</td>
+                    <td className={styles.actionButtons}>
+                      <button 
+                        className={styles.editButton}
+                        onClick={() => handleUpdate(order.id)}
+                      >
+                        <FaEdit />
+                      </button>
+                      <button 
+                        className={styles.deleteButton}
+                        onClick={() => handleDelete(order.id)}
+                        disabled={['Delivered', 'Processing', 'Shipped'].includes(order.status)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* Order Update Modal */}
-        <Modal show={showUpdateModal} onHide={handleCloseModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Cập nhật đơn hàng #{currentOrder?.id}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {loading ? (
-              <div className="text-center py-4">
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Loading...</span>
+        {showUpdateModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <h2 className={styles.modalTitle}>Cập nhật đơn hàng #{currentOrder?.id}</h2>
+              
+              {loading ? (
+                <div className="text-center py-4">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p className="mt-2">Đang tải dữ liệu...</p>
                 </div>
-                <p className="mt-2">Đang tải dữ liệu...</p>
-              </div>
-            ) : currentOrder ? (
-              <Form onSubmit={handleSubmitUpdate}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Trạng thái đơn hàng</Form.Label>
-                  <Form.Select 
-                    name="status" 
-                    value={updateForm.status}
-                    onChange={handleInputChange}
-                  >
-                    <option value={currentOrder.status}>{currentOrder.status} (Hiện tại)</option>
-                    {statusOptions[currentOrder.status]?.map((status) => (
-                      <option key={status} value={status}>{status}</option>
-                    ))}
-                  </Form.Select>
-                  <Form.Text className="text-muted">
-                    Trạng thái chỉ có thể thay đổi theo quy trình: Pending → Confirmed → Processing → Shipped → Delivered
-                  </Form.Text>
-                </Form.Group>
+              ) : currentOrder ? (
+                <form onSubmit={handleSubmitUpdate}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Trạng thái đơn hàng</label>
+                    <select 
+                      className={styles.textInput}
+                      name="status" 
+                      value={updateForm.status}
+                      onChange={handleInputChange}
+                    >
+                      <option value={currentOrder.status}>{currentOrder.status} (Hiện tại)</option>
+                      {statusOptions[currentOrder.status]?.map((status) => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+                    <small className={styles.formHelper}>
+                      Trạng thái chỉ có thể thay đổi theo quy trình: Pending → Confirmed → Processing → Shipped → Delivered
+                    </small>
+                  </div>
 
-                <Form.Group className="mb-3">
-                  <Form.Check 
-                    type="checkbox"
-                    name="isPrepaid"
-                    checked={updateForm.isPrepaid}
-                    onChange={handleInputChange}
-                    label="Đã thanh toán"
-                  />
-                </Form.Group>
+                  <div className={styles.formGroup}>
+                    <div className={styles.checkboxItem}>
+                      <input 
+                        type="checkbox"
+                        id="isPrepaid"
+                        name="isPrepaid"
+                        checked={updateForm.isPrepaid}
+                        onChange={handleInputChange}
+                      />
+                      <label htmlFor="isPrepaid">Đã thanh toán</label>
+                    </div>
+                  </div>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Tổng tiền</Form.Label>
-                  <Form.Control 
-                    type="number" 
-                    name="totalAmount"
-                    value={updateForm.totalAmount}
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Tổng tiền</label>
+                    <input 
+                      className={styles.textInput}
+                      type="number" 
+                      name="totalAmount"
+                      value={updateForm.totalAmount}
+                      onChange={handleInputChange}
+                    />
+                  </div>
 
-                {/* Customer Information */}
-                <div className="mb-3">
-                  <h6>Thông tin khách hàng:</h6>
-                  <p>Tên: {currentOrder.customerInfo?.username || '—'}</p>
-                  <p>Email: {currentOrder.customerInfo?.email || '—'}</p>
-                  <p>SĐT: {currentOrder.customerInfo?.phoneNumber || '—'}</p>
-                  <p>Địa chỉ: {currentOrder.customerInfo?.address || '—'}</p>
-                </div>
+                  {/* Customer Information */}
+                  <div className={styles.formGroup}>
+                    <h6 className={styles.formLabel}>Thông tin khách hàng:</h6>
+                    <div className={styles.customerInfo}>
+                      <p>Tên: {currentOrder.customerInfo?.username || '—'}</p>
+                      <p>Email: {currentOrder.customerInfo?.email || '—'}</p>
+                      <p>SĐT: {currentOrder.customerInfo?.phoneNumber || '—'}</p>
+                      <p>Địa chỉ: {currentOrder.customerInfo?.address || '—'}</p>
+                    </div>
+                  </div>
 
-                {/* Order Items */}
-                <div className="mb-3">
-                  <h6>Sản phẩm ({currentOrder.orderItems?.length || 0}):</h6>
-                  <ul className="list-group">
-                    {(currentOrder.orderItems || []).map((item) => (
-                      <li key={item.productId} className="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                          {item.productName} x {item.itemQuantity}
-                        </div>
-                        <span>{(item.productPrice * item.itemQuantity).toLocaleString()}đ</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  {/* Order Items */}
+                  <div className={styles.formGroup}>
+                    <h6 className={styles.formLabel}>Sản phẩm ({currentOrder.orderItems?.length || 0}):</h6>
+                    <ul className={styles.orderItems}>
+                      {(currentOrder.orderItems || []).map((item) => (
+                        <li key={item.productId} className={styles.orderItem}>
+                          <div className={styles.productInfo}>
+                            {item.productName} x {item.itemQuantity}
+                          </div>
+                          <span>{(item.productPrice * item.itemQuantity).toLocaleString()}đ</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                <Button variant="success" type="submit" className="mt-3 w-100">
-                  Cập nhật đơn hàng
-                </Button>
-              </Form>
-            ) : (
-              <p>Không tìm thấy thông tin đơn hàng</p>
-            )}
-          </Modal.Body>
-        </Modal>
+                  <div className={styles.modalFooter}>
+                    <button type="button" className={styles.cancelButton} onClick={handleCloseModal}>
+                      Hủy
+                    </button>
+                    <button type="submit" className={styles.saveButton}>
+                      Cập nhật đơn hàng
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <p>Không tìm thấy thông tin đơn hàng</p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductById } from "../api/productApi";
-import { getInventoryByProductId } from "../api/inventoryApi";
 import { useCart } from "../store/CartContext";
 import "/src/styles/ProductDetails.css";
 import { formatProductImageUrl } from "../utils/imageUtils";
@@ -11,7 +10,6 @@ const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-  const [inventory, setInventory] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,17 +20,7 @@ const ProductDetails = () => {
   // Use cart context
   const { addItemToCart, formatPrice } = useCart();
 
-  // Add new function to fetch inventory
-  const fetchInventory = async () => {
-    try {
-      const inventoryResponse = await getInventoryByProductId(id);
-      setInventory(inventoryResponse.data);
-    } catch (error) {
-      console.error("Lỗi khi tải thông tin tồn kho:", error);
-    }
-  };
-
-  // Update useEffect to use fetchInventory
+  // Update useEffect to fetch product details
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -40,9 +28,6 @@ const ProductDetails = () => {
         const response = await getProductById(id);
         setProduct(response.data);
         setError(null);
-        
-        // Fetch inventory for the product
-        await fetchInventory();
       } catch (error) {
         console.error("Lỗi khi tải thông tin sản phẩm:", error);
         setError("Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.");
@@ -80,11 +65,9 @@ const ProductDetails = () => {
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       
-      // Handle inventory error
+      // Handle stock error
       if (error.type === "INSUFFICIENT_INVENTORY") {
         setError("❌ " + error.message);
-        // Fetch latest inventory data
-        await fetchInventory();
       } else if (error.response?.status === 401) {
         setError("❌ Vui lòng đăng nhập để thêm vào giỏ hàng!");
         navigate('/login', { state: { from: `/product/${id}` } });
@@ -101,13 +84,15 @@ const ProductDetails = () => {
     }
   };
 
-  // Add effect to reset quantity when inventory changes
+  // Update useEffect for quantity control
   useEffect(() => {
-    const totalInventory = inventory.reduce((acc, inv) => acc + inv.quantity, 0);
-    if (quantity > totalInventory) {
-      setQuantity(Math.max(1, totalInventory));
+    // Check if product has stock
+    if (product?.stock && product.stock > 0) {
+      if (quantity > product.stock) {
+        setQuantity(Math.max(1, product.stock));
+      }
     }
-  }, [inventory, quantity]);
+  }, [product, quantity]);
 
   if (loading) {
     return (
@@ -138,6 +123,9 @@ const ProductDetails = () => {
       </div>
     );
   }
+
+  // Determine if product is in stock
+  const isInStock = product.stock > 0;
 
   return (
     <div className="product-details-container">
@@ -180,8 +168,8 @@ const ProductDetails = () => {
             </p>
             <p className="product-stock">
               <strong>Tình trạng:</strong>{" "}
-              {inventory.length > 0 
-                ? `Còn ${inventory.reduce((acc, inv) => acc + inv.quantity, 0)} sản phẩm` 
+              {isInStock 
+                ? `Còn ${product.stock} sản phẩm`
                 : "Hết hàng"}
             </p>
           </div>
@@ -200,7 +188,7 @@ const ProductDetails = () => {
             <span>{quantity}</span>
             <button 
               onClick={() => setQuantity(quantity + 1)}
-              disabled={quantity >= inventory.reduce((acc, inv) => acc + inv.quantity, 0)}
+              disabled={quantity >= (product?.stock || 0)}
             >
               +
             </button>
@@ -209,11 +197,11 @@ const ProductDetails = () => {
           <button 
             className={`add-to-cart-btn ${addingToCart ? 'loading' : ''}`}
             onClick={handleAddToCart}
-            disabled={inventory.length === 0 || addingToCart}
+            disabled={!isInStock || addingToCart}
           >
             {addingToCart 
               ? 'Đang thêm...' 
-              : inventory.length === 0 
+              : !isInStock
                 ? 'Hết hàng' 
                 : 'Thêm vào giỏ hàng'}
           </button>

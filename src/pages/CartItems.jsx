@@ -1,9 +1,8 @@
 // src/pages/CartItems.jsx
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash, FaSpinner } from "react-icons/fa";
 import { useCart } from "../store/CartContext";
-import { getInventoryByProductId } from "../api/inventoryApi"; // Import the inventory API function
 import "/src/styles/CartItems.css";
 import { formatProductImageUrl } from "../utils/imageUtils";
 
@@ -74,7 +73,6 @@ const CartItems = () => {
   const [deletingItems, setDeletingItems] = useState({});
   const [localError, setLocalError] = useState(null);
   const [iconsLoaded, setIconsLoaded] = useState(true);
-  const [inventoryData, setInventoryData] = useState({}); // State to hold inventory data
   
   // Refs cho theo dõi thay đổi và tạo hiệu ứng
   const prevQuantitiesRef = useRef({});
@@ -114,22 +112,6 @@ const CartItems = () => {
     prevQuantitiesRef.current = newQuantities;
   }, [cartItems, cartData]);
 
-  useEffect(() => {
-    const fetchInventoryData = async () => {
-      const inventoryPromises = cartItems.map(item => 
-        getInventoryByProductId(item.productId).then(response => {
-          setInventoryData(prev => ({
-            ...prev,
-            [item.productId]: response.data // Store inventory data by product ID
-          }));
-        })
-      );
-      await Promise.all(inventoryPromises);
-    };
-
-    fetchInventoryData();
-  }, [cartItems]);
-
   const shippingFee = 30000;
   const total = subtotal + shippingFee;
 
@@ -151,17 +133,9 @@ const CartItems = () => {
       
       // Cập nhật prevQuantitiesRef sau khi thành công
       prevQuantitiesRef.current[itemId] = newQuantity;
-
-      // Update inventory data if quantity changes
-      if (inventoryData[productId]) {
-        const availableStock = inventoryData[productId].reduce((acc, inv) => acc + inv.quantity, 0);
-        if (newQuantity > availableStock) {
-          setLocalError("Số lượng yêu cầu vượt quá số lượng có sẵn trong kho.");
-        }
-      }
     } catch (error) {
       console.error("Error updating item quantity:", error);
-      setLocalError("Không thể cập nhật số lượng. Vui lòng thử lại!");
+      setLocalError(error.message || "Không thể cập nhật số lượng. Vui lòng thử lại!");
     } finally {
       // Bỏ đánh dấu updating sau khi hoàn thành
       setUpdatingItems(prev => ({ ...prev, [itemId]: false }));
@@ -201,6 +175,15 @@ const CartItems = () => {
   const handleCheckout = () => {
     navigate("/Checkout", { state: { cartItems, subtotal, shippingFee, total } });
   };
+
+  // Check if any item has stock issues
+  const hasStockIssues = useMemo(() => {
+    return cartItems.some(item => {
+      const stock = item.productStock ?? 0;
+      // Chỉ coi là có vấn đề khi số lượng vượt quá stock hoặc stock <= 0
+      return stock <= 0 || item.quantity > stock;
+    });
+  }, [cartItems]);
 
   // Add function to handle product click
   const handleProductClick = (productId) => {
@@ -260,10 +243,13 @@ const CartItems = () => {
                 const isUpdating = updatingItems[item.id];
                 const isDeleting = deletingItems[item.id];
                 const animationState = animatingItemsRef.current[item.id] || "";
-                const availableStock = inventoryData[item.productId] 
-                  ? inventoryData[item.productId].reduce((acc, inv) => acc + inv.quantity, 0) 
-                  : 0;
-
+                // Use product's stock directly
+                const availableStock = item.productStock ?? 0;
+                const isOutOfStock = availableStock <= 0;
+                // Sửa điều kiện để chỉ coi là max khi lớn hơn, bằng vẫn hợp lệ
+                const isMaxQuantity = item.quantity > availableStock;
+                const isAtMaxQuantity = item.quantity === availableStock;
+                
                 if (isDeleting) {
                   return (
                     <div key={item.id} className="cart-item deleting">
@@ -280,7 +266,7 @@ const CartItems = () => {
                 }
 
                 return (
-                  <div key={item.id} className="cart-item">
+                  <div key={item.id} className={`cart-item ${isOutOfStock ? 'out-of-stock' : ''} ${isMaxQuantity ? 'max-quantity' : ''} ${isAtMaxQuantity ? 'at-max-quantity' : ''}`}>
                     <div className="item-image" onClick={() => handleProductClick(item.productId)} style={{ cursor: 'pointer' }}>
                       <img 
                         src={formatProductImageUrl(item.productImage)} 
@@ -301,9 +287,27 @@ const CartItems = () => {
                       <div className="item-total">
                         Thành tiền: {calculateItemTotal(item, isUpdating)}
                       </div>
-                      <div className="item-stock">
-                        <strong>Tình trạng kho:</strong> {availableStock > 0 ? `Còn ${availableStock} sản phẩm` : "Hết hàng"}
+                      <div className={`item-stock ${isOutOfStock ? 'out-of-stock' : ''} ${isMaxQuantity ? 'max-quantity' : ''} ${isAtMaxQuantity ? 'at-max-quantity' : ''}`}>
+                        <strong>Tình trạng:</strong> {
+                          isOutOfStock 
+                            ? <span className="stock-status error">Hết hàng</span> 
+                            : isMaxQuantity 
+                              ? <span className="stock-status error">Vượt giới hạn tồn kho ({availableStock})</span>
+                              : isAtMaxQuantity
+                                ? <span className="stock-status warning">Đạt giới hạn tồn kho ({availableStock})</span> 
+                                : <span className="stock-status available">Còn {availableStock} sản phẩm</span>
+                        }
                       </div>
+                      
+                      {(isOutOfStock || isMaxQuantity || isAtMaxQuantity) && (
+                        <div className="stock-alert">
+                          {isOutOfStock 
+                            ? "Sản phẩm này hiện đã hết hàng, vui lòng xóa khỏi giỏ hàng hoặc quay lại sau." 
+                            : isMaxQuantity
+                              ? `Số lượng đã vượt quá tồn kho hiện có (${availableStock}), vui lòng giảm số lượng.`
+                              : `Bạn đã chọn tối đa số lượng có thể (${availableStock}).`}
+                        </div>
+                      )}
                     </div>
 
                     <div className="item-controls">
@@ -324,13 +328,13 @@ const CartItems = () => {
                         <span>{item.quantity}</span>
                         <button 
                           onClick={() => handleUpdateQuantity(item.id, item.productId, 1, item.quantity)}
-                          disabled={isUpdating || item.quantity >= availableStock}
+                          disabled={isUpdating || isMaxQuantity || isOutOfStock}
                           className="plus-btn"
                           aria-label="Tăng số lượng"
                           type="button"
                           style={{
                             ...overrideStyles.quantityButton,
-                            ...(isUpdating ? overrideStyles.quantityButtonDisabled : {})
+                            ...(isUpdating || isMaxQuantity || isOutOfStock ? overrideStyles.quantityButtonDisabled : {})
                           }}
                         >
                           <FaPlus style={overrideStyles.icon} />
@@ -368,12 +372,20 @@ const CartItems = () => {
                 <span>Tổng Cộng</span>
                 <span>{formatPrice(total)}</span>
               </div>
+              
+              {hasStockIssues && (
+                <div className="stock-warning">
+                  <p>Không thể thanh toán vì có sản phẩm hết hàng hoặc số lượng vượt quá tồn kho.</p>
+                  <p>Vui lòng điều chỉnh số lượng hoặc xóa các sản phẩm không đủ hàng.</p>
+                </div>
+              )}
+              
               <button
                 className="checkout-button"
                 onClick={handleCheckout}
-                disabled={cartItems.length === 0}
+                disabled={cartItems.length === 0 || hasStockIssues}
               >
-                Tiến Hành Thanh Toán
+                {hasStockIssues ? 'Có sản phẩm hết hàng' : 'Tiến Hành Thanh Toán'}
               </button>
             </div>
           </div>

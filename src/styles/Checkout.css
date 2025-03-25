@@ -65,7 +65,7 @@
 
 /* Reset layout tổng thể để giảm cuộn */
 .order-detail-page {
-  padding-top: 1000px;
+  padding-top: 100px;
   padding: 5rem 2rem 2rem;
   background: linear-gradient(135deg, #f8faf9 0%, #e8f5e9 100%);
   min-height: 100vh;
@@ -74,7 +74,7 @@
 }
 
 .order-detail-container {
-  padding-top: 300px;
+  padding-top: 10px;
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
@@ -510,4 +510,86 @@
   .cart-item-name {
     max-width: 120px;
   }
+}
+
+/* Styles for voucher section */
+.voucher-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #e8f5e9;
+}
+
+.voucher-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: #216942;
+  margin-bottom: 12px;
+}
+
+.voucher-selection {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.voucher-select {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #e8f5e9;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.voucher-select:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  outline: none;
+}
+
+.apply-voucher-button {
+  padding: 10px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.apply-voucher-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.voucher-error {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.applied-voucher {
+  background-color: #e8f5e9;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.applied-voucher strong {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.price-row.discount {
+  color: #2e7d32;
+  font-weight: 500;
 }

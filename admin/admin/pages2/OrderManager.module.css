@@ -63,3 +63,324 @@ body {
     padding-bottom: 220px;
   }
 }
+
+.container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #2f4858;
+}
+
+/* Table wrapper to control overflow */
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table */
+.productTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-size: 14px;
+  min-width: 100%;
+  table-layout: fixed;
+}
+
+.productTable thead {
+  background-color: #8cc5af;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.productTable th {
+  padding: 12px 8px;
+  text-align: center;
+  color: #2f4858;
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 2px solid #74b095;
+}
+
+.productTable td {
+  padding: 12px 8px;
+  text-align: center;
+  vertical-align: middle;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+.productTable tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Status badges */
+.statusBadge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.statusPending {
+  background-color: #ffefd5;
+  color: #ff9800;
+}
+
+.statusConfirmed {
+  background-color: #e0f7fa;
+  color: #00acc1;
+}
+
+.statusProcessing {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.statusShipped {
+  background-color: #e3f2fd;
+  color: #2196f3;
+}
+
+.statusDelivered {
+  background-color: #c8e6c9;
+  color: #388e3c;
+}
+
+.statusCancelled {
+  background-color: #ffebee;
+  color: #f44336;
+}
+
+/* Action buttons */
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.editButton {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.editButton:hover {
+  background-color: #0b5ed7;
+}
+
+.deleteButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px 0;
+}
+
+.modalContent {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #8cc5af;
+  padding-bottom: 12px;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.cancelButton, .saveButton {
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.cancelButton {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.cancelButton:hover {
+  background-color: #e1e1e1;
+}
+
+.saveButton {
+  background-color: #8cc5af;
+  color: white;
+}
+
+.saveButton:hover {
+  background-color: #74b095;
+}
+
+/* Form fields */
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formLabel {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.formHelper {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.textInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.textInput:focus {
+  border-color: #8cc5af;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(140, 197, 175, 0.25);
+}
+
+/* Customer info and order items styling */
+.customerInfo {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+
+.customerInfo p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.orderItems {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.orderItem:last-child {
+  border-bottom: none;
+}
+
+.productInfo {
+  font-weight: 500;
+}
+
+/* Checkbox styling */
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkboxItem input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsiveness */
+@media (max-width: 992px) {
+  .productTable {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+    padding: 16px;
+  }
+}
