@@ -15,7 +15,9 @@
     width: 100vw;
     box-sizing: border-box;
     z-index: 1000;
+
     height: 80px;
+
     /* Fixed consistent height */
     transition: all 0.3s ease;
 }
@@ -189,6 +191,7 @@
 
 .register-btn,
 .login-btn {
+    text-align: center;
     padding: 0.4rem 0.8rem;
     border-radius: 8px;
     border: none;
@@ -371,9 +374,11 @@
     gap: 4px;
     align-items: center;
     justify-content: center;
-    z-index: 5; /* Ensure buttons are above the clickable area */
+    z-index: 5;
+    /* Ensure buttons are above the clickable area */
     margin-left: 8px;
-    min-width: 40px; /* Ensure minimum width for the action area */
+    min-width: 40px;
+    /* Ensure minimum width for the action area */
 }
 
 .cart-popup-item .action-btn {
@@ -387,7 +392,8 @@
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 12px;
-    position: relative; /* Ensure the button stays on top */
+    position: relative;
+    /* Ensure the button stays on top */
     z-index: 10;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
