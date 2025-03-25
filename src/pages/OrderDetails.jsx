@@ -5,6 +5,7 @@ import { getOrderDetail } from '../api/orderApi';
 import { getProductById } from '../api/productApi';
 import { useAuth } from '../auth/AuthProvider';
 import '/src/styles/OrderDetails.css';
+import { formatProductImageUrl } from "../utils/imageUtils";
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -19,7 +20,7 @@ const OrderDetails = () => {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
   const orderIdToFetch = orderId || (location.state && location.state.orderId);
-  
+
   console.log("OrderDetails component - orderId from params:", orderId);
   console.log("OrderDetails component - location state:", location.state);
   console.log("OrderDetails component - orderIdToFetch:", orderIdToFetch);
@@ -42,6 +43,7 @@ const OrderDetails = () => {
         }
 
         const orderData = await getOrderDetail(orderIdToFetch);
+        console.log("Order data received:", orderData);
         setOrder(orderData);
       } catch (err) {
         console.error("Error fetching order details:", err);
@@ -55,18 +57,18 @@ const OrderDetails = () => {
   }, [orderIdToFetch, isAuthenticated, navigate, location]);
 
   useEffect(() => {
-    if (order && order.orderItems && order.orderItems.length > 0) {
+    if (order && order.items && order.items.length > 0) {
       const fetchProductDetails = async () => {
         const details = {};
 
-        for (const item of order.orderItems) {
+        for (const item of order.items) {
           try {
             const product = await getProductById(item.productId);
             details[item.productId] = product;
           } catch (err) {
             details[item.productId] = {
               name: `Sản phẩm #${item.productId}`,
-              price: order.totalPrice / order.orderItems.reduce((acc, i) => acc + i.itemQuantity, 0)
+              price: order.totalPrice / order.items.reduce((acc, i) => acc + i.itemQuantity, 0)
             };
           }
         }
@@ -105,6 +107,8 @@ const OrderDetails = () => {
     switch (status?.toLowerCase()) {
       case 'completed':
         return 'status-completed';
+      case 'shipped':
+        return 'status-processing';
       case 'pending':
         return 'status-pending';
       case 'processing':
@@ -138,7 +142,7 @@ const OrderDetails = () => {
   const getProductInfo = (productId) => {
     return productDetails[productId] || {
       name: `Sản phẩm #${productId}`,
-      price: order?.totalPrice / order?.orderItems.reduce((acc, item) => acc + item.itemQuantity, 0) || 0
+      price: order?.totalPrice / order?.items.reduce((acc, item) => acc + item.itemQuantity, 0) || 0
     };
   };
 
@@ -209,46 +213,46 @@ const OrderDetails = () => {
 
         <div className="order-body">
           <div className="order-info-grid">
-            <div className="customer-info info-card">
+            <div className="info-card">
               <h3>Thông tin khách hàng</h3>
               <div className="info-content">
-                <p><strong>Tên khách hàng:</strong> {order.customerInfo?.username || ''}</p>
-                <p><strong>Email:</strong> {order.customerInfo?.email || 'Email không có sẵn'}</p>
-                <p><strong>Số điện thoại:</strong> {order.customerInfo?.phoneNumber || ''}</p>
+                <p><strong>Tên khách hàng:</strong> {order.customer?.username || ''}</p>
+                <p><strong>Email:</strong> {order.customer?.email || 'Email không có sẵn'}</p>
+                <p><strong>Số điện thoại:</strong> {order.customer?.phoneNumber || ''}</p>
               </div>
             </div>
 
-            <div className="shipping-info info-card">
+            <div className="info-card">
               <h3>Thông tin giao hàng</h3>
               <div className="info-content">
-                <p><strong>Địa chỉ:</strong> {order.customerInfo?.address || ''}</p>
+                <p><strong>Địa chỉ:</strong> {order.customer?.address || ''}</p>
                 <p><strong>Phương thức vận chuyển:</strong> Giao hàng tiêu chuẩn</p>
-                <p><strong>Trạng thái:</strong> {order.status === 'Completed' ? 'Đã giao hàng' : 'Đang xử lý'}</p>
+                <p><strong>Trạng thái:</strong> {order.status === 'Completed' ? 'Đã giao hàng' : order.status === 'Shipped' ? 'Đang giao hàng' : 'Đang xử lý'}</p>
               </div>
             </div>
 
-            <div className="payment-info info-card">
+            <div className="info-card">
               <h3>Thông tin thanh toán</h3>
               <div className="info-content">
                 <p>
                   <strong>Phương thức thanh toán:</strong>{' '}
-                  {order.paymentInfo?.paymentMethod === 'Cash'
+                  {order.payment?.paymentMethod === 'Cash'
                     ? 'Tiền mặt khi nhận hàng (COD)'
-                    : order.paymentInfo?.paymentMethod === 'Credit'
+                    : order.payment?.paymentMethod === 'Credit'
                       ? 'Thẻ tín dụng (Credit Card)'
-                      : order.paymentInfo?.paymentMethod === 'Bank'
+                      : order.payment?.paymentMethod === 'Bank'
                         ? 'Chuyển khoản (PayPal)'
-                        : order.paymentInfo?.paymentMethod || 'Không có thông tin'
+                        : order.payment?.paymentMethod || 'Không có thông tin'
                   }
                 </p>
                 <p>
                   <strong>Trạng thái thanh toán:</strong>{' '}
-                  {order.paymentInfo?.status === 'Completed' ? 'Đã thanh toán' :
+                  {order.payment?.status === 'Paid' ? 'Đã thanh toán' :
                     order.isPrepaid ? 'Đang xử lý thanh toán' : 'Thanh toán khi nhận hàng'}
                 </p>
-                {order.paymentInfo?.createdDate && (
+                {order.payment?.createdDate && (
                   <p>
-                    <strong>Ngày thanh toán:</strong> {formatDate(order.paymentInfo.createdDate)}
+                    <strong>Ngày thanh toán:</strong> {formatDate(order.payment.createdDate)}
                   </p>
                 )}
               </div>
@@ -266,22 +270,24 @@ const OrderDetails = () => {
               </div>
 
               <div className="order-items-body">
-                {order.orderItems && order.orderItems.map((item, index) => {
+                {order.items && order.items.map((item, index) => {
                   const product = getProductInfo(item.productId);
                   const productImage = item.productImage || 'placeholder.jpg';
-                  const imageUrl = productImage.startsWith('http') 
-                    ? productImage 
-                    : `/src/assets/images/products/${productImage}`;
-                    
+                  const imageUrl = formatProductImageUrl(productImage);
+
                   return (
                     <div className="order-item-row" key={index}>
                       <div className="item-col product-col">
                         <div className="product-info">
                           <div className={`product-image ${!item.productImage ? 'placeholder' : ''}`}>
-                            {item.productImage ?
-                              <img src={imageUrl} alt={item.productName} /> :
-                              <i className="fas fa-box"></i>
-                            }
+                            <img
+                              src={imageUrl}
+                              alt={item.productName}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "/placeholder.png";
+                              }}
+                            />
                           </div>
                           <div className="product-details">
                             <p className="product-name">{item.productName}</p>
@@ -312,7 +318,7 @@ const OrderDetails = () => {
                 Tiếp tục mua sắm
               </button>
             </div>
-            
+
             <div className="order-summary">
               <h3>Tổng cộng</h3>
               <div className="summary-details">
@@ -334,7 +340,7 @@ const OrderDetails = () => {
                   <span>Tổng thanh toán:</span>
                   <span>{formatPrice(order.totalAmount || (order.totalPrice + 30000))}</span>
                 </div>
-                
+
                 {order.voucher && (
                   <div className="voucher-info">
                     <p>

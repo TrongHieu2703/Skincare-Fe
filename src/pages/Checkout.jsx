@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createOrder } from '../api/orderApi';
+import { getAllVouchers } from '../api/voucherApi';
 import '/src/styles/Checkout.css';
 import { getAccountInfo, updateAccountInfo } from '../api/accountApi';
 import { useAuth } from '../auth/AuthProvider';
 import { useCart } from "../store/CartContext";
+import { formatProductImageUrl } from "../utils/imageUtils";
 
 // Hàm định dạng tiền tệ VND
 const formatVND = (amount) => {
@@ -22,64 +24,13 @@ const PaymentMethodSelector = ({ selectedMethod, onChange }) => {
       <h3>Phương Thức Thanh Toán</h3>
       <div className="payment-methods">
         <div
-          className={`payment-method-card ${selectedMethod === "Credit" ? "selected" : ""}`}
-          onClick={() => onChange("Credit")}
-        >
-          <img src="/src/assets/images/visa.png" alt="Thẻ tín dụng" />
-          <span>Thẻ Tín Dụng</span>
-        </div>
-
-        <div
-          className={`payment-method-card ${selectedMethod === "Cash" ? "selected" : ""}`}
+          className={`payment-method-card selected`}
           onClick={() => onChange("Cash")}
         >
           <i className="fas fa-money-bill-wave"></i>
-          <span>Tiền Mặt</span>
-        </div>
-
-        <div
-          className={`payment-method-card ${selectedMethod === "Momo" ? "selected" : ""}`}
-          onClick={() => onChange("Momo")}
-        >
-          <img src="/src/assets/images/momo.webp" alt="Momo" />
-          <span>Ví Momo</span>
-        </div>
-
-        <div
-          className={`payment-method-card ${selectedMethod === "Bank" ? "selected" : ""}`}
-          onClick={() => onChange("Bank")}
-        >
-          <img src="/src/assets/images/applepay.png" alt="Chuyển khoản" />
-          <span>Apple Pay</span>
-        </div>
-
-        <div
-          className={`payment-method-card ${selectedMethod === "PayPal" ? "selected" : ""}`}
-          onClick={() => onChange("PayPal")}
-        >
-          <img src="/src/assets/images/mastercard.png" alt="PayPal" />
-          <span>MasterCard</span>
+          <span>Tiền Mặt (COD)</span>
         </div>
       </div>
-
-      {selectedMethod === "Credit" && (
-        <div className="card-details">
-          <div className="form-group">
-            <label>Số Thẻ</label>
-            <input type="text" placeholder="0000 0000 0000 0000" />
-          </div>
-          <div className="form-row">
-            <div className="form-group half">
-              <label>Hết Hạn</label>
-              <input type="text" placeholder="MM/YY" />
-            </div>
-            <div className="form-group half">
-              <label>CVV</label>
-              <input type="text" placeholder="123" />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -111,7 +62,12 @@ const Checkout = () => {
   const { user, isAuthenticated } = useAuth();
 
   // Thêm useCart
-  const { clearCart } = useCart();
+  const { clearCart, loadCartItems } = useCart();
+
+  const [vouchers, setVouchers] = useState([]); // State for vouchers
+  const [selectedVoucher, setSelectedVoucher] = useState(null); // Selected voucher
+  const [discount, setDiscount] = useState(0); // Discount amount
+  const [voucherErrorMessage, setVoucherErrorMessage] = useState(''); // Error message for voucher application
 
   // Cập nhật useEffect
   useEffect(() => {
@@ -128,6 +84,41 @@ const Checkout = () => {
     // Log ra thông tin cart items để debug
     console.log("Cart items in Checkout:", cartItems);
 
+    const fetchVouchers = async () => {
+      try {
+        const response = await getAllVouchers();
+        console.log("Voucher response structure:", response);
+
+        // Try different possible API response structures
+        if (response && response.data && Array.isArray(response.data.data)) {
+          // Structure: response.data.data is an array
+          setVouchers(response.data.data);
+          console.log("Fetched vouchers from response.data.data:", response.data.data);
+        } else if (response && Array.isArray(response.data)) {
+          // Structure: response.data is an array
+          setVouchers(response.data);
+          console.log("Fetched vouchers from response.data:", response.data);
+        } else if (response && response.data && typeof response.data === 'object') {
+          // Structure: response.data might have properties that aren't 'data'
+          const possibleVouchers = Object.values(response.data).find(value => Array.isArray(value));
+          if (possibleVouchers) {
+            setVouchers(possibleVouchers);
+            console.log("Fetched vouchers from response.data object:", possibleVouchers);
+          } else {
+            console.error("Couldn't find voucher array in response", response);
+            setVouchers([]);
+          }
+        } else {
+          console.error("Unexpected voucher response format:", response);
+          setVouchers([]);
+        }
+      } catch (error) {
+        console.error("Error fetching vouchers:", error);
+        setVouchers([]);
+      }
+    };
+
+    fetchVouchers();
   }, [isAuthenticated, user]);
 
   // Hàm lấy thông tin người dùng
@@ -225,79 +216,161 @@ const Checkout = () => {
     return Promise.resolve(true);
   };
 
+  // Cập nhật hàm handleVoucherChange để xử lý khi người dùng chọn voucher
+  const handleVoucherChange = (e) => {
+    const voucherId = e.target.value;
+    
+    // Reset messages and discount
+    setVoucherErrorMessage('');
+    setSuccessMessage('');
+    
+    if (!voucherId) {
+      setSelectedVoucher(null);
+      setDiscount(0);
+      return;
+    }
+    
+    if (!Array.isArray(vouchers)) {
+      console.error("vouchers is not an array:", vouchers);
+      setVoucherErrorMessage('Có lỗi khi chọn voucher, vui lòng thử lại sau');
+      return;
+    }
+    
+    const voucher = vouchers.find(v => v.voucherId.toString() === voucherId);
+    if (voucher) {
+      console.log("Selected voucher:", voucher);
+      setSelectedVoucher(voucher);
+    } else {
+      console.error(`No voucher found with ID ${voucherId}`);
+      setSelectedVoucher(null);
+      setDiscount(0);
+    }
+  };
+
+  // Cập nhật hàm xử lý áp dụng voucher
+  const handleApplyVoucher = () => {
+    if (!selectedVoucher) {
+      setVoucherErrorMessage('Vui lòng chọn voucher trước khi áp dụng');
+      return;
+    }
+
+    // Check if voucher has all required properties
+    if (!selectedVoucher.minOrderValue || selectedVoucher.value === undefined) {
+      console.error("Selected voucher has missing properties:", selectedVoucher);
+      setVoucherErrorMessage('Voucher không hợp lệ, vui lòng chọn voucher khác');
+      return;
+    }
+
+    // Kiểm tra điều kiện áp dụng voucher (minOrderValue)
+    if (subtotal < selectedVoucher.minOrderValue) {
+      setVoucherErrorMessage(
+        `Đơn hàng tối thiểu phải từ ${formatVND(selectedVoucher.minOrderValue)} để áp dụng voucher này`
+      );
+      return;
+    }
+
+    try {
+      // Tính toán giá trị giảm giá dựa theo loại voucher
+      let discountAmount = 0;
+      
+      if (selectedVoucher.isPercent) {
+        // Tính giảm giá phần trăm
+        discountAmount = (subtotal * selectedVoucher.value) / 100;
+        
+        // Áp dụng giới hạn maxDiscountValue nếu có
+        if (selectedVoucher.maxDiscountValue > 0 && discountAmount > selectedVoucher.maxDiscountValue) {
+          discountAmount = selectedVoucher.maxDiscountValue;
+        }
+      } else {
+        // Giảm giá cố định
+        discountAmount = selectedVoucher.value;
+        
+        // Xử lý voucher free ship
+        if (selectedVoucher.code === "FREESHIP") {
+          discountAmount = Math.min(shippingFee, selectedVoucher.value);
+        }
+      }
+
+      // Đảm bảo giảm giá không vượt quá tổng tiền
+      discountAmount = Math.min(discountAmount, subtotal);
+      
+      // Cập nhật state discount
+      setDiscount(discountAmount);
+      
+      // Hiển thị thông báo thành công
+      setSuccessMessage(
+        `Áp dụng voucher "${selectedVoucher.name}" thành công! Giảm ${
+          selectedVoucher.isPercent ? selectedVoucher.value + '%' : formatVND(discountAmount)
+        }`
+      );
+      
+      setVoucherErrorMessage('');
+    } catch (error) {
+      console.error("Error applying voucher:", error);
+      setVoucherErrorMessage('Có lỗi khi áp dụng voucher, vui lòng thử lại');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
 
-    // Kiểm tra đăng nhập
-    if (!isAuthenticated) {
-      setLoading(false);
-      setErrorMessage('Bạn chưa đăng nhập!');
-      return;
-    }
-
-    // Kiểm tra token
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setLoading(false);
-      setErrorMessage('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!');
-      return;
-    }
-
-    console.log("Token exists before creating order:", !!token);
-    console.log("Selected payment method:", paymentMethod);
-
-    // Chuẩn bị dữ liệu tạo Order - sử dụng paymentMethod đã chọn
-    const orderData = {
-      voucherId: null,
-      totalPrice: subtotal,
-      discountPrice: 0,
-      totalAmount: total,
-      status: 'Pending',
-      isPrepaid: paymentMethod !== "Cash", // Đánh dấu đã thanh toán nếu không phải thanh toán tiền mặt
-      orderItems: cartItems.map((item) => ({
-        productId: item.productId ?? 0,
-        itemQuantity: item.quantity
-      })),
-      transactions: [
-        {
-          // Sử dụng giá trị paymentMethod đã chọn (đã được kiểm tra là hợp lệ)
-          paymentMethod: paymentMethod,
-          status: paymentMethod === "Cash" ? "Pending" : "Completed",
-          amount: total,
-          createdDate: new Date().toISOString()
-        }
-      ]
-    };
-
     try {
+      // Kiểm tra đăng nhập
+      if (!isAuthenticated) {
+        throw new Error('Bạn chưa đăng nhập!');
+      }
+
+      // Kiểm tra token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!');
+      }
+
+      // Kiểm tra giỏ hàng trống
+      if (!cartItems || cartItems.length === 0) {
+        throw new Error('Giỏ hàng của bạn đang trống!');
+      }
+
+      // Chuẩn bị dữ liệu tạo Order
+      const orderData = {
+        voucherId: selectedVoucher?.voucherId || null,
+        totalPrice: subtotal,
+        discountPrice: discount,
+        totalAmount: subtotal - discount + shippingFee,
+        status: 'Pending',
+        isPrepaid: false,
+        orderItems: cartItems.map((item) => ({
+          productId: item.productId ?? 0,
+          itemQuantity: item.quantity
+        })),
+        transactions: [
+          {
+            paymentMethod: 'Cash',
+            status: 'Pending',
+            amount: subtotal - discount + shippingFee,
+            createdDate: new Date().toISOString()
+          }
+        ]
+      };
+
       console.log("Submitting order:", orderData);
       const response = await createOrder(orderData);
       console.log("Order created successfully:", response);
 
-      // Giả lập quá trình thanh toán
-      await simulatePayment(paymentMethod, orderData);
-      
       try {
-        // Clear the cart after successful order
         await clearCart();
         console.log("Cart cleared successfully after order");
       } catch (clearError) {
         console.error("Failed to clear cart, but order was successful:", clearError);
-        // We don't want to block the order success flow if cart clearing fails
       }
 
-      // Sau khi thanh toán thành công, chuyển hướng đến trang chi tiết đơn hàng
-      // Kiểm tra và lấy orderId đúng cấu trúc từ response
       const orderId = response.data ? response.data.id : response.id;
-      
+
       if (!orderId) {
-        console.error("Order ID not found in response:", response);
-        setErrorMessage("Đặt hàng thành công nhưng không thể hiển thị chi tiết đơn hàng.");
-        setLoading(false);
-        return;
+        throw new Error("Đặt hàng thành công nhưng không thể hiển thị chi tiết đơn hàng.");
       }
 
       console.log("Navigating to order details with ID:", orderId);
@@ -309,12 +382,31 @@ const Checkout = () => {
       });
     } catch (error) {
       console.error("Error creating order:", error);
-      setErrorMessage(
-        error.response?.data?.message ||
-        "Đã xảy ra lỗi khi đặt hàng. Vui lòng thử lại sau."
-      );
+
+      // Handle specific error types
+      if (error.type === "INSUFFICIENT_INVENTORY") {
+        setErrorMessage("❌ " + error.message);
+        // Reload cart to get updated inventory
+        await loadCartItems();
+      } else if (error.type === "PRODUCT_NOT_FOUND") {
+        setErrorMessage("❌ " + error.message);
+        // Reload cart as product might have been removed
+        await loadCartItems();
+      } else if (error.type === "ORDER_ERROR") {
+        setErrorMessage("❌ " + error.message);
+      } else {
+        setErrorMessage(
+          "❌ " + (error.message || "Đã xảy ra lỗi khi đặt hàng. Vui lòng thử lại sau.")
+        );
+      }
+    } finally {
       setLoading(false);
     }
+  };
+
+  // Add function to handle product click
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
   };
 
   return (
@@ -325,7 +417,7 @@ const Checkout = () => {
           <p>Đang xử lý đơn hàng của bạn...</p>
         </div>
       )}
-      
+
       <div className="order-detail-container">
         <div className="order-detail-left">
           <h2>Thông Tin Giao Hàng</h2>
@@ -373,7 +465,7 @@ const Checkout = () => {
                   required
                 />
               </div>
-              
+
               {/* Nút cập nhật thông tin đặt ngay dưới thông tin người dùng */}
               <div className="update-profile-section">
                 <button
@@ -393,6 +485,50 @@ const Checkout = () => {
               onChange={setPaymentMethod}
             />
 
+            {/* Cập nhật phần chọn voucher */}
+            <div className="voucher-section">
+              <h3>Mã Giảm Giá</h3>
+              <div className="voucher-selection">
+                <select 
+                  onChange={handleVoucherChange} 
+                  className="voucher-select"
+                >
+                  <option value="">-- Chọn mã giảm giá --</option>
+                  {Array.isArray(vouchers) && vouchers.length > 0 ? (
+                    vouchers.map(voucher => (
+                      <option key={voucher.voucherId} value={voucher.voucherId}>
+                        {voucher.code} - {voucher.name} {voucher.isPercent 
+                          ? `(${voucher.value}%)` 
+                          : `(${formatVND(voucher.value)})`
+                        } - Đơn tối thiểu: {formatVND(voucher.minOrderValue)}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>Không có voucher nào khả dụng</option>
+                  )}
+                </select>
+                <button 
+                  type="button" 
+                  className="apply-voucher-button"
+                  onClick={handleApplyVoucher}
+                  disabled={!selectedVoucher}
+                >
+                  Áp Dụng
+                </button>
+              </div>
+              
+              {voucherErrorMessage && (
+                <div className="voucher-error">{voucherErrorMessage}</div>
+              )}
+              
+              {selectedVoucher && discount > 0 && (
+                <div className="applied-voucher">
+                  <span>Voucher đã áp dụng: </span>
+                  <strong>{selectedVoucher.code}</strong> - Giảm {formatVND(discount)}
+                </div>
+              )}
+            </div>
+
             {errorMessage && <div className="error-message">{errorMessage}</div>}
             {successMessage && <div className="success-message">{successMessage}</div>}
           </form>
@@ -401,22 +537,30 @@ const Checkout = () => {
           <h3>Tổng Quan Đơn Hàng</h3>
           <div className="cart-items-summary">
             {cartItems.map((item) => {
-              // Sử dụng trực tiếp các thuộc tính từ API response
               const productName = item.productName || 'Sản phẩm không xác định';
               const productPrice = item.productPrice ?? 0;
-              const productImage = item.productImage || 'https://via.placeholder.com/60';
-              
-              // Fix để hiển thị đúng đường dẫn ảnh
-              const imageUrl = productImage.startsWith('http') 
-                ? productImage 
-                : `/src/assets/images/products/${productImage}`;
-              
+
               return (
                 <div key={item.id} className="cart-item-summary">
-                  <div className="cart-item-image">
-                    <img src={imageUrl} alt={productName} />
+                  <div
+                    className="cart-item-image"
+                    onClick={() => handleProductClick(item.productId)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <img
+                      src={formatProductImageUrl(item.productImage)}
+                      alt={productName}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/src/assets/images/placeholder.png";
+                      }}
+                    />
                   </div>
-                  <div className="cart-item-info">
+                  <div
+                    className="cart-item-info"
+                    onClick={() => handleProductClick(item.productId)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className="cart-item-name">{productName}</div>
                     <div className="cart-item-details">
                       <span className="cart-item-price">{formatVND(productPrice)}</span>
@@ -430,31 +574,37 @@ const Checkout = () => {
               );
             })}
           </div>
-          
+
           <div className="price-details">
             <div className="price-row">
               <span>Tổng Tạm Tính</span>
               <span>{formatVND(subtotal)}</span>
             </div>
+            {discount > 0 && (
+              <div className="price-row discount">
+                <span>Giảm Giá</span>
+                <span>-{formatVND(discount)}</span>
+              </div>
+            )}
             <div className="price-row">
               <span>Phí Vận Chuyển</span>
               <span>{formatVND(shippingFee)}</span>
             </div>
             <div className="price-row total">
               <span>Tổng Cộng</span>
-              <span>{formatVND(total)}</span>
+              <span>{formatVND(subtotal - discount + shippingFee)}</span>
             </div>
           </div>
-          
+
           {/* Nút đặt hàng được di chuyển đến đây */}
-          <button 
-            onClick={handleSubmit} 
-            className="checkout-button" 
+          <button
+            onClick={handleSubmit}
+            className="checkout-button"
             disabled={loading}
           >
             {loading ? 'Đang Xử Lý...' : paymentMethod === "Cash" ? 'ĐẶT HÀNG (COD)' : 'THANH TOÁN NGAY'}
           </button>
-          
+
           <div className="order-security-note">
             <p>Mọi thông tin của bạn sẽ được bảo mật theo chính sách bảo mật của chúng tôi.</p>
           </div>

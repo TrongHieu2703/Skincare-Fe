@@ -1,12 +1,5 @@
 /* Tổng thể trang đăng nhập */
-body,
-html {
-    background-color: #ffffff;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-}
+
 
 .title-container {
     margin-top: 20px;
@@ -22,16 +15,27 @@ html {
 
 /* Container chính */
 .login-container {
+    width: 120vw;
+    /* Make the container full width */
+    height: calc(100vh - 60px);
+    /* Adjust height to account for navbar */
+    /* Add margin to push below navbar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    /* Remove border-radius for full size */
     min-height: 100vh;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 80px 20px;
-    /* Added top padding to account for navbar */
+    height: 100vh;
+    border-radius: 15px;
     background: linear-gradient(to right, #287c6a, #ffffff);
     gap: 40px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    padding: 20px;
 }
 
 .container {

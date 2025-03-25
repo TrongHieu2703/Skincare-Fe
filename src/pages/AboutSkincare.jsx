@@ -3,6 +3,7 @@ import { FaFacebookMessenger, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import AboutUs from "/src/components/AboutUs";
 import "/src/styles/AboutSkincare.css";
+import Footer from "../components/Footer";
 
 const HomePage = () => {
     return (
@@ -26,21 +27,22 @@ const HomePage = () => {
             </div>
 
             {/* Giới thiệu */}
-            <section className="px-8 md:px-20 py-12">
-                <h3 className="text-xl font-semibold flex items-center">
+            {/* Giới thiệu */}
+            <section className="px-8 md:px-20 py-12 flex flex-col items-center text-center">
+                <h3 className="text-xl font-semibold flex items-center justify-center">
                     <span className="text-green-600 text-2xl pr-2">🏵️</span> GIỚI THIỆU VỀ CHĂM SÓC DA 🏵️
                 </h3>
-                <p className="mt-4 text-lg">
+                <p className="mt-4 text-lg max-w-3xl">
                     Chăm sóc da - là một câu chuyện bắt nguồn từ tình yêu thiên nhiên và những sản phẩm phong phú của Việt Nam, được phát triển từ các dược sĩ <span className="font-bold text-green-700">Hanoi University of Pharmacy</span>.
                 </p>
-                <p className="mt-4 text-lg">
+                <p className="mt-4 text-lg max-w-3xl">
                     Chúng tôi cam kết loại bỏ các thành phần độc hại trong mỹ phẩm và thay thế bằng các thành phần tự nhiên sạch như trà xanh, cà phê, nghệ, bơ, cám gạo, dầu dưỡng,...
                 </p>
             </section>
 
             {/* AboutUs Component */}
             <AboutUs />
-
+            <Footer />
 
         </div>
     );

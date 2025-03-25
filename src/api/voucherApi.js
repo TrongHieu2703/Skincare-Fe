@@ -7,8 +7,10 @@ const VOUCHER_API_URL = "https://localhost:7290/api/Voucher";
  */
 export const getAllVouchers = async () => {
     try {
+        console.log("Fetching vouchers from API:", VOUCHER_API_URL);
         const response = await axiosClient.get(VOUCHER_API_URL);
-        return response.data;
+        console.log("Raw voucher response:", response);
+        return response;  // Return the full response to handle in the component
     } catch (error) {
         console.error('Error fetching vouchers:', error);
         throw error;

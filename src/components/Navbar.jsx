@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaSearch, FaShoppingCart, FaUserCircle, FaHistory, FaTrash, FaEye, FaSpinner } from "react-icons/fa";
+import { FaSearch, FaShoppingCart, FaUserCircle, FaHistory, FaTrash, FaSpinner } from "react-icons/fa";
 import { searchProducts } from "../api/productApi";
 import { useCart } from "../store/CartContext";
 import { useAuth } from "../auth/AuthProvider";
+import { formatProductImageUrl } from "../utils/imageUtils";
 import "/src/styles/Navbar.css";
 
 const Navbar = () => {
@@ -128,14 +129,18 @@ const Navbar = () => {
         }
     };
 
-    // Handle cart item view details
-    const handleViewItem = (productId) => {
+    // Handle navigate to product details page
+    const handleNavigateToProduct = (productId) => {
         setCartPopupVisible(false);
         navigate(`/product/${productId}`);
     };
 
     // Handle remove item with loading state
-    const handleRemoveItem = async (itemId) => {
+    const handleRemoveItem = async (e, itemId) => {
+        // Stop propagation to prevent navigation when clicking remove button
+        e.stopPropagation();
+        e.preventDefault();
+        
         try {
             // Set loading state cho item này
             setRemovingItems(prev => ({ ...prev, [itemId]: true }));
@@ -215,18 +220,19 @@ const Navbar = () => {
     const getAvatarUrl = (avatarPath) => {
         if (!avatarPath) return "/src/assets/images/profile-pic.png";
         
-        // Kiểm tra URL Google Drive và thay đổi format
+        // URL tương đối từ wwwroot (bắt đầu bằng /avatar-images/)
+        if (avatarPath.startsWith("/avatar-images/")) {
+            // Thêm timestamp để tránh cache browser
+            const timestamp = new Date().getTime();
+            // Sử dụng API_BASE_URL từ .env
+            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "https://localhost:7290";
+            return `${apiBaseUrl}${avatarPath}?t=${timestamp}`;
+        }
+        
+        // Nếu là ảnh Google Drive, sử dụng ảnh mặc định
         if (avatarPath.includes("drive.google.com")) {
-            // Nếu URL có dạng uc?id=
-            if (avatarPath.includes("uc?id=")) {
-                const fileId = avatarPath.split("uc?id=")[1].split("&")[0];
-                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-            }
-            // Nếu URL có dạng /d/
-            else if (avatarPath.includes("/d/")) {
-                const fileId = avatarPath.split("/d/")[1].split("/")[0];
-                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-            }
+            console.warn("Navbar: Google Drive image detected. Should be migrated to local.");
+            return "/src/assets/images/profile-pic.png";
         }
         
         // Nếu là URL http(s) khác, giữ nguyên
@@ -340,11 +346,19 @@ const Navbar = () => {
                                             const isRemoving = removingItems[item.id];
                                             
                                             return (
-                                                <div key={item.id} className={`cart-popup-item ${isRemoving ? 'removing' : ''}`}>
+                                                <div 
+                                                    key={item.id} 
+                                                    className={`cart-popup-item ${isRemoving ? 'removing' : ''}`}
+                                                    onClick={() => handleNavigateToProduct(item.productId)}
+                                                >
                                                     <div className="item-image">
                                                         <img 
-                                                            src={item.productImage || "https://via.placeholder.com/50"} 
+                                                            src={formatProductImageUrl(item.productImage)} 
                                                             alt={item.productName}
+                                                            onError={(e) => {
+                                                                e.target.onerror = null;
+                                                                e.target.src = "/src/assets/images/placeholder.png";
+                                                            }}
                                                         />
                                                     </div>
                                                     <div className="item-details">
@@ -356,20 +370,12 @@ const Navbar = () => {
                                                     </div>
                                                     <div className="item-actions">
                                                         <button 
-                                                            className="action-btn view"
-                                                            onClick={() => handleViewItem(item.productId)}
-                                                            title="Xem chi tiết"
-                                                            disabled={isRemoving}
-                                                        >
-                                                            <FaEye />
-                                                        </button>
-                                                        <button 
                                                             className="action-btn remove"
-                                                            onClick={() => handleRemoveItem(item.id)}
+                                                            onClick={(e) => handleRemoveItem(e, item.id)}
                                                             title="Xóa sản phẩm"
                                                             disabled={isRemoving}
                                                         >
-                                                            {isRemoving ? <FaSpinner className="spin" /> : <FaTrash />}
+                                                            {isRemoving ? <FaSpinner className="spin" /> : <FaTrash className="trash-icon" />}
                                                         </button>
                                                     </div>
                                                     

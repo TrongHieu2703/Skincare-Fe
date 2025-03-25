@@ -14,7 +14,9 @@ import Footer from "/src/components/Footer";
 import Carousel from "/src/components/Carousel";
 import FeaturedNews from "/src/components/FeaturedNews";
 import Blog from "/src/components/Blog";
+import BlogDetail from "/src/components/BlogDetail";
 import SkinTest from "/src/pages/SkinTest";
+import Rountine from "/src/pages/Rountine";
 import Login from "/src/pages/Login";
 import Register from "/src/pages/Register";
 import Profile from "/src/pages/Profile";
@@ -27,6 +29,9 @@ import ProductDetails from "/src/pages/ProductDetails";
 import AboutUs from "/src/components/Aboutus";
 import AboutSkincare from "/src/pages/AboutSkincare";
 import OrderHistory from './pages/OrderHistory';
+
+import AdminProducts from './pages/AdminProducts';
+import Home from './pages/Home';
 
 // Admin pages
 import Dashboard from "/admin/admin/pages2/Dashboard";
@@ -61,8 +66,9 @@ const AppContent = memo(function AppContent() {
         <div className="container mt-4">
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<><Carousel /><AboutUs /><FeaturedNews /></>} />
+            <Route path="/" element={<Home />} />
             <Route path="/test-loai-da" element={<SkinTest />} />
+            <Route path="/routine/:skinType" element={<Rountine />} />
             <Route path="/cart-items" element={<CartItems />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/order-detail" element={<OrderDetail />} />
@@ -70,6 +76,8 @@ const AppContent = memo(function AppContent() {
             <Route path="/product-list" element={<ProductList />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
+
             <Route path="/ho-so" element={<Profile />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -97,7 +105,7 @@ const AppContent = memo(function AppContent() {
             <Route path="/admin/customermanager" element={<CustomerManager />} />
             <Route path="/admin/orders" element={<OrderManager />} />
             <Route path="/admin/content" element={<ContentManager />} />
-
+            <Route path="/admin/products" element={<AdminProducts />} />
             {/* Staff routes */}
             <Route path="/staff/dashboard" element={<StaffDashboard />} />
             <Route path="/staff/orders" element={<StaffOrder />} />
@@ -111,8 +119,7 @@ const AppContent = memo(function AppContent() {
         </div>
       </div>
 
-      {/* Conditionally render Footer */}
-      {!isAdminPage && !isStaffPage && <Footer />}
+
     </div>
   );
 });

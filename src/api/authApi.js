@@ -35,7 +35,12 @@ export const loginUser = async (credentials) => {
     };
 
     // Thêm log để debug
-    console.log("Login - Avatar URL:", userData.avatar);
+    console.log("Login - Original Avatar URL:", userData.avatar);
+    
+    // Kiểm tra nếu avatar là URL Google Drive và cảnh báo
+    if (userData.avatar && userData.avatar.includes('drive.google.com')) {
+      console.warn("Google Drive avatar detected! Will need to be migrated to local storage.");
+    }
 
     // Lưu token và user vào localStorage
     localStorage.setItem('token', token);
@@ -86,7 +91,14 @@ export const registerWithAvatar = async (userData, avatarFile) => {
       }
     };
 
+    console.log("Sending registration with avatar request");
     const response = await axiosClient.post("/Authentication/register-with-avatar", formData, config);
+    
+    // Ghi log thông tin avatar nếu có
+    if (response.data && response.data.data && response.data.data.avatar) {
+      console.log("Registration - New avatar URL:", response.data.data.avatar);
+    }
+    
     return response.data;
   } catch (error) {
     console.error("Register with avatar error:", error);

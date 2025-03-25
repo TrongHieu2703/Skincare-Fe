@@ -126,7 +126,7 @@ export const CartProvider = ({ children }) => {
       
       // Check if authenticated before making request
       if (!isAuthenticated) {
-        throw new Error("Unauthorized: You need to be logged in");
+        throw new Error("Vui lòng đăng nhập để thêm vào giỏ hàng!");
       }
       
       // Call API to add item to cart
@@ -142,13 +142,27 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       console.error("Error adding item to cart:", err);
       
+      // Handle specific error types
+      if (err.type === "INSUFFICIENT_INVENTORY" || 
+          (err.response?.data?.message && err.response.data.message.includes("Không đủ số lượng") ||
+           err.response?.data?.message && err.response.data.message.includes("hết hàng"))) {
+        const errorMessage = err.message || err.response?.data?.message || "Không đủ số lượng trong kho";
+        const error = {
+          type: "INSUFFICIENT_INVENTORY",
+          message: errorMessage,
+          productId: productId
+        };
+        throw error;
+      }
+      
       // Handle unauthorized errors
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
+        throw new Error("Vui lòng đăng nhập để thêm vào giỏ hàng!");
       }
       
       setError("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
-      throw err;
+      throw new Error(err.response?.data?.message || "Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
     }
   }, [isAuthenticated, loadCartItems]);
 
@@ -159,7 +173,7 @@ export const CartProvider = ({ children }) => {
       
       // Check if authenticated before making request
       if (!isAuthenticated) {
-        throw new Error("Unauthorized: You need to be logged in");
+        throw new Error("Vui lòng đăng nhập để cập nhật giỏ hàng!");
       }
       
       // Lưu lại giá trị quantity cũ để tính toán subtotal sau khi cập nhật
@@ -199,17 +213,41 @@ export const CartProvider = ({ children }) => {
         }));
       }
       
-      // KHÔNG gọi loadCartItems() để tránh flicker UI và cải thiện hiệu suất
-      
       console.log(`Cart item ${cartItemId} updated successfully to quantity ${quantity}`);
       return true;
     } catch (err) {
       console.error("Error updating cart item:", err);
+      
+      // Handle specific error types - including stock errors
+      if (err.type === "INSUFFICIENT_INVENTORY" ||
+          (err.response?.data?.message && (
+           err.response.data.message.includes("Không đủ số lượng") ||
+           err.response.data.message.includes("hết hàng")))) {
+        // Rollback the optimistic update
+        await loadCartItems();
+        
+        // Get the actual error message from the response if available
+        const errorMessage = err.message || err.response?.data?.message || "Không đủ số lượng trong kho";
+        
+        // Re-throw with custom error type for component handling
+        throw {
+          type: "INSUFFICIENT_INVENTORY",
+          message: errorMessage,
+          productId: productId // Pass productId for inventory refetch
+        };
+      }
+      
+      // Handle unauthorized errors
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        throw new Error("Vui lòng đăng nhập để cập nhật giỏ hàng!");
+      }
+      
       setError("Không thể cập nhật giỏ hàng. Vui lòng thử lại.");
       
       // Rollback the optimistic update by reloading only in case of error
       await loadCartItems();
-      throw err;
+      throw new Error(err.response?.data?.message || "Không thể cập nhật giỏ hàng. Vui lòng thử lại.");
     }
   }, [isAuthenticated, loadCartItems, cartItems, cartData]);
 

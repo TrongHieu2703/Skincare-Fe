@@ -1,9 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 body {
-    padding-top: 1800px;
     font-family: 'Montserrat', sans-serif;
-    background-color: #ffffff;
+    background-color: white;
     color: #216942;
 }
 
@@ -46,6 +45,7 @@ header {
 }
 
 .banner-text {
+    margin-top: 1000px;
     position: absolute;
     background: rgba(33, 105, 66, 0.9);
     padding: 30px 50px;

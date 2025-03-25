@@ -1,60 +1,177 @@
 .section {
-  margin-top: -1400px;
+  margin-top: 20px;
   padding: 20px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 15px;
+  margin-bottom: 25px;
+  padding: 10px 0;
 }
 
 .tabButton {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
-  background-color: #f8f9fa;
-  color: #7f8c8d;
+  font-size: 15px;
+  font-weight: 500;
+  background-color: #f0f2f5;
+  color: #666;
+  transition: all 0.3s ease;
 }
 
 .tabButton.active {
-  background-color: #27ae60;
+  background-color: #2c503f;
   color: white;
+  box-shadow: 0 4px 12px rgba(44, 80, 63, 0.2);
 }
 
 .form {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
   background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
 }
 
 .input,
 .select {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
   background-color: white;
   color: #333;
+  transition: all 0.3s ease;
+}
+
+.input:focus,
+.select:focus {
+  border-color: #2c503f;
+  box-shadow: 0 0 0 2px rgba(44, 80, 63, 0.1);
+  outline: none;
 }
 
 .textarea {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
   min-height: 200px;
   resize: vertical;
-  font-size: 16px;
+  font-size: 15px;
   background-color: white;
   color: #333;
+  transition: all 0.3s ease;
+}
+
+.textarea:focus {
+  border-color: #2c503f;
+  box-shadow: 0 0 0 2px rgba(44, 80, 63, 0.1);
+  outline: none;
+}
+
+.button {
+  padding: 12px 24px;
+  background-color: #2c503f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  align-self: flex-start;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background-color: #1e3a2d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 80, 63, 0.2);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+}
+
+.table th {
+  background-color: #8cc5af;
+  color: white;
+  font-weight: 600;
+  padding: 15px;
+  text-align: left;
+}
+
+.table td {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background-color: #f8f9fa;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status.draft {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status.published {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .section {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    margin-left: 0;
+    width: 100%;
+    padding: 15px;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+  }
+
+  .tabButton {
+    width: calc(50% - 8px);
+  }
+
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
 }
 
 .seoSection {
@@ -66,59 +183,6 @@
 
 .fileInput {
   padding: 10px;
-}
-
-.button {
-  padding: 10px 20px;
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  align-self: flex-start;
-}
-
-.button:hover {
-  background-color: #2ecc71;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.table th,
-.table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.table th {
-  background-color: #f8f9fa;
-  font-weight: bold;
-}
-
-.status {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 14px;
-  display: inline-block;
-}
-
-.status.draft {
-  background-color: #f39c12;
-  color: white;
-}
-
-.status.published {
-  background-color: #27ae60;
-  color: white;
 }
 
 .editButton,

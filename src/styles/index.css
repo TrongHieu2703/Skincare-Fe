@@ -52,7 +52,7 @@ body {
   min-height: 100vh;
   width: 100%;
   padding: 0;
-  background-color: var(--color-background);
+  background-color: #ffffff;
   /* Màu nền sáng */
   font-family: var(--font-body);
   line-height: 1.7;
@@ -154,7 +154,7 @@ input {
 @media (prefers-color-scheme: dark) {
   :root {
     color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    background-color: #ffffff;
   }
 
   a {

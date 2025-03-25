@@ -1,327 +1,49 @@
-html,
-body {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
 .main-content {
-    flex: 1;
+    background-color: #f8f9fa;
+    padding: 20px;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 .footer {
-    background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
-    font-family: 'Montserrat', sans-serif;
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    padding: 20px 0 0;
-    /* Reduced padding */
-    position: relative;
-    bottom: 0;
-    left: 0;
-    margin-top: auto;
-    z-index: 1;
-    margin-top: 1500px;
-}
-
-.footer-sections {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px 30px;
-    /* Reduced gap */
-    max-width: 800px;
-}
-
-.footer-section {
-    min-width: 200px;
-}
-
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-    /* Reduced padding */
-    display: flex;
-    justify-content: space-between;
-    gap: 30px;
-    /* Reduced gap */
-}
-
-@media (max-width: 1024px) {
-    .footer-content {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .footer-sections {
-        width: 100%;
-        max-width: 600px;
-    }
-}
-
-@media (max-width: 768px) {
-    .footer-sections {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-
-    .footer-section {
-        text-align: center;
-    }
-
-    .footer-section h4::before {
-        left: 50%;
-        transform: translateX(-50%);
-    }
-}
-
-.footer-brand {
-    max-width: 320px;
-}
-
-.footer-brand p {
-    font-family: 'Montserrat', sans-serif;
-    color: #216942;
-    line-height: 1.8;
-    margin-bottom: 20px;
-    font-size: 0.95rem;
-}
-
-.footer-section h4 {
-    font-family: 'Playfair Display', serif;
-    color: #216942;
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 25px;
-    position: relative;
-    padding-bottom: 15px;
-}
-
-.footer-section h4::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: -15px;
-    width: 40px;
-    height: 2px;
-    background: #216942;
-}
-
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.footer-section ul li {
-    margin-bottom: 15px;
-}
-
-.footer-section ul a {
-    font-family: 'Montserrat', sans-serif;
-    color: #216942;
-    font-size: 1rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-block;
-}
-
-.footer-section ul a:hover {
-    color: #4caf50;
-    transform: translateX(8px);
-}
-
-.footer-section ul a:hover {
-    color: #4caf50;
-    transform: translateX(5px);
-    padding-left: 5px;
-}
-
-.social-links a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: #ffffff;
-    border-radius: 50%;
-    color: #216942;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(76, 175, 80, 0.2);
-}
-
-.social-links a:hover {
-    transform: translateY(-3px);
-    background: #4caf50;
+    background-color: #343a40;
     color: #ffffff;
-    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+    padding: 40px 0;
+    text-align: center;
 }
 
 .footer-extra {
-    text-align: center;
-    padding: 15px 0;
-    /* Reduced padding */
-    margin-top: 20px;
-    /* Reduced margin */
-    border-top: 1px solid rgba(76, 175, 80, 0.1);
-    position: relative;
-    z-index: 1;
-}
-
-.footer-extra p {
-    font-family: 'Montserrat', sans-serif;
-    color: #216942;
-    font-size: 0.95rem;
     display: flex;
+    justify-content: space-around;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+    flex-wrap: wrap;
 }
 
-.footer-bottom {
-    background: #e8f5e9;
-    padding: 10px 0;
-    /* Reduced padding */
-    margin-top: 20px;
-    /* Reduced margin */
-    border-top: 1px solid rgba(76, 175, 80, 0.2);
-    position: relative;
-    z-index: 1;
+.certification,
+.brand-motto {
+    margin: 10px;
 }
 
-.footer-bottom p {
-    font-family: 'Montserrat', sans-serif;
-    color: #216942;
-    font-size: 0.9rem;
+.certification p,
+.brand-motto p {
+    margin: 5px 0;
 }
 
-/* Keep existing responsive styles */
-@media (max-width: 1024px) {
-    .footer-content {
-        padding: 0 20px;
-    }
-
-    .footer-brand {
-        flex: 0 0 100%;
-        text-align: center;
-        max-width: 100%;
-    }
-
-    .social-links {
-        justify-content: center;
-    }
-
-    .footer-sections {
-        width: 100%;
-        justify-content: space-around;
-    }
+.certification img {
+    margin-top: 10px;
+    width: 150px;
 }
 
-@media (max-width: 768px) {
-    .footer {
-        margin-left: -20px;
-        margin-right: -20px;
-        width: calc(100% + 40px);
-    }
-
-    .footer-sections {
-        flex-wrap: wrap;
-        gap: 40px;
-    }
-
-    .footer-section {
-        flex: 0 0 calc(50% - 20px);
-        text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    .footer-section {
-        flex: 0 0 100%;
-    }
-
-    .footer-legal {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .separator {
-        display: none;
-    }
-}
-
-.newsletter-section {
-    background-color: #f8f9fa;
-    padding: 3rem 0;
-    text-align: center;
-}
-
-.newsletter-content {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.newsletter-content h3 {
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
-
-.newsletter-form {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 1.5rem;
-}
-
-.newsletter-form input {
-    padding: 0.8rem;
-    width: 300px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.newsletter-form button {
-    padding: 0.8rem 2rem;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.payment-methods {
-    text-align: center;
-    padding: 2rem 0;
-    border-top: 1px solid #eee;
-}
-
-.payment-icons {
-    display: flex;
-    gap: 2rem;
-    justify-content: center;
-    margin-top: 1rem;
-}
-
-.payment-icons img {
-    height: 30px;
-    object-fit: contain;
-}
-
-.footer-social {
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.social-icon {
+.brand-motto span {
     font-size: 24px;
-    color: #2d572c;
-    transition: color 0.3s;
+    margin: 0 5px;
+}
+
+.brand-motto strong {
+    font-size: 20px;
+    display: block;
+    margin: 10px 0;
+}
+
+.brand-motto p {
+    font-size: 14px;
+    color: #adb5bd;
 }

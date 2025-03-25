@@ -1,9 +1,10 @@
 // src/pages/CartItems.jsx
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash, FaSpinner } from "react-icons/fa";
 import { useCart } from "../store/CartContext";
 import "/src/styles/CartItems.css";
+import { formatProductImageUrl } from "../utils/imageUtils";
 
 // Thêm style nội tuyến để ghi đè lên các animation không cần thiết
 const overrideStyles = {
@@ -134,7 +135,7 @@ const CartItems = () => {
       prevQuantitiesRef.current[itemId] = newQuantity;
     } catch (error) {
       console.error("Error updating item quantity:", error);
-      setLocalError("Không thể cập nhật số lượng. Vui lòng thử lại!");
+      setLocalError(error.message || "Không thể cập nhật số lượng. Vui lòng thử lại!");
     } finally {
       // Bỏ đánh dấu updating sau khi hoàn thành
       setUpdatingItems(prev => ({ ...prev, [itemId]: false }));
@@ -175,6 +176,20 @@ const CartItems = () => {
     navigate("/Checkout", { state: { cartItems, subtotal, shippingFee, total } });
   };
 
+  // Check if any item has stock issues
+  const hasStockIssues = useMemo(() => {
+    return cartItems.some(item => {
+      const stock = item.productStock ?? 0;
+      // Chỉ coi là có vấn đề khi số lượng vượt quá stock hoặc stock <= 0
+      return stock <= 0 || item.quantity > stock;
+    });
+  }, [cartItems]);
+
+  // Add function to handle product click
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   if (globalLoading) {
     return (
       <div className="loading-container">
@@ -191,6 +206,10 @@ const CartItems = () => {
         <button onClick={loadCartItems}>Thử lại</button>
       </div>
     );
+  }
+
+  if (cartItems.length === 0) {
+    return <div>Giỏ hàng của bạn đang trống.</div>;
   }
 
   return (
@@ -221,12 +240,16 @@ const CartItems = () => {
               {cartItems.map((item) => {
                 const productPrice = item.productPrice ?? 0;
                 const productName = item.productName || "Unnamed product";
-                const productImage = item.productImage || "https://via.placeholder.com/150";
                 const isUpdating = updatingItems[item.id];
                 const isDeleting = deletingItems[item.id];
                 const animationState = animatingItemsRef.current[item.id] || "";
-
-                // Không hiển thị item nếu đang trong quá trình xóa
+                // Use product's stock directly
+                const availableStock = item.productStock ?? 0;
+                const isOutOfStock = availableStock <= 0;
+                // Sửa điều kiện để chỉ coi là max khi lớn hơn, bằng vẫn hợp lệ
+                const isMaxQuantity = item.quantity > availableStock;
+                const isAtMaxQuantity = item.quantity === availableStock;
+                
                 if (isDeleting) {
                   return (
                     <div key={item.id} className="cart-item deleting">
@@ -243,22 +266,48 @@ const CartItems = () => {
                 }
 
                 return (
-                  <div 
-                    key={item.id} 
-                    className="cart-item"
-                  >
-                    <div className="item-image">
-                      <img src={productImage} alt={productName} />
+                  <div key={item.id} className={`cart-item ${isOutOfStock ? 'out-of-stock' : ''} ${isMaxQuantity ? 'max-quantity' : ''} ${isAtMaxQuantity ? 'at-max-quantity' : ''}`}>
+                    <div className="item-image" onClick={() => handleProductClick(item.productId)} style={{ cursor: 'pointer' }}>
+                      <img 
+                        src={formatProductImageUrl(item.productImage)} 
+                        alt={productName}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/src/assets/images/placeholder.png";
+                        }}
+                      />
                     </div>
-
                     <div className="item-details">
-                      <h3>{productName}</h3>
+                      <h3 onClick={() => handleProductClick(item.productId)} style={{ cursor: 'pointer' }}>
+                        {productName}
+                      </h3>
                       <div className="item-price">
                         {formatPrice(productPrice)}
                       </div>
                       <div className="item-total">
                         Thành tiền: {calculateItemTotal(item, isUpdating)}
                       </div>
+                      <div className={`item-stock ${isOutOfStock ? 'out-of-stock' : ''} ${isMaxQuantity ? 'max-quantity' : ''} ${isAtMaxQuantity ? 'at-max-quantity' : ''}`}>
+                        <strong>Tình trạng:</strong> {
+                          isOutOfStock 
+                            ? <span className="stock-status error">Hết hàng</span> 
+                            : isMaxQuantity 
+                              ? <span className="stock-status error">Vượt giới hạn tồn kho ({availableStock})</span>
+                              : isAtMaxQuantity
+                                ? <span className="stock-status warning">Đạt giới hạn tồn kho ({availableStock})</span> 
+                                : <span className="stock-status available">Còn {availableStock} sản phẩm</span>
+                        }
+                      </div>
+                      
+                      {(isOutOfStock || isMaxQuantity || isAtMaxQuantity) && (
+                        <div className="stock-alert">
+                          {isOutOfStock 
+                            ? "Sản phẩm này hiện đã hết hàng, vui lòng xóa khỏi giỏ hàng hoặc quay lại sau." 
+                            : isMaxQuantity
+                              ? `Số lượng đã vượt quá tồn kho hiện có (${availableStock}), vui lòng giảm số lượng.`
+                              : `Bạn đã chọn tối đa số lượng có thể (${availableStock}).`}
+                        </div>
+                      )}
                     </div>
 
                     <div className="item-controls">
@@ -279,13 +328,13 @@ const CartItems = () => {
                         <span>{item.quantity}</span>
                         <button 
                           onClick={() => handleUpdateQuantity(item.id, item.productId, 1, item.quantity)}
-                          disabled={isUpdating}
+                          disabled={isUpdating || isMaxQuantity || isOutOfStock}
                           className="plus-btn"
                           aria-label="Tăng số lượng"
                           type="button"
                           style={{
                             ...overrideStyles.quantityButton,
-                            ...(isUpdating ? overrideStyles.quantityButtonDisabled : {})
+                            ...(isUpdating || isMaxQuantity || isOutOfStock ? overrideStyles.quantityButtonDisabled : {})
                           }}
                         >
                           <FaPlus style={overrideStyles.icon} />
@@ -323,12 +372,20 @@ const CartItems = () => {
                 <span>Tổng Cộng</span>
                 <span>{formatPrice(total)}</span>
               </div>
+              
+              {hasStockIssues && (
+                <div className="stock-warning">
+                  <p>Không thể thanh toán vì có sản phẩm hết hàng hoặc số lượng vượt quá tồn kho.</p>
+                  <p>Vui lòng điều chỉnh số lượng hoặc xóa các sản phẩm không đủ hàng.</p>
+                </div>
+              )}
+              
               <button
                 className="checkout-button"
                 onClick={handleCheckout}
-                disabled={cartItems.length === 0}
+                disabled={cartItems.length === 0 || hasStockIssues}
               >
-                Tiến Hành Thanh Toán
+                {hasStockIssues ? 'Có sản phẩm hết hàng' : 'Tiến Hành Thanh Toán'}
               </button>
             </div>
           </div>

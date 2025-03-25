@@ -69,25 +69,24 @@ h2 {
 .action-btn {
     border: none;
     outline: none;
-    padding: 6px 12px;
-    margin: 2px;
+    padding: 8px 16px; /* Increased padding for better spacing */
+    margin: 4px; /* Adjusted margin for better spacing */
     border-radius: 5px;
     font-size: 0.9rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    transition: background-color 0.3s ease; /* Added transition for smooth hover effect */
 }
 
 .edit-btn {
-    background-color: #28a745;
-    /* Light green */
+    background-color: #28a745; /* Light green */
     color: white;
 }
 
 .edit-btn:hover {
-    background-color: #218838;
-    /* Darker green */
+    background-color: #218838; /* Darker green */
 }
 
 .delete-btn {

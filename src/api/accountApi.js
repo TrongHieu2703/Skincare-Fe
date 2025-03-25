@@ -184,3 +184,43 @@ export const updateProfileWithAvatar = async (profileData, avatarFile) => {
     throw new Error(error.response?.data?.message || "Lỗi khi cập nhật thông tin");
   }
 };
+
+// Hàm mới để chuyển đổi ảnh từ Google Drive sang local
+export const migrateGoogleDriveAvatar = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error("Chưa đăng nhập");
+
+    const res = await axiosClient.post("/Account/migrate-my-avatar");
+    return res.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi chuyển đổi ảnh đại diện");
+  }
+};
+
+// Hàm cưỡng chế chuyển đổi ảnh từ Google Drive sang local
+export const forceMigrateGoogleDriveAvatar = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error("Chưa đăng nhập");
+
+    const res = await axiosClient.post("/Account/force-migrate-avatar");
+    
+    // Cập nhật localStorage với avatar mới
+    if (res.data && res.data.newAvatar) {
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const user = JSON.parse(userJson);
+        user.avatar = res.data.newAvatar;
+        localStorage.setItem('user', JSON.stringify(user));
+        // Thông báo cập nhật
+        window.dispatchEvent(new CustomEvent('user-profile-updated'));
+      }
+    }
+    
+    return res.data;
+  } catch (error) {
+    console.error("Error force migrating avatar:", error);
+    throw new Error(error.response?.data?.message || "Lỗi khi chuyển đổi ảnh đại diện");
+  }
+};

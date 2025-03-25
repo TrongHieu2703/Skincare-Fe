@@ -1,212 +1,142 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-
-/* 1) Toàn màn hình với gradient background */
-body.signup-page,
-html.signup-page {
+body,
+html {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-  background: linear-gradient(to right, #287c6a, #ffffff);
+  width: 100%;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('/src/assets/images/background.jpg') no-repeat center center fixed;
   background-size: cover;
-  background-position: center;
-  font-family: 'Montserrat', sans-serif;
 }
 
-/* 2) Chia trang làm 2 cột: .register-left (ảnh) và .register-right (form) */
-.register-page-container {
+.register-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  width: 100%;
-  /* Adjusted for full size */
+
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Cột trái (nếu muốn dùng ảnh lớn) */
-.register-left {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e0f2f1;
-  padding: 2rem;
-  /* Adjusted for full size */
-}
 
-.register-left img {
-  max-width: 90%;
-  height: auto;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-/* Cột phải: form */
-.register-right {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f5f5f5;
-  padding: 2rem;
-  /* Adjusted for full size */
-}
-
-/* Form đăng ký */
 .register-form {
-  background: white;
-  padding: 2.5rem;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 500px;
-  animation: fadeInUp 0.8s ease-out;
+  width: 100%;
+  text-align: center;
 }
 
 .register-form h2 {
-  text-align: center;
-  color: #2e7d32;
-  font-weight: 600;
-  margin-bottom: 2rem;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #388e3c;
+  /* Dark green color */
 }
 
-/* Upload avatar */
 .avatar-upload {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
 }
 
 .avatar-preview {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   overflow: hidden;
-  margin-bottom: 1rem;
-  border: 3px solid #2e7d32;
+  margin-bottom: 10px;
 }
 
-.preview-image {
+.avatar-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 .avatar-upload-button {
-  background: #2e7d32;
+  background-color: #4caf50;
+  /* Green color */
   color: white;
-  padding: 0.5rem 1.2rem;
-  border-radius: 25px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  padding: 10px 20px;
   border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .avatar-upload-button:hover {
-  background: #1b5e20;
+  background-color: #388e3c;
+  /* Darker green color */
 }
 
-/* Form group */
 .form-group {
   position: relative;
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
 }
 
 .input-icon {
   position: absolute;
-  left: 1rem;
   top: 50%;
+  left: 10px;
   transform: translateY(-50%);
-  color: #666;
-  font-size: 1.2rem;
+  color: #888;
 }
 
-/* Input style */
-.form-group input {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"] {
   width: 100%;
-  padding: 0.8rem 1rem 0.8rem 3rem;
-  /* chừa 3rem cho icon */
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  padding: 10px 10px 10px 40px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
   font-size: 1rem;
-  transition: border-color 0.3s;
-  font-family: 'Montserrat', sans-serif;
-  background-color: #f9f9f9;
+  box-sizing: border-box;
 }
 
-.form-group input:focus {
-  border-color: #2e7d32;
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus {
+  border-color: #4caf50;
+  /* Green color */
   outline: none;
-  background-color: #fff;
-  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
 }
 
-/* Nút đăng ký */
 .register-button {
   width: 100%;
-  padding: 1rem;
-  background: #2e7d32;
+  padding: 12px;
+  background-color: #4caf50;
+  /* Green color */
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
+  transition: background-color 0.3s;
 }
 
-.register-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.register-button:hover {
+  background-color: #388e3c;
+  /* Darker green color */
 }
 
-.register-button:not(:disabled):hover {
-  background: #1b5e20;
-}
-
-/* Link đăng nhập */
 .login-link {
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 0.95rem;
+  margin-top: 20px;
+  font-size: 1rem;
 }
 
 .login-link a {
-  color: #2e7d32;
+  color: #388e3c;
+  /* Dark green color */
   text-decoration: none;
-  font-weight: 500;
 }
 
 .login-link a:hover {
   text-decoration: underline;
-}
-
-/* Animation */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive: Nếu muốn ẩn cột ảnh khi màn hình nhỏ */
-@media (max-width: 992px) {
-  .register-page-container {
-    flex-direction: column;
-  }
-
-  .register-left {
-    display: none;
-    /* ẩn ảnh nếu muốn */
-  }
-
-  .register-right {
-    flex: none;
-    width: 100%;
-  }
 }
