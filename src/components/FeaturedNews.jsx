@@ -49,9 +49,10 @@ const FeaturedNews = () => {
                         <div className="news-content">
                             <h3 className="news-title">{item.title}</h3>
                             <p className="news-description">{item.description}</p>
-                            <a href="#" className="read-more">
+                            <a href="/blog" className="read-more flex items-center gap-1 hover:underline">
                                 Đọc ngay <FaArrowRight className="arrow-icon" />
                             </a>
+
                         </div>
                     </div>
                 ))}

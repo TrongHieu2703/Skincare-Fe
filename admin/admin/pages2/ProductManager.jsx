@@ -164,15 +164,15 @@ const ProductManager = () => {
     totalPages: 1,
     totalItems: 0
   });
-  
+
   // Add submitting state to track form submission
   const [submitting, setSubmitting] = useState(false);
-  
+
   // Add showForm state to control form visibility
   const [showForm, setShowForm] = useState(false);
   // Add editMode state to track if we're editing an existing product
   const [editMode, setEditMode] = useState(false);
-  
+
   // Add success notification state
   const [successMessage, setSuccessMessage] = useState("");
   const [showNotification, setShowNotification] = useState(false);
@@ -220,17 +220,30 @@ const ProductManager = () => {
   const fetchAllData = async (page = 1) => {
     try {
       setLoading(true);
-      console.log(`Fetching data for page ${page}`);
+      console.log(`Fetching data for page ${page} at ${new Date().toISOString()}`);
 
       // Fetch products with pagination
-      const { products: productData, pagination: paginationData } = await getAllProducts(page);
+      const response = await getAllProducts(page);
+
+      if (!response) {
+        console.log('Request was debounced, waiting...');
+        // Try again after debounce period
+        setTimeout(() => fetchAllData(page), 400);
+        return;
+      }
+
+      const { products: productData, pagination: paginationData } = response;
+      console.log(`Received ${productData?.length || 0} products from API`);
 
       // Update products with timestamp for images
       const timestamp = new Date().getTime();
-      const productArray = productData.map(product => ({
-        ...product,
-        mainImage: product.image ? `${product.image}?t=${timestamp}` : product.image
-      }));
+      const productArray = productData.map(product => {
+        console.log(`Product ${product.id}: ${product.name}, Stock: ${product.stock}, Available: ${product.isAvailable}`);
+        return {
+          ...product,
+          mainImage: product.image ? `${product.image}?t=${timestamp}` : product.image
+        };
+      });
 
       setProducts(productArray);
 
@@ -247,11 +260,11 @@ const ProductManager = () => {
             getAllProductTypes(),
             getAllSkinTypes()
           ]);
-          
+
           console.log("Fetched skin types:", skinTypes);
           setTypeList(types);
           setSkinTypeList(skinTypes);
-          
+
           // For now, keep the mock brand data
           setBrandList([
             { id: 1, name: "Brand A" },
@@ -308,13 +321,17 @@ const ProductManager = () => {
   // Mở form edit
   const handleOpenEditForm = (product) => {
     console.log("Opening edit form with product data:", product);
-    
+
     // Convert skinTypeIds to numbers if they're strings
     let skinIds = [];
     if (product.skinTypeIds && Array.isArray(product.skinTypeIds)) {
       skinIds = product.skinTypeIds.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
     }
-    
+
+    // Ensure stock and quantity are initialized correctly even when they're 0
+    const stock = product.stock !== undefined && product.stock !== null ? product.stock : 0;
+    const quantity = product.quantity !== undefined && product.quantity !== null ? product.quantity : 0;
+
     setFormData({
       id: product.id,
       name: product.name || "",
@@ -323,14 +340,16 @@ const ProductManager = () => {
       productTypeId: product.productTypeId || "",
       productBrandId: product.productBrandId || "",
       skinTypeIds: skinIds,
-      quantity: product.quantity || "",
-      stock: product.stock || "",
+      quantity: quantity,
+      stock: stock,
       branchId: product.branchId || "",
       isAvailable: product.isAvailable !== undefined ? product.isAvailable : true,
       image: product.image || "",
       imageUrl: formatProductImageUrl(product.image) || ""
     });
-    
+
+    console.log(`Edit form data initialized with - Stock: ${stock}, Quantity: ${quantity}, isAvailable: ${product.isAvailable}`);
+
     setEditMode(true);
     setShowForm(true);
   };
@@ -338,7 +357,7 @@ const ProductManager = () => {
   // Xử lý khi thay đổi input
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     // For checkboxes
     if (type === "checkbox") {
       setFormData({
@@ -347,9 +366,25 @@ const ProductManager = () => {
       });
       return;
     }
-    
-    // For price field - convert to number
-    if (name === "price" || name === "quantity" || name === "stock") {
+
+    // Handle stock field specially to update isAvailable
+    if (name === "stock") {
+      const stockValue = parseInt(value, 10) || 0;
+      const numericValue = value.replace(/[^\d.]/g, "");
+
+      setFormData({
+        ...formData,
+        [name]: numericValue,
+        // Automatically update isAvailable based on stock value
+        // If stock becomes positive, set isAvailable to true
+        // If stock becomes zero or negative, keep the current value or false
+        isAvailable: stockValue > 0 ? true : false
+      });
+      return;
+    }
+
+    // For price field and other numeric fields - convert to number
+    if (name === "price" || name === "quantity") {
       const numericValue = value.replace(/[^\d.]/g, "");
       setFormData({
         ...formData,
@@ -357,7 +392,25 @@ const ProductManager = () => {
       });
       return;
     }
-    
+
+    // Handle skin type IDs
+    if (name === "skinTypeIds") {
+      if (checked) {
+        // Add to selected skin types
+        setFormData({
+          ...formData,
+          skinTypeIds: [...formData.skinTypeIds, Number(value)]
+        });
+      } else {
+        // Remove from selected skin types
+        setFormData({
+          ...formData,
+          skinTypeIds: formData.skinTypeIds.filter(id => id !== Number(value))
+        });
+      }
+      return;
+    }
+
     // For other fields
     setFormData({
       ...formData,
@@ -368,7 +421,7 @@ const ProductManager = () => {
   // Handle skin type selection/deselection
   const handleSkinTypeChange = (skinTypeId, isChecked) => {
     const currentSkinTypeIds = [...formData.skinTypeIds];
-    
+
     if (isChecked) {
       // Add the skin type ID if it's not already in the array
       if (!currentSkinTypeIds.includes(skinTypeId)) {
@@ -381,7 +434,7 @@ const ProductManager = () => {
         currentSkinTypeIds.splice(index, 1);
       }
     }
-    
+
     setFormData({
       ...formData,
       skinTypeIds: currentSkinTypeIds
@@ -430,48 +483,84 @@ const ProductManager = () => {
         return;
       }
 
+      // Ensure quantity and stock are parsed as integers
+      const quantity = formData.quantity ? parseInt(formData.quantity, 10) : 0;
+      const stock = formData.stock ? parseInt(formData.stock, 10) : 0;
+
+      // Validate that stock cannot be greater than quantity
+      if (stock > quantity) {
+        alert("Số lượng tồn kho (Stock) không thể lớn hơn số lượng sản phẩm (Quantity)!");
+        return;
+      }
+
       setSubmitting(true);
 
-      // Prepare form data for API
-      const productData = new FormData();
-      
-      // Append normal fields
-      productData.append("Name", formData.name);
-      productData.append("Description", formData.description);
-      productData.append("Price", formData.price);
-      productData.append("ProductBrandId", formData.productBrandId);
-      productData.append("ProductTypeId", formData.productTypeId);
-      productData.append("IsAvailable", formData.isAvailable);
-      
-      // Append quantity and stock fields
-      if (formData.quantity) productData.append("Quantity", formData.quantity);
-      if (formData.stock) productData.append("Stock", formData.stock);
-      if (formData.branchId) productData.append("BranchId", formData.branchId);
-      
-      // Append all selected skin type IDs
-      formData.skinTypeIds.forEach(id => {
-        productData.append("SkinTypeIds", id);
-      });
-      
-      // For edit mode, append product ID
+      // Prepare data for API
+      let productData;
+
+      // Automatically set isAvailable to false if stock is 0
+      const isAvailable = stock > 0 ? formData.isAvailable : false;
+
       if (editMode) {
-        productData.append("Id", formData.id);
-      }
-      
-      // Append image file if selected
-      if (formData.imageFile) {
-        productData.append("Image", formData.imageFile);
+        // For update, prepare a plain object with the correctly typed values
+        productData = {
+          name: formData.name,
+          description: formData.description,
+          price: parseFloat(formData.price),
+          productBrandId: parseInt(formData.productBrandId, 10),
+          productTypeId: parseInt(formData.productTypeId, 10),
+          isAvailable: isAvailable,
+          image: formData.image, // Current image URL
+          imageFile: formData.imageFile, // New image file if any
+          quantity: quantity,
+          stock: stock,
+          branchId: formData.branchId ? parseInt(formData.branchId, 10) : null,
+          skinTypeIds: formData.skinTypeIds.map(id => parseInt(id, 10)),
+          id: formData.id // Include the ID
+        };
+      } else {
+        // For create, use FormData
+        productData = new FormData();
+
+        // Append normal fields
+        productData.append("Name", formData.name);
+        productData.append("Description", formData.description);
+        productData.append("Price", formData.price);
+        productData.append("ProductBrandId", formData.productBrandId);
+        productData.append("ProductTypeId", formData.productTypeId);
+        productData.append("IsAvailable", isAvailable);
+
+        // Append quantity and stock fields
+        productData.append("Quantity", quantity);
+        productData.append("Stock", stock);
+        if (formData.branchId) productData.append("BranchId", formData.branchId);
+
+        // Append all selected skin type IDs
+        formData.skinTypeIds.forEach(id => {
+          productData.append("SkinTypeIds", id);
+        });
+
+        // Append image file if selected
+        if (formData.imageFile) {
+          productData.append("Image", formData.imageFile);
+        }
       }
 
+      console.log('Saving product data:', productData);
+
       let response;
-      
+
       if (editMode) {
         // Update existing product
         response = await updateProduct(formData.id, productData);
         if (response) {
           // Show success notification
           showSuccess("Cập nhật sản phẩm thành công!");
-          fetchAllData(pagination.currentPage);
+
+          // Force reload data after a short delay to allow backend to process
+          setTimeout(() => {
+            fetchAllData(pagination.currentPage);
+          }, 500);
         }
       } else {
         // Create new product
@@ -479,7 +568,11 @@ const ProductManager = () => {
         if (response) {
           // Show success notification
           showSuccess("Tạo sản phẩm mới thành công!");
-          fetchAllData(1);
+
+          // Load first page after creating new product
+          setTimeout(() => {
+            fetchAllData(1);
+          }, 500);
         }
       }
 
@@ -590,7 +683,7 @@ const ProductManager = () => {
   // Add pagination UI component
   const Pagination = () => {
     const pageNumbers = [];
-    const maxVisiblePages = 5;
+    const maxVisiblePages = window.innerWidth < 768 ? 3 : 5; // Fewer pages on smaller screens
     let startPage = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
     let endPage = Math.min(pagination.totalPages, startPage + maxVisiblePages - 1);
 
@@ -602,12 +695,6 @@ const ProductManager = () => {
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(i);
     }
-
-    console.log('Rendering pagination with:', {
-      currentPage: pagination.currentPage,
-      totalPages: pagination.totalPages,
-      pageNumbers
-    });
 
     if (pagination.totalPages <= 1) return null;
 
@@ -685,7 +772,7 @@ const ProductManager = () => {
       <Sidebar />
       <div className={styles.content}>
         <h1>Quản lý sản phẩm</h1>
-        
+
         {/* Success notification banner */}
         {showNotification && (
           <div className={styles.successNotification}>
@@ -693,7 +780,7 @@ const ProductManager = () => {
             <button onClick={() => setShowNotification(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px' }}>×</button>
           </div>
         )}
-        
+
         <div className={styles.actions}>
           <button className={styles.addButton} onClick={handleOpenCreateForm}>
             <FaPlus /> Thêm sản phẩm mới
@@ -709,14 +796,15 @@ const ProductManager = () => {
                 <thead>
                   <tr>
                     <th>STT</th>
-                    <th>Hình ảnh</th>
-                    <th>Tên</th>
+                    <th>Ảnh</th>
+                    <th>Tên SP</th>
                     <th>Mô tả</th>
                     <th>Giá</th>
                     <th>SL</th>
+                    <th>Tồn</th>
                     <th>Thương hiệu</th>
                     <th>Loại</th>
-                    <th>Hàng?</th>
+                    <th>Trạng thái</th>
                     <th>Thao tác</th>
                   </tr>
                 </thead>
@@ -731,7 +819,6 @@ const ProductManager = () => {
                           className={styles.productImage}
                           loading="lazy"
                           onError={(e) => {
-                            console.error('Image load error:', e.target.src);
                             e.target.onerror = null;
                             e.target.src = "../src/assets/images/aboutus.jpg";
                           }}
@@ -750,9 +837,29 @@ const ProductManager = () => {
                         }).format(product.price)}
                       </td>
                       <td>{product.quantity || 0}</td>
+                      <td>
+                        <div className={`${styles.stockCell} ${product.stock <= 0 ? styles.outOfStock : ''}`}>
+                          {product.stock <= 0 ? (
+                            <span title="Hết hàng">0 ⚠️</span>
+                          ) : (
+                            product.stock
+                          )}
+                        </div>
+                      </td>
                       <td>{product.productBrandName || product.productBrandId}</td>
                       <td>{product.productTypeName || product.productTypeId}</td>
-                      <td>{product.isAvailable ? "✔" : "✖"}</td>
+                      <td>
+                        {product.isAvailable ? (
+                          <span className={styles.availableStatus}>✔</span>
+                        ) : (
+                          <span
+                            className={styles.unavailableStatus}
+                            title={product.stock <= 0 ? "Sản phẩm không có sẵn vì hết hàng" : "Sản phẩm không có sẵn"}
+                          >
+                            ✖
+                          </span>
+                        )}
+                      </td>
                       <td>
                         <div className={styles.actionButtons}>
                           <button
@@ -848,17 +955,58 @@ const ProductManager = () => {
                 />
               </div>
 
+              {/* Stock input with warning for zero stock */}
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Tồn kho</label>
-                <input
-                  type="number"
-                  name="stock"
-                  value={formData.stock}
-                  onChange={handleInputChange}
-                  className={styles.textInput}
-                  placeholder="Nhập số lượng tồn kho"
-                  min="0"
-                />
+                <div className={styles.inputWithWarning}>
+                  <input
+                    type="number"
+                    name="stock"
+                    value={formData.stock}
+                    onChange={handleInputChange}
+                    className={`${styles.textInput} ${parseInt(formData.stock, 10) <= 0 ? styles.zeroStockInput : ''}`}
+                    placeholder="Nhập số lượng tồn kho"
+                    min="0"
+                  />
+                  {parseInt(formData.stock, 10) <= 0 && (
+                    <div className={styles.stockWarning}>
+                      <span>⚠️ Hết hàng - Sản phẩm sẽ được đánh dấu là không có sẵn</span>
+                    </div>
+                  )}
+                  {parseInt(formData.stock, 10) > 0 &&
+                    parseInt(formData.stock, 10) > parseInt(formData.quantity || 0, 10) && (
+                      <div className={styles.stockError}>
+                        <span>⚠️ Số lượng tồn kho không thể vượt quá tổng số lượng</span>
+                      </div>
+                    )}
+                </div>
+              </div>
+
+              {/* Checkbox for availability status */}
+              <div className={styles.formGroup} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div className={styles.availabilityContainer}>
+                  <input
+                    type="checkbox"
+                    id="isAvailable"
+                    name="isAvailable"
+                    checked={parseInt(formData.stock, 10) > 0 ? formData.isAvailable : false}
+                    onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+                    style={{ width: "auto", margin: 0 }}
+                    disabled={parseInt(formData.stock, 10) <= 0}
+                  />
+                  <label htmlFor="isAvailable" style={{ margin: 0 }}>
+                    Còn hàng?
+                    {parseInt(formData.stock, 10) <= 0 ? (
+                      <span style={{ marginLeft: '8px', color: '#ff4d4f', fontSize: '12px' }}>
+                        (Tự động đặt là hết hàng khi stock = 0)
+                      </span>
+                    ) : (
+                      <span style={{ marginLeft: '8px', color: '#52c41a', fontSize: '12px' }}>
+                        (Tự động đặt là còn hàng khi stock {'>'} 0)
+                      </span>
+                    )}
+                  </label>
+                </div>
               </div>
 
               {/* Improved image upload section */}
@@ -900,18 +1048,6 @@ const ProductManager = () => {
                     </div>
                   )}
                 </div>
-              </div>
-
-              <div className={styles.formGroup} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <input
-                  type="checkbox"
-                  id="isAvailable"
-                  name="isAvailable"
-                  checked={formData.isAvailable}
-                  onChange={(e) => setFormData({...formData, isAvailable: e.target.checked})}
-                  style={{ width: "auto", margin: 0 }}
-                />
-                <label htmlFor="isAvailable" style={{ margin: 0 }}>Còn hàng?</label>
               </div>
 
               <div className={styles.formGroup}>
@@ -974,8 +1110,8 @@ const ProductManager = () => {
               {/* Upload progress indicator with improved styling */}
               {uploadProgress > 0 && (
                 <div className={styles.progressContainer}>
-                  <div 
-                    className={styles.progressBar} 
+                  <div
+                    className={styles.progressBar}
                     style={{ width: `${uploadProgress}%` }}
                   ></div>
                   <div className={styles.progressText}>
@@ -985,7 +1121,7 @@ const ProductManager = () => {
               )}
 
               <div className={styles.modalFooter}>
-                <button 
+                <button
                   className={styles.cancelButton}
                   onClick={handleCloseForm}
                   type="button"

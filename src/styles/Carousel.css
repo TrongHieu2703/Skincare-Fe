@@ -27,7 +27,7 @@
 
 .carousel-container {
 
-    margin-top: 2000px;
+    margin-top: 1800px;
     /* Adjusted to ensure the carousel is not covered by the navbar */
     width: 100%;
     height: calc(100vh - 80px);
