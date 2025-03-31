@@ -5,34 +5,25 @@
  */
 export const formatProductImageUrl = (imagePath) => {
     // Define a reliable placeholder image URL
-    const PLACEHOLDER_IMAGE = "/src/assets/images/placeholder.png";
-    
-    // For debugging purposes
-    console.log("Processing image path:", imagePath);
+    const PLACEHOLDER_IMAGE = "/src/assets/images/aboutus.jpg";
     
     // If no image path or empty string, return default placeholder
     if (!imagePath || imagePath === '') {
-        console.log("No image path provided, using placeholder");
         return PLACEHOLDER_IMAGE;
     }
     
     // If it's already a complete URL, return it as is
     if (imagePath.startsWith("http")) {
-        console.log("Using complete URL as is");
         return imagePath;
     }
     
     // If it's a relative path starting with /, add the API base URL
     if (imagePath.startsWith("/")) {
-        const url = `https://localhost:7290${imagePath}`;
-        console.log("Created URL from path with leading slash:", url);
-        return url;
+        return `https://localhost:7290${imagePath}`;
     }
     
     // Otherwise, assume it's a relative path and add the base URL with /
-    const url = `https://localhost:7290/${imagePath}`;
-    console.log("Created URL from relative path:", url);
-    return url;
+    return `https://localhost:7290/${imagePath}`;
 };
 
 /**
@@ -54,20 +45,24 @@ export const testImageUrl = (url) => {
  * @param {Event} e - The error event
  * @param {string} fallbackSrc - Optional fallback source if different from default
  */
-export const handleImageError = (e, fallbackSrc = "/src/assets/images/placeholder.png") => {
-    console.log("Image loading error:", e.target.src);
-    
+export const handleImageError = (e, fallbackSrc = "/src/assets/images/aboutus.jpg") => {
     // If the image is already the fallback, don't try to reload it
     if (e.target.src.includes(fallbackSrc) || e.target.hasAttribute('data-fallback-applied')) {
-        console.log("Fallback already applied or attempting to load fallback image");
         e.target.classList.add('placeholder-image');
         e.target.setAttribute('data-fallback-applied', 'true');
         return;
     }
     
+    // Set image dimensions to ensure proper display
+    e.target.style.minWidth = '80%';
+    e.target.style.minHeight = '80%';
+    e.target.style.width = 'auto';
+    e.target.style.height = 'auto';
+    e.target.style.maxWidth = '100%';
+    e.target.style.maxHeight = '100%';
+    
     e.target.onerror = null; // Prevent infinite loop
     e.target.src = fallbackSrc; // Fallback image
     e.target.classList.add('placeholder-image'); // Add class for styling
     e.target.setAttribute('data-fallback-applied', 'true');
-    console.log("Applied fallback image:", fallbackSrc);
 }; 

@@ -3,6 +3,7 @@ import { getAllAccounts, deleteAccount, updateAccountInfo, createAccount } from 
 import { Trash2, Pencil } from 'lucide-react';
 import Sidebar from './Sidebar';
 import styles from './CustomerManager.module.css';
+import ConfirmationModal from "/src/components/ConfirmationModal";
 
 const CustomerManager = () => {
   const [accounts, setAccounts] = useState([]);
@@ -16,6 +17,13 @@ const CustomerManager = () => {
     status: 'active',
     role: 'customer'
   });
+  
+  // Add state for delete confirmation modal
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    accountId: null,
+    accountName: ''
+  });
 
   const fetchAccounts = async () => {
     try {
@@ -26,14 +34,39 @@ const CustomerManager = () => {
     }
   };
 
+  // Update the handleDelete function to work with confirmation modal
   const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa tài khoản này?")) return;
     try {
       await deleteAccount(id);
       setAccounts(accounts.filter(acc => acc.id !== id));
       alert("Xóa thành công");
     } catch (error) {
       alert(error.message || "Lỗi khi xóa");
+    }
+  };
+  
+  // Add function to show delete confirmation modal
+  const showDeleteConfirmation = (account) => {
+    setDeleteModal({
+      isOpen: true,
+      accountId: account.id,
+      accountName: account.username
+    });
+  };
+  
+  // Add function to close delete confirmation modal
+  const closeDeleteModal = () => {
+    setDeleteModal({
+      isOpen: false,
+      accountId: null,
+      accountName: ''
+    });
+  };
+  
+  // Add function to handle delete confirmation
+  const confirmDeleteAccount = async () => {
+    if (deleteModal.accountId) {
+      await handleDelete(deleteModal.accountId);
     }
   };
 
@@ -144,7 +177,7 @@ const CustomerManager = () => {
                         <Pencil size={16} /> Sửa
                       </button>
                       <button
-                        onClick={() => handleDelete(acc.id)}
+                        onClick={() => showDeleteConfirmation(acc)}
                         className={`${styles.button} ${styles.delete}`}
                       >
                         <Trash2 size={16} /> Xóa
@@ -219,6 +252,17 @@ const CustomerManager = () => {
             Tạo tài khoản
           </button>
         </div>
+
+        {/* Add delete confirmation modal */}
+        <ConfirmationModal
+          isOpen={deleteModal.isOpen}
+          onClose={closeDeleteModal}
+          onConfirm={confirmDeleteAccount}
+          title="Xác nhận xóa tài khoản"
+          message="Bạn có chắc chắn muốn xóa"
+          itemName={deleteModal.accountName}
+          itemType="tài khoản"
+        />
       </div>
 
       {/* Modal chỉnh sửa tài khoản */}

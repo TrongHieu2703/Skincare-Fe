@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createOrder } from '../api/orderApi';
-import { getAllVouchers } from '../api/voucherApi';
+import { getAllVouchers, getAvailableVouchers } from '../api/voucherApi';
 import '/src/styles/Checkout.css';
 import { getAccountInfo, updateAccountInfo } from '../api/accountApi';
 import { useAuth } from '../auth/AuthProvider';
@@ -39,7 +39,13 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   // Lấy cartItems, subtotal, shippingFee, total từ location.state
-  const { cartItems = [], subtotal = 0, shippingFee = 30000, total = 0 } = state || {};
+  const { 
+    cartItems = [], 
+    subtotal = 0, 
+    shippingFee = 30000, 
+    total = 0,
+    isBuyNow = false 
+  } = state || {};
 
   const [orderInfo, setOrderInfo] = useState({
     fullName: '',
@@ -47,6 +53,23 @@ const Checkout = () => {
     phone: '',
     address: '',
     note: ''
+  });
+
+  // Add formErrors state for validation
+  const [formErrors, setFormErrors] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    address: '',
+    note: ''
+  });
+
+  // Add orderSummary state
+  const [orderSummary, setOrderSummary] = useState({
+    items: cartItems,
+    subtotal: subtotal,
+    shipping: shippingFee,
+    total: total
   });
 
   // Thêm state cho phương thức thanh toán
@@ -69,6 +92,56 @@ const Checkout = () => {
   const [discount, setDiscount] = useState(0); // Discount amount
   const [voucherErrorMessage, setVoucherErrorMessage] = useState(''); // Error message for voucher application
 
+  // Function to fetch cart items if needed
+  const fetchCartItems = async () => {
+    try {
+      // Don't load cart items in Buy Now mode
+      if (isBuyNow) return;
+      
+      await loadCartItems();
+      // If using direct cart items from context, update order summary
+      setOrderSummary({
+        items: cartItems,
+        subtotal: subtotal,
+        shipping: shippingFee,
+        total: total
+      });
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+      setErrorMessage("Không thể tải giỏ hàng. Vui lòng thử lại sau.");
+    }
+  };
+
+  // Modify the useEffect that fetches cart items to check for isBuyNow flag
+  useEffect(() => {
+    // If coming from "Buy Now", use the passed cart items directly
+    // This ensures we're only showing the product from product details, not the whole cart
+    if (isBuyNow && cartItems.length > 0) {
+      console.log("Buy Now mode with items:", cartItems);
+      // Use the cart items directly from state
+      setOrderSummary({
+        items: cartItems,
+        subtotal: subtotal,
+        shipping: shippingFee,
+        total: total,
+      });
+      return;
+    }
+
+    // Regular cart checkout flow - fetch cart items if needed
+    if (cartItems.length === 0) {
+      fetchCartItems();
+    } else {
+      // Use cart items passed from the cart page
+      setOrderSummary({
+        items: cartItems,
+        subtotal: subtotal,
+        shipping: shippingFee,
+        total: total,
+      });
+    }
+  }, [state, cartItems.length, isBuyNow, subtotal, shippingFee, total]);
+
   // Cập nhật useEffect
   useEffect(() => {
     if (!isAuthenticated) {
@@ -86,28 +159,12 @@ const Checkout = () => {
 
     const fetchVouchers = async () => {
       try {
-        const response = await getAllVouchers();
-        console.log("Voucher response structure:", response);
-
-        // Try different possible API response structures
+        const response = await getAvailableVouchers();
+        
         if (response && response.data && Array.isArray(response.data.data)) {
-          // Structure: response.data.data is an array
           setVouchers(response.data.data);
-          console.log("Fetched vouchers from response.data.data:", response.data.data);
         } else if (response && Array.isArray(response.data)) {
-          // Structure: response.data is an array
           setVouchers(response.data);
-          console.log("Fetched vouchers from response.data:", response.data);
-        } else if (response && response.data && typeof response.data === 'object') {
-          // Structure: response.data might have properties that aren't 'data'
-          const possibleVouchers = Object.values(response.data).find(value => Array.isArray(value));
-          if (possibleVouchers) {
-            setVouchers(possibleVouchers);
-            console.log("Fetched vouchers from response.data object:", possibleVouchers);
-          } else {
-            console.error("Couldn't find voucher array in response", response);
-            setVouchers([]);
-          }
         } else {
           console.error("Unexpected voucher response format:", response);
           setVouchers([]);
@@ -149,9 +206,76 @@ const Checkout = () => {
     }
   };
 
+  // Thêm kiểm tra validation khi thay đổi input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setOrderInfo((prev) => ({ ...prev, [name]: value }));
+    
+    // Clear error when user types
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+    
+    // Clear general error messages on input
+    if (errorMessage) {
+      setErrorMessage('');
+    }
+
+    // Validate phone number as user types
+    if (name === 'phone') {
+      if (value && !validatePhone(value)) {
+        setFormErrors(prev => ({
+          ...prev,
+          phone: 'Số điện thoại không hợp lệ (Ví dụ: 0912345678 hoặc +84912345678)'
+        }));
+      } else {
+        // Clear phone error if valid or empty
+        setFormErrors(prev => ({
+          ...prev,
+          phone: ''
+        }));
+      }
+    }
+  };
+
+  // Validate phone number
+  const validatePhone = (phone) => {
+    // Vietnamese phone number format: starts with 0 or +84, followed by 9-10 digits
+    const phoneRegex = /^(0|\+84)(\d{9,10})$/;
+    return phoneRegex.test(phone);
+  };
+
+  // Function to validate form fields
+  const validateForm = () => {
+    const errors = { ...formErrors };
+    let isValid = true;
+    
+    // Validate full name
+    if (!orderInfo.fullName.trim()) {
+      errors.fullName = 'Vui lòng nhập họ tên';
+      isValid = false;
+    }
+    
+    // Validate phone number
+    if (!orderInfo.phone) {
+      errors.phone = 'Vui lòng nhập số điện thoại';
+      isValid = false;
+    } else if (!validatePhone(orderInfo.phone)) {
+      errors.phone = 'Số điện thoại không hợp lệ (Ví dụ: 0912345678 hoặc +84912345678)';
+      isValid = false;
+    }
+    
+    // Validate address
+    if (!orderInfo.address.trim()) {
+      errors.address = 'Vui lòng nhập địa chỉ';
+      isValid = false;
+    }
+    
+    setFormErrors(errors);
+    return isValid;
   };
 
   // Hàm cập nhật thông tin người dùng
@@ -163,6 +287,11 @@ const Checkout = () => {
       return;
     }
 
+    // Validate form before submitting
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       setIsUpdatingProfile(true);
       setErrorMessage('');
@@ -170,34 +299,72 @@ const Checkout = () => {
 
       // Chuẩn bị dữ liệu cập nhật theo UProfileDTO
       const updateData = {
-        username: orderInfo.fullName, // Sử dụng username thay vì fullName
-        email: orderInfo.email, // Giữ email nhưng không thay đổi
-        phoneNumber: orderInfo.phone, // Sử dụng phoneNumber thay vì phone
+        username: orderInfo.fullName,
+        email: orderInfo.email,
+        phoneNumber: orderInfo.phone,
         address: orderInfo.address,
-        avatar: orderInfo.avatar // Sử dụng avatar hiện tại thay vì null
+        avatar: orderInfo.avatar // Keeps existing avatar
       };
 
       console.log("Sending update profile request with data:", updateData);
 
       await updateAccountInfo(updateData);
       setSuccessMessage('Cập nhật thông tin thành công!');
+      
+      // Tự động xóa thông báo thành công sau 3 giây
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
 
       // Cập nhật lại thông tin người dùng sau khi update thành công
       await fetchUserInfo();
     } catch (error) {
       console.error('Error updating profile:', error);
 
-      // Hiển thị thông báo lỗi chi tiết hơn
-      if (error.errors) {
-        const errorMessages = Object.values(error.errors).flat().join(', ');
-        setErrorMessage('Lỗi khi cập nhật thông tin: ' + errorMessages);
+      // Handle duplicate phone error specifically
+      if (error.response?.data?.errorCode === "DUPLICATE_PHONE") {
+        setFormErrors(prev => ({
+          ...prev,
+          phone: `Số điện thoại ${orderInfo.phone} đã được sử dụng bởi tài khoản khác`
+        }));
+      } 
+      // Kiểm tra lỗi từ message và details (format thực tế)
+      else if (error.response?.data?.details && error.response.data.details.includes("Phone number") && error.response.data.details.includes("already exists")) {
+        // Trích xuất số điện thoại từ thông báo lỗi
+        const phoneMatch = error.response.data.details.match(/Phone number (\d+)/);
+        const phone = phoneMatch ? phoneMatch[1] : orderInfo.phone;
+        
+        setFormErrors(prev => ({
+          ...prev,
+          phone: `Số điện thoại ${phone} đã được sử dụng bởi tài khoản khác`
+        }));
       } else {
-        setErrorMessage('Lỗi khi cập nhật thông tin: ' + (error.message || 'Lỗi không xác định'));
+        // Hiển thị thông báo lỗi chi tiết hơn
+        if (error.errors) {
+          const errorMessages = Object.values(error.errors).flat().join(', ');
+          setErrorMessage('Lỗi khi cập nhật thông tin: ' + errorMessages);
+        } else {
+          setErrorMessage('Lỗi khi cập nhật thông tin: ' + (error.message || 'Lỗi không xác định'));
+        }
       }
     } finally {
       setIsUpdatingProfile(false);
     }
   };
+
+  // Thêm useEffect để xóa thông báo thành công khi thay đổi dữ liệu hoặc unmount
+  useEffect(() => {
+    // Reset success message when user changes any field
+    if (successMessage) {
+      setSuccessMessage('');
+    }
+    
+    // Cleanup function to clear timers and messages when unmounting
+    return () => {
+      setSuccessMessage('');
+      setErrorMessage('');
+    };
+  }, [orderInfo.fullName, orderInfo.phone, orderInfo.address]);
 
   // Thêm hàm giả lập thanh toán thành công cho tất cả phương thức
   const simulatePayment = async (paymentMethod, orderData) => {
@@ -269,6 +436,30 @@ const Checkout = () => {
       return;
     }
 
+    // Check if voucher has expired (just in case it wasn't filtered out properly)
+    const now = new Date();
+    const expiryDate = new Date(selectedVoucher.expiredAt);
+    if (expiryDate < now) {
+      setVoucherErrorMessage(
+        `Voucher "${selectedVoucher.code}" đã hết hạn từ ${expiryDate.toLocaleDateString('vi-VN')}. Vui lòng chọn voucher khác.`
+      );
+      setSelectedVoucher(null);
+      // Refresh available vouchers list
+      fetchVouchers();
+      return;
+    }
+
+    // Check if voucher has been fully redeemed (quantity <= 0 and not infinite)
+    if (!selectedVoucher.isInfinity && selectedVoucher.quantity <= 0) {
+      setVoucherErrorMessage(
+        `Voucher "${selectedVoucher.code}" đã hết lượt sử dụng. Vui lòng chọn voucher khác.`
+      );
+      setSelectedVoucher(null);
+      // Refresh available vouchers list
+      fetchVouchers();
+      return;
+    }
+
     try {
       // Tính toán giá trị giảm giá dựa theo loại voucher
       let discountAmount = 0;
@@ -304,6 +495,11 @@ const Checkout = () => {
         }`
       );
       
+      // Tự động xóa thông báo thành công sau 3 giây
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+      
       setVoucherErrorMessage('');
     } catch (error) {
       console.error("Error applying voucher:", error);
@@ -313,6 +509,12 @@ const Checkout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form before submitting
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
@@ -360,11 +562,14 @@ const Checkout = () => {
       const response = await createOrder(orderData);
       console.log("Order created successfully:", response);
 
-      try {
-        await clearCart();
-        console.log("Cart cleared successfully after order");
-      } catch (clearError) {
-        console.error("Failed to clear cart, but order was successful:", clearError);
+      // Only clear cart if not using "Buy Now" mode
+      if (!isBuyNow) {
+        try {
+          await clearCart();
+          console.log("Cart cleared successfully after order");
+        } catch (clearError) {
+          console.error("Failed to clear cart, but order was successful:", clearError);
+        }
       }
 
       const orderId = response.data ? response.data.id : response.id;
@@ -383,8 +588,62 @@ const Checkout = () => {
     } catch (error) {
       console.error("Error creating order:", error);
 
-      // Handle specific error types
-      if (error.type === "INSUFFICIENT_INVENTORY") {
+      // Check for specific API error codes
+      if (error.response?.data?.errorCode === "DUPLICATE_PHONE") {
+        setFormErrors(prev => ({
+          ...prev,
+          phone: `Số điện thoại ${orderInfo.phone} đã được sử dụng bởi tài khoản khác`
+        }));
+        setLoading(false);
+        return;
+      }
+      
+      // Kiểm tra lỗi từ message và details (format thực tế)
+      if (error.response?.data?.details && error.response.data.details.includes("Phone number") && error.response.data.details.includes("already exists")) {
+        // Trích xuất số điện thoại từ thông báo lỗi
+        const phoneMatch = error.response.data.details.match(/Phone number (\d+)/);
+        const phone = phoneMatch ? phoneMatch[1] : orderInfo.phone;
+        
+        setFormErrors(prev => ({
+          ...prev,
+          phone: `Số điện thoại ${phone} đã được sử dụng bởi tài khoản khác`
+        }));
+        setLoading(false);
+        return;
+      }
+
+      // Handle voucher-specific errors with more user-friendly messages
+      if (error.type === "VOUCHER_ERROR" || error.response?.data?.errorCode?.startsWith("VOUCHER_")) {
+        const errorCode = error.errorCode || error.response?.data?.errorCode;
+        const errorMessage = error.message || error.response?.data?.message;
+        
+        // Reset the discount since voucher couldn't be applied
+        setDiscount(0);
+        
+        // Handle specific voucher error types with friendly messages
+        if (errorCode === "VOUCHER_EXPIRED") {
+          setVoucherErrorMessage(`❌ Voucher "${selectedVoucher?.code}" đã hết hạn. Vui lòng chọn voucher khác.`);
+          setSelectedVoucher(null);
+        } 
+        else if (errorCode === "VOUCHER_FULLY_REDEEMED") {
+          setVoucherErrorMessage(`❌ Voucher "${selectedVoucher?.code}" đã hết lượt sử dụng. Vui lòng chọn voucher khác.`);
+          setSelectedVoucher(null);
+        } 
+        else if (errorCode === "VOUCHER_MIN_ORDER_NOT_MET") {
+          const minOrderValue = error.response?.data?.details?.minOrderValue || selectedVoucher?.minOrderValue || 0;
+          setVoucherErrorMessage(`❌ Đơn hàng tối thiểu phải từ ${formatVND(minOrderValue)} để áp dụng voucher này.`);
+        } 
+        else {
+          // Generic voucher error
+          setVoucherErrorMessage(`❌ ${errorMessage || "Có lỗi khi áp dụng voucher. Vui lòng thử voucher khác."}`);
+          setSelectedVoucher(null);
+        }
+        
+        // Re-fetch available vouchers to get updated quantities
+        fetchVouchers();
+      }
+      // Handle other specific error types
+      else if (error.type === "INSUFFICIENT_INVENTORY") {
         setErrorMessage("❌ " + error.message);
         // Reload cart to get updated inventory
         await loadCartItems();
@@ -431,7 +690,9 @@ const Checkout = () => {
                   value={orderInfo.fullName}
                   onChange={handleInputChange}
                   required
+                  className={formErrors.fullName ? "error-input" : ""}
                 />
+                {formErrors.fullName && <div className="error-message">{formErrors.fullName}</div>}
               </div>
               <div className="form-group">
                 <label>Email * (Không Thể Thay Đổi)</label>
@@ -453,7 +714,9 @@ const Checkout = () => {
                   value={orderInfo.phone}
                   onChange={handleInputChange}
                   required
+                  className={formErrors.phone ? "error-input" : ""}
                 />
+                {formErrors.phone && <div className="error-message">{formErrors.phone}</div>}
               </div>
               <div className="form-group">
                 <label>Địa Chỉ *</label>
@@ -463,7 +726,9 @@ const Checkout = () => {
                   value={orderInfo.address}
                   onChange={handleInputChange}
                   required
+                  className={formErrors.address ? "error-input" : ""}
                 />
+                {formErrors.address && <div className="error-message">{formErrors.address}</div>}
               </div>
 
               {/* Nút cập nhật thông tin đặt ngay dưới thông tin người dùng */}
@@ -501,6 +766,7 @@ const Checkout = () => {
                           ? `(${voucher.value}%)` 
                           : `(${formatVND(voucher.value)})`
                         } - Đơn tối thiểu: {formatVND(voucher.minOrderValue)}
+                        {!voucher.isInfinity && voucher.quantity > 0 ? ` - Còn ${voucher.quantity} lượt dùng` : ''}
                       </option>
                     ))
                   ) : (
@@ -525,6 +791,9 @@ const Checkout = () => {
                 <div className="applied-voucher">
                   <span>Voucher đã áp dụng: </span>
                   <strong>{selectedVoucher.code}</strong> - Giảm {formatVND(discount)}
+                  {!selectedVoucher.isInfinity && selectedVoucher.quantity > 0 && 
+                    <span className="voucher-remaining"> (Còn {selectedVoucher.quantity} lượt sử dụng)</span>
+                  }
                 </div>
               )}
             </div>
@@ -552,7 +821,7 @@ const Checkout = () => {
                       alt={productName}
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "/src/assets/images/placeholder.png";
+                        e.target.src = "/src/assets/images/aboutus.jpg";
                       }}
                     />
                   </div>

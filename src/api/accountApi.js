@@ -100,7 +100,12 @@ export const updateAccountInfo = async (updatedData) => {
     });
     return res.data; // Có thể chứa message: "Cập nhật thành công"
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Lỗi khi cập nhật thông tin");
+    // Xử lý lỗi trùng số điện thoại
+    if (error.response?.data?.details && error.response.data.details.includes("Phone number") && error.response.data.details.includes("already exists")) {
+      // Thêm thông tin errorCode để dễ xử lý ở front-end
+      error.response.data.errorCode = "DUPLICATE_PHONE";
+    }
+    throw error;
   }
 };
 
@@ -181,7 +186,14 @@ export const updateProfileWithAvatar = async (profileData, avatarFile) => {
     return res.data;
   } catch (error) {
     console.error("Profile update error:", error);
-    throw new Error(error.response?.data?.message || "Lỗi khi cập nhật thông tin");
+    
+    // Xử lý lỗi trùng số điện thoại
+    if (error.response?.data?.details && error.response.data.details.includes("Phone number") && error.response.data.details.includes("already exists")) {
+      // Thêm thông tin errorCode để dễ xử lý ở front-end
+      error.response.data.errorCode = "DUPLICATE_PHONE";
+    }
+    
+    throw error;
   }
 };
 

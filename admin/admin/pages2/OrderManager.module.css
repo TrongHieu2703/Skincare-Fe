@@ -371,10 +371,226 @@ h1 {
   height: 16px;
 }
 
+/* Styles for new filter, search, and pagination components */
+.filterContainer {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filterBar {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  min-width: 160px;
+  font-size: 14px;
+  color: #333;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #8cc5af;
+  box-shadow: 0 0 0 2px rgba(140, 197, 175, 0.1);
+}
+
+.searchBarRow {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0 12px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchIcon {
+  color: #8cc5af;
+  margin-right: 8px;
+}
+
+.searchInput {
+  border: none;
+  padding: 10px 0;
+  width: 100%;
+  font-size: 14px;
+  color: #333;
+}
+
+.searchInput:focus {
+  outline: none;
+}
+
+.dateFilterWrapper {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0 12px;
+  gap: 8px;
+}
+
+.calendarIcon {
+  color: #8cc5af;
+}
+
+.dateInput {
+  border: none;
+  padding: 8px 0;
+  color: #333;
+  font-size: 14px;
+  width: 130px;
+}
+
+.dateInput:focus {
+  outline: none;
+}
+
+.dateSeparator {
+  color: #666;
+  margin: 0 4px;
+}
+
+.resetFilterBtn {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.resetFilterBtn:hover {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.orderCount {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #666;
+  text-align: right;
+}
+
+.noOrders {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.noOrders p {
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.loadingIndicator {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: white;
+}
+
+/* Pagination styles */
+.paginationContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.paginationControls {
+  display: flex;
+  gap: 5px;
+}
+
+.pageButton {
+  border: 1px solid #ddd;
+  background-color: white;
+  color: #333;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pageButton:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #c5c5c5;
+}
+
+.pageButton:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.activePage {
+  background-color: #8cc5af;
+  color: white;
+  border-color: #8cc5af;
+}
+
+.activePage:hover {
+  background-color: #74b095;
+}
+
+.pageSizeSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.pageSizeSelect {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
 /* Responsiveness */
 @media (max-width: 992px) {
   .productTable {
     min-width: 800px;
+  }
+  
+  .filterBar, .searchBarRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .searchInputWrapper, .dateFilterWrapper {
+    width: 100%;
   }
 }
 
@@ -382,5 +598,14 @@ h1 {
   .modalContent {
     width: 95%;
     padding: 16px;
+  }
+  
+  .paginationContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .pageSizeSelector {
+    margin-top: 10px;
   }
 }

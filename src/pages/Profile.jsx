@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import { getAccountInfo, updateProfileWithAvatar, migrateGoogleDriveAvatar, forceMigrateGoogleDriveAvatar } from "../api/accountApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import coverImage from "/src/assets/images/cover-image.png";
 import defaultAvatar from "/src/assets/images/profile-pic.png";
 import "/src/styles/Profile.css";
 import { API_BASE_URL } from "../api/axiosClient";
+import { useAuth } from "../auth/AuthProvider";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -19,6 +19,15 @@ const Profile = () => {
     address: "",
     avatar: "",
   });
+  
+  // Add form errors state
+  const [formErrors, setFormErrors] = useState({
+    username: "",
+    email: "",
+    phoneNumber: "",
+    address: ""
+  });
+  
   const [avatarFile, setAvatarFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [originalData, setOriginalData] = useState(null);
@@ -27,6 +36,9 @@ const Profile = () => {
   const [successNotification, setSuccessNotification] = useState("");
   const [isGoogleDriveAvatar, setIsGoogleDriveAvatar] = useState(false);
   const [migratingAvatar, setMigratingAvatar] = useState(false);
+  
+  // Sử dụng Auth Context để cập nhật thông tin user
+  const { updateUserData } = useAuth();
 
   const getImageUrl = (avatarPath) => {
     if (!avatarPath) return defaultAvatar;
@@ -105,7 +117,12 @@ const Profile = () => {
       setPreviewImage(getImageUrl(userData.avatar));
       setImageError(false);
       
-      window.dispatchEvent(new CustomEvent('user-profile-updated'));
+      // Cập nhật thông tin trong Auth Context
+      updateUserData({
+        username: userData.username,
+        email: userData.email,
+        avatar: userData.avatar
+      });
     } catch (error) {
       console.error("Error fetching user profile:", error);
       
@@ -133,6 +150,29 @@ const Profile = () => {
       ...prev,
       [name]: value,
     }));
+    
+    // Clear error when user types
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+    
+    // Clear success notification when user starts editing
+    if (successNotification) {
+      setSuccessNotification("");
+    }
+
+    // Validate phone number as user types
+    if (name === 'phoneNumber' && value) {
+      if (!validatePhone(value)) {
+        setFormErrors(prev => ({
+          ...prev,
+          phoneNumber: 'Số điện thoại không hợp lệ (Ví dụ: 0912345678 hoặc +84912345678)'
+        }));
+      }
+    }
   };
 
   const handleImageChange = async (e) => {
@@ -212,6 +252,39 @@ const Profile = () => {
     });
   };
 
+  // Validate phone number
+  const validatePhone = (phone) => {
+    if (!phone) return true; // Phone is optional on profile page
+    
+    // Vietnamese phone number format: starts with 0 or +84, followed by 9-10 digits
+    const phoneRegex = /^(0|\+84)(\d{9,10})$/;
+    return phoneRegex.test(phone);
+  };
+  
+  // Validate the form before submission
+  const validateForm = () => {
+    const errors = { ...formErrors };
+    let isValid = true;
+    
+    // Username validation
+    if (!formData.username.trim()) {
+      errors.username = 'Vui lòng nhập tên người dùng';
+      isValid = false;
+    } else if (formData.username.trim().length < 3) {
+      errors.username = 'Tên người dùng phải có ít nhất 3 ký tự';
+      isValid = false;
+    }
+    
+    // Phone validation (optional but must be valid if provided)
+    if (formData.phoneNumber && !validatePhone(formData.phoneNumber)) {
+      errors.phoneNumber = 'Số điện thoại không hợp lệ (Ví dụ: 0912345678 hoặc +84912345678)';
+      isValid = false;
+    }
+    
+    setFormErrors(errors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -224,6 +297,11 @@ const Profile = () => {
     if (!hasChanges) {
         toast.info("Không có thay đổi nào để cập nhật");
         return;
+    }
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
     }
 
     try {
@@ -240,28 +318,53 @@ const Profile = () => {
                 avatar: response.avatarUrl
             }));
             
-            // Cập nhật localStorage ngay lập tức
-            const userJson = localStorage.getItem('user');
-            if (userJson) {
-                const user = JSON.parse(userJson);
-                user.avatar = response.avatarUrl;
-                user.username = formData.username;
-                user.phoneNumber = formData.phoneNumber;
-                user.address = formData.address;
-                localStorage.setItem('user', JSON.stringify(user));
-                
-                // Dispatch custom event thay vì storage event
-                window.dispatchEvent(new CustomEvent('user-profile-updated'));
-            }
+            // Cập nhật thông tin user trong context
+            updateUserData({
+              username: formData.username,
+              phoneNumber: formData.phoneNumber,
+              address: formData.address,
+              avatar: response.avatarUrl
+            });
+        } else {
+            // Nếu không có avatar mới, chỉ cập nhật thông tin cơ bản
+            updateUserData({
+              username: formData.username,
+              phoneNumber: formData.phoneNumber,
+              address: formData.address
+            });
         }
         
         setSuccessNotification("✅ Thông tin đã được cập nhật thành công!");
         setTimeout(() => setSuccessNotification(""), 3000);
-        
-        // Không cần gọi fetchUserProfile lại vì đã cập nhật state và localStorage
     } catch (error) {
         console.error("Error updating profile:", error);
-        toast.error(error.message || "Không thể cập nhật thông tin");
+        
+        // Kiểm tra lỗi trùng email hoặc số điện thoại
+        if (error.response?.data?.errorCode === "DUPLICATE_EMAIL") {
+            setFormErrors(prev => ({
+              ...prev,
+              email: `Email này đã được sử dụng bởi tài khoản khác`
+            }));
+        } else if (error.response?.data?.errorCode === "DUPLICATE_PHONE") {
+            setFormErrors(prev => ({
+              ...prev,
+              phoneNumber: `Số điện thoại này đã được sử dụng bởi tài khoản khác`
+            }));
+        } 
+        // Kiểm tra lỗi từ message và details (format thực tế)
+        else if (error.response?.data?.details && error.response.data.details.includes("Phone number") && error.response.data.details.includes("already exists")) {
+            // Trích xuất số điện thoại từ thông báo lỗi
+            const phoneMatch = error.response.data.details.match(/Phone number (\d+)/);
+            const phone = phoneMatch ? phoneMatch[1] : formData.phoneNumber;
+            
+            setFormErrors(prev => ({
+              ...prev,
+              phoneNumber: `Số điện thoại ${phone} đã được sử dụng bởi tài khoản khác`
+            }));
+        } else {
+            toast.error(error.message || "Không thể cập nhật thông tin");
+        }
+        
         if (error.message === "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại") {
             navigate("/login");
         }
@@ -295,18 +398,20 @@ const Profile = () => {
           {successNotification}
         </div>
       )}
-      <div className="cover-photo">
-        <img src={coverImage} alt="Cover" />
-      </div>
 
-      <div className="profile-section">
-        <div className="profile-image-container">
-          <img
-            src={imageError ? defaultAvatar : (previewImage || getImageUrl(formData.avatar))}
-            alt="Profile"
-            className="profile-image"
-            onError={() => setImageError(true)}
-          />
+      <div className="profile-content">
+        <div className="profile-left">
+          <h2>Thông tin tài khoản</h2>
+          
+          <div className="profile-image-container">
+            <img
+              src={imageError ? defaultAvatar : (previewImage || getImageUrl(formData.avatar))}
+              alt="Profile"
+              className="profile-image"
+              onError={() => setImageError(true)}
+            />
+          </div>
+          
           <label className="change-photo-button">
             <input
               type="file"
@@ -327,63 +432,72 @@ const Profile = () => {
               {migratingAvatar ? "Đang chuyển đổi..." : "Chuyển đổi sang Local"}
             </button>
           )}
+          
+          <p className="profile-email">{formData.email}</p>
         </div>
-        <h2>{formData.username || "Chưa cập nhật tên"}</h2>
-        <p>{formData.email}</p>
+
+        <div className="profile-right">
+          <h3>Thông tin cá nhân</h3>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Tên người dùng</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Nhập tên người dùng"
+                className={formErrors.username ? "error-input" : ""}
+              />
+              {formErrors.username && <div className="error-message">{formErrors.username}</div>}
+            </div>
+
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Nhập email"
+                disabled
+                className={formErrors.email ? "error-input" : ""}
+              />
+              {formErrors.email && <div className="error-message">{formErrors.email}</div>}
+            </div>
+
+            <div className="form-group">
+              <label>Số điện thoại</label>
+              <input
+                type="tel"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                placeholder="Nhập số điện thoại"
+                className={formErrors.phoneNumber ? "error-input" : ""}
+              />
+              {formErrors.phoneNumber && <div className="error-message">{formErrors.phoneNumber}</div>}
+            </div>
+
+            <div className="form-group">
+              <label>Địa chỉ</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Nhập địa chỉ"
+                className={formErrors.address ? "error-input" : ""}
+              />
+              {formErrors.address && <div className="error-message">{formErrors.address}</div>}
+            </div>
+
+            <button type="submit" className="save-btn" disabled={saving}>
+              {saving ? "Đang lưu..." : "Lưu thay đổi"}
+            </button>
+          </form>
+        </div>
       </div>
-
-      <form className="profile-form" onSubmit={handleSubmit}>
-        <h3>Thông tin cá nhân</h3>
-
-        <div className="form-group">
-          <label>Tên người dùng</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="Nhập tên người dùng"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Nhập email"
-            disabled
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Số điện thoại</label>
-          <input
-            type="tel"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            placeholder="Nhập số điện thoại"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Địa chỉ</label>
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            placeholder="Nhập địa chỉ"
-          />
-        </div>
-
-        <button type="submit" className="save-btn" disabled={saving}>
-          {saving ? "Đang lưu..." : "Lưu thay đổi"}
-        </button>
-      </form>
     </div>
   );
 };

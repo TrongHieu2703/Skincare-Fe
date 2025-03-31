@@ -46,9 +46,11 @@ export const addToCart = async (productId, quantity) => {
            (error.response.data.message.includes("Không đủ số lượng") ||
             error.response.data.message.includes("hết hàng")))
       ) {
+        // Ưu tiên sử dụng details nếu có, nếu không mới dùng message
+        const errorMessage = error.response?.data?.details || error.response?.data?.message || "Không đủ số lượng trong kho";
         throw {
           type: "INSUFFICIENT_INVENTORY",
-          message: error.response.data.message || "Không đủ số lượng trong kho"
+          message: errorMessage
         };
       }
     }
@@ -79,9 +81,11 @@ export const updateCart = async (cartItemId, quantity) => {
            (error.response.data.message.includes("Không đủ số lượng") ||
             error.response.data.message.includes("hết hàng")))
       ) {
+        // Ưu tiên sử dụng details nếu có, nếu không mới dùng message
+        const errorMessage = error.response?.data?.details || error.response?.data?.message || "Không đủ số lượng trong kho";
         throw {
           type: "INSUFFICIENT_INVENTORY",
-          message: error.response.data.message || "Không đủ số lượng trong kho"
+          message: errorMessage
         };
       }
     }
