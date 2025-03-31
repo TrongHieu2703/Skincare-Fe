@@ -2,6 +2,7 @@ import React from "react";
 import "/src/styles/Blog.css";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaTwitter, FaYoutube, FaPinterest, FaInstagram } from 'react-icons/fa';
+import Footer from "./Footer";
 
 const Blog = () => {
     const blogPosts = [
@@ -137,6 +138,7 @@ const Blog = () => {
                     </div>
                 </aside>
             </div>
+            <Footer />
         </div>
     );
 };

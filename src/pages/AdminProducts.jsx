@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAllProducts, deleteProduct } from "../api/productApi";
 import { FiPlus, FiEdit, FiTrash2, FiLoader, FiSearch } from "react-icons/fi";
-import "../styles/AdminProducts.css";
+// import "../styles/AdminProducts.css";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -21,7 +21,7 @@ const AdminProducts = () => {
     try {
       setLoading(true);
       const response = await getAllProducts(1, 100); // Get more products for admin view
-      
+
       const productArray = Array.isArray(response)
         ? response
         : Array.isArray(response.data)
@@ -29,7 +29,7 @@ const AdminProducts = () => {
           : Array.isArray(response.data?.data)
             ? response.data.data
             : [];
-            
+
       setProducts(productArray);
       setError(null);
     } catch (err) {
@@ -44,7 +44,7 @@ const AdminProducts = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredProducts = products.filter(product => 
+  const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -90,8 +90,8 @@ const AdminProducts = () => {
     <div className="admin-products-container">
       <div className="admin-header">
         <h1>Quản lý sản phẩm</h1>
-        <button 
-          className="add-product-btn" 
+        <button
+          className="add-product-btn"
           onClick={() => navigate("/admin/products/new")}
         >
           <FiPlus />
@@ -129,8 +129,8 @@ const AdminProducts = () => {
               filteredProducts.map(product => (
                 <tr key={product.id}>
                   <td className="product-image">
-                    <img 
-                      src={product.image || "/placeholder-product.png"} 
+                    <img
+                      src={product.image || "/placeholder-product.png"}
                       alt={product.name}
                     />
                   </td>
@@ -144,14 +144,14 @@ const AdminProducts = () => {
                     </span>
                   </td>
                   <td className="actions">
-                    <button 
+                    <button
                       className="edit-btn"
                       onClick={() => navigate(`/admin/products/edit/${product.id}`)}
                       title="Chỉnh sửa"
                     >
                       <FiEdit />
                     </button>
-                    <button 
+                    <button
                       className="delete-btn"
                       onClick={() => confirmDelete(product)}
                       title="Xóa"
@@ -178,16 +178,16 @@ const AdminProducts = () => {
             <h3>Xác nhận xóa sản phẩm</h3>
             <p>Bạn có chắc chắn muốn xóa sản phẩm <strong>{deleteConfirm.name}</strong>?</p>
             <p className="warning">Hành động này không thể hoàn tác!</p>
-            
+
             <div className="delete-modal-actions">
-              <button 
+              <button
                 className="cancel-delete-btn"
                 onClick={cancelDelete}
                 disabled={deleting}
               >
                 Hủy
               </button>
-              <button 
+              <button
                 className="confirm-delete-btn"
                 onClick={() => handleDelete(deleteConfirm.id)}
                 disabled={deleting}

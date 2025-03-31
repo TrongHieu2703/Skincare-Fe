@@ -53,6 +53,60 @@
   animation: fadeIn 0.5s;
 }
 
+/* Inline error styles */
+.form-group .error-message {
+  background-color: transparent;
+  padding: 5px 0;
+  margin-bottom: 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: #ff4d4f;
+  animation: fadeIn 0.3s;
+}
+
+.error-input {
+  border: 2px solid #ff4d4f !important;
+  background-color: #fff1f0 !important;
+}
+
+/* Phone error specific styling - enhanced */
+.form-group input[name="phone"].error-input,
+.form-group input[name="phoneNumber"].error-input {
+  border-color: #ff4d4f !important;
+  box-shadow: 0 0 0 1px rgba(255, 77, 79, 0.2) !important;
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.form-group input[name="phone"].error-input:focus,
+.form-group input[name="phoneNumber"].error-input:focus {
+  border-color: #ff4d4f !important;
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.3) !important;
+}
+
+/* Phone number error message specific styling */
+.form-group .error-message:has(+ input[name="phone"]),
+.form-group .error-message:has(+ input[name="phoneNumber"]),
+.form-group input[name="phone"] + .error-message,
+.form-group input[name="phoneNumber"] + .error-message {
+  font-weight: 500;
+  padding: 8px 0;
+  color: #ff4d4f;
+  animation: fadeIn 0.3s;
+}
+
+/* Add shake animation for validation errors */
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-2px); }
+  40%, 60% { transform: translateX(2px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .success-message {
   background-color: #e8f5e9;
   color: #2e7d32;
@@ -60,12 +114,21 @@
   border-radius: 5px;
   margin-bottom: 20px;
   font-weight: 500;
-  animation: fadeIn 0.5s;
+  animation: fadeInAndOut 3s forwards;
+  border-left: 4px solid #4caf50;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeInAndOut {
+  0% { opacity: 0; transform: translateY(-5px); }
+  15% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-5px); }
 }
 
 /* Reset layout tổng thể để giảm cuộn */
 .order-detail-page {
-  padding-top: 1000px;
+  padding-top: 100px;
   padding: 5rem 2rem 2rem;
   background: linear-gradient(135deg, #f8faf9 0%, #e8f5e9 100%);
   min-height: 100vh;
@@ -74,7 +137,7 @@
 }
 
 .order-detail-container {
-  padding-top: 300px;
+  padding-top: 10px;
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
@@ -510,4 +573,108 @@
   .cart-item-name {
     max-width: 120px;
   }
+}
+
+/* Styles for voucher section */
+.voucher-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #e8f5e9;
+}
+
+.voucher-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: #216942;
+  margin-bottom: 12px;
+}
+
+.voucher-selection {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.voucher-select {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #e8f5e9;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.voucher-select:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  outline: none;
+}
+
+.apply-voucher-button {
+  padding: 10px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.apply-voucher-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.voucher-error {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 5px;
+  background-color: #ffebee;
+  color: #c62828;
+  font-size: 14px;
+  border-left: 4px solid #ef5350;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.applied-voucher {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #ebf7f0;
+  color: #216942;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.voucher-remaining {
+  font-size: 13px;
+  font-style: italic;
+  color: #4a6f5d;
+  margin-left: 5px;
+}
+
+.applied-voucher strong {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.price-row.discount {
+  color: #2e7d32;
+  font-weight: 500;
 }

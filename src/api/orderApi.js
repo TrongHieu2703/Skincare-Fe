@@ -13,17 +13,12 @@ export const getAllOrders = async () => {
 // Fetch order details by ID (cho trang chi tiết đơn hàng)
 export const getOrderDetail = async (id) => {
   try {
-    console.log(`Fetching order details for ID: ${id}`);
     const response = await axiosClient.get(`/Order/detail/${id}`);
-    
-    console.log("Raw order detail response:", response);
     
     // Check response structure and return data
     if (response.data && response.data.data) {
-      console.log("Returning response.data.data:", response.data.data);
       return response.data.data;
     } else if (response.data) {
-      console.log("Returning response.data:", response.data);
       return response.data;
     } else {
       console.error("Invalid response format:", response);
@@ -39,11 +34,31 @@ export const getOrderDetail = async (id) => {
 export const getOrdersByUser = async () => {
   try {
     const response = await axiosClient.get('/Order/user');
-    console.log('User orders response:', response);
-    // Giả sử server trả về dạng: { message: "...", data: [...] }
-    return response.data.data || [];
+    
+    // Check response structure and return data
+    if (response.data && response.data.data) {
+      const orderData = response.data.data;
+      
+      // Enhance the data if needed
+      return orderData.map(order => {
+        // Ensure orderItems is always an array
+        if (!order.orderItems) {
+          order.orderItems = [];
+        }
+        
+        return order;
+      });
+    } else if (Array.isArray(response.data)) {
+      return response.data;
+    } else {
+      console.error("Invalid response format:", response);
+      return []; // Return empty array on invalid format
+    }
   } catch (error) {
     console.error('Error fetching user orders:', error);
+    if (error.response?.status === 401) {
+      throw new Error('Unauthorized: Please log in');
+    }
     throw error;
   }
 };
@@ -51,16 +66,43 @@ export const getOrdersByUser = async () => {
 // Create a new order
 export const createOrder = async (orderData) => {
   try {
-    console.log('Creating order with data:', orderData);
     const response = await axiosClient.post('/Order', orderData);
-    console.log('Create order response:', response);
     return response.data;
   } catch (error) {
     console.error('Error creating order:', error);
     
-    // Handle specific error cases
+    // Extract specific error information
     if (error.response?.data) {
       const errorData = error.response.data;
+      
+      // Handle voucher-specific errors
+      if (errorData.errorCode === "VOUCHER_EXPIRED") {
+        throw {
+          type: "VOUCHER_ERROR",
+          errorCode: "VOUCHER_EXPIRED",
+          message: "Voucher đã hết hạn. Vui lòng chọn voucher khác."
+        };
+      } else if (errorData.errorCode === "VOUCHER_FULLY_REDEEMED") {
+        throw {
+          type: "VOUCHER_ERROR",
+          errorCode: "VOUCHER_FULLY_REDEEMED",
+          message: "Voucher đã hết lượt sử dụng. Vui lòng chọn voucher khác."
+        };
+      } else if (errorData.errorCode === "VOUCHER_MIN_ORDER_NOT_MET") {
+        throw {
+          type: "VOUCHER_ERROR",
+          errorCode: "VOUCHER_MIN_ORDER_NOT_MET",
+          message: `Đơn hàng không đạt giá trị tối thiểu để sử dụng voucher (${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(errorData.details?.minOrderValue || 0).replace('₫', 'đ')}).`
+        };
+      } else if (errorData.message && errorData.message.includes("voucher")) {
+        // Generic voucher error
+        throw {
+          type: "VOUCHER_ERROR",
+          message: errorData.message || "Có lỗi khi áp dụng voucher. Vui lòng thử voucher khác."
+        };
+      }
+      
+      // Handle other specific errors
       throw {
         type: errorData.errorCode || 'ORDER_ERROR',
         message: errorData.message || 'Đã xảy ra lỗi khi tạo đơn hàng',
@@ -114,7 +156,6 @@ export const updateOrderStatus = async (orderId, status) => {
 export const getOrderById = async (id) => {
   try {
     const response = await axiosClient.get(`/Order/${id}`);
-    console.log("Order by ID response:", response);
     return response.data;
   } catch (error) {
     console.error(`Error fetching order with ID ${id}:`, error);

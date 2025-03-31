@@ -23,19 +23,22 @@ export const loginUser = async (credentials) => {
       throw new Error("Invalid login response - no token received");
     }
 
-    const token = response.data.data.token;
+    const responseData = response.data.data;
+    const token = responseData.token;
+    
+    // Tạo userData từ các trường trả về từ API 
     const userData = {
-      id: response.data.data.id,
-      email: response.data.data.email,
-      username: response.data.data.username,
-      role: response.data.data.role,
-      avatar: response.data.data.avatar,
-      phoneNumber: response.data.data.phoneNumber,
-      address: response.data.data.address
+      id: responseData.id,
+      email: responseData.email,
+      username: responseData.username,
+      role: responseData.role,
+      avatar: responseData.avatar,
+      phoneNumber: responseData.phoneNumber,
+      address: responseData.address
     };
 
     // Thêm log để debug
-    console.log("Login - Original Avatar URL:", userData.avatar);
+    console.log("Login - User data extracted:", userData);
     
     // Kiểm tra nếu avatar là URL Google Drive và cảnh báo
     if (userData.avatar && userData.avatar.includes('drive.google.com')) {
@@ -80,8 +83,18 @@ export const registerWithAvatar = async (userData, avatarFile) => {
     formData.append('phoneNumber', userData.phoneNumber || '');
     formData.append('address', userData.address || '');
     
+    // Thêm debug logging
+    console.log("Registration data:", {
+      username: userData.username,
+      email: userData.email,
+      phoneNumber: userData.phoneNumber,
+      address: userData.address,
+      hasAvatar: !!avatarFile
+    });
+    
     // Chỉ thêm avatar nếu có file
     if (avatarFile) {
+      console.log("Adding avatar file to FormData:", avatarFile.name, avatarFile.type, avatarFile.size + " bytes");
       formData.append('avatar', avatarFile);
     }
 
@@ -94,14 +107,45 @@ export const registerWithAvatar = async (userData, avatarFile) => {
     console.log("Sending registration with avatar request");
     const response = await axiosClient.post("/Authentication/register-with-avatar", formData, config);
     
+    // Detailed response logging
+    console.log("Registration response:", response);
+    
     // Ghi log thông tin avatar nếu có
     if (response.data && response.data.data && response.data.data.avatar) {
       console.log("Registration - New avatar URL:", response.data.data.avatar);
+    } else {
+      console.warn("No avatar URL in registration response - avatar might not have been saved");
     }
     
     return response.data;
   } catch (error) {
     console.error("Register with avatar error:", error);
-    throw error.response ? error.response.data : error.message;
+    
+    // Enhance error handling to preserve error codes
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      
+      // Log detailed error information
+      console.error("Registration error details:", {
+        status: error.response.status,
+        data: errorData,
+        errorCode: errorData.errorCode,
+        message: errorData.message
+      });
+      
+      // For 409 Conflict - duplicate email or phone
+      if (error.response.status === 409 && errorData.errorCode) {
+        throw {
+          errorCode: errorData.errorCode,
+          message: errorData.message || "Thông tin đã tồn tại trong hệ thống"
+        };
+      }
+      
+      // Other API errors
+      throw errorData;
+    }
+    
+    // Network or other unexpected errors
+    throw { message: error.message || "Lỗi kết nối đến máy chủ" };
   }
 };

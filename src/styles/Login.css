@@ -1,17 +1,5 @@
 /* Tổng thể trang đăng nhập */
-body,
-html {
-    background-color: #ffffff;
-    min-height: 100vh;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    /* Make the body full width */
-    height: 100vh;
-    /* Make the body full height */
-}
+
 
 .title-container {
     margin-top: 20px;
@@ -27,26 +15,87 @@ html {
 
 /* Container chính */
 .login-container {
-    width: 120vw;
-    /* Make the container full width */
+    width: 100%;
     height: calc(100vh - 60px);
     /* Adjust height to account for navbar */
-    margin-top: 500px;
-    /* Add margin to push below navbar */
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0;
-    /* Remove border-radius for full size */
-    background: linear-gradient(to right, #287c6a, #ffffff);
-    gap: 40px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    padding: 20px;
+    background: #f5f7fa;
+    overflow: hidden;
 }
 
-.container {
+.login-left {
+    flex: 1;
+    background: white;
+    height: 100%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.login-right {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-right img {
     width: 100%;
-    max-width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.login-header {
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 70px 20px 20px 20px;
+    width: 100%;
+}
+
+.login-logo {
+    height: 60px;
+    margin-bottom: 20px;
+}
+
+.login-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #216942;
+    margin-bottom: 0.5rem;
+}
+
+.login-header p {
+    color: #4a6f5d;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+@media (max-width: 992px) {
+    .login-container {
+        flex-direction: column-reverse;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .login-left, .login-right {
+        width: 100%;
+        flex: none;
+    }
+    
+    .login-left {
+        padding: 30px 20px;
+    }
+    
+    .login-right {
+        height: 200px;
+    }
 }
 
 /* Hộp chứa form đăng nhập */
@@ -81,50 +130,74 @@ html {
 
 /* Nhóm input */
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     text-align: left;
 }
 
 .input-group label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #34495e;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 0.95rem;
 }
 
 /* Ô nhập liệu */
 .input-group input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px !important;
+    -webkit-border-radius: 8px !important;
+    -moz-border-radius: 8px !important;
     font-size: 16px;
-    transition: border 0.3s;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    box-sizing: border-box;
+    margin: 0;
 }
 
 .input-group input:focus {
-    border: 1px solid #005f40;
+    border-color: #216942;
     outline: none;
-    box-shadow: 0 0 8px rgba(0, 95, 64, 0.3);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(33, 105, 66, 0.1);
+    border-radius: 8px !important;
+    -webkit-border-radius: 8px !important;
+    -moz-border-radius: 8px !important;
 }
 
 /* Nút đăng nhập */
 .login-button {
     width: 100%;
-    padding: 12px;
-    background: linear-gradient(to right, #007a50, #005f40);
+    padding: 14px;
+    background: linear-gradient(to right, #216942, #2e8b57);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 18px;
-    margin-top: 10px;
-    transition: 0.3s;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .login-button:hover {
-    background: linear-gradient(to right, #007a50, #005f40);
-    transform: scale(1.05);
+    background: linear-gradient(to right, #195537, #267349);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Nút đăng nhập với Google */
@@ -134,14 +207,16 @@ html {
     justify-content: center;
     gap: 10px;
     width: 100%;
-    padding: 12px;
-    background: linear-gradient(to right, #007a50, #005f40);
-    border: 2px solid #ccc;
+    padding: 14px;
+    background: white;
+    border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 10px;
-    transition: 0.3s;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #333;
 }
 
 .google-button img {
@@ -150,24 +225,104 @@ html {
 }
 
 .google-button:hover {
-    border-color: #005f40;
-    background: rgb(16, 78, 44);
+    background: #f5f5f5;
+    border-color: #ccc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Link đăng ký */
 .register-link {
-    margin-top: 10px;
+    margin-top: 25px;
+    font-size: 15px;
+    text-align: center;
+}
+
+.register-link a {
+    color: #216942;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+    color: #2e8b57;
+}
+
+/* Remember/Forgot */
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
     font-size: 14px;
 }
 
-.signup-link {
-    color: #007a50;
+.remember-forgot label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #555;
     cursor: pointer;
-    font-weight: bold;
 }
 
-.signup-link:hover {
+.remember-forgot input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
+.remember-forgot a {
+    color: #216942;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.remember-forgot a:hover {
+    color: #2e8b57;
     text-decoration: underline;
+}
+
+/* Message styling */
+.message {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #4caf50;
+}
+
+.message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #ef5350;
+}
+
+/* Separator */
+.separator {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.separator:before,
+.separator:after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+
+.separator-text {
+    margin: 0 15px;
+    color: #888;
+    font-size: 14px;
 }
 
 /* Căn chỉnh ảnh bên phải */
@@ -324,4 +479,36 @@ html {
 .input-group input:focus {
     transform: translateY(-2px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fix for any potential form styling issues */
+form.login-form {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+form.login-form .input-group input {
+    border-radius: 8px !important;
+    -webkit-border-radius: 8px !important;
+    -moz-border-radius: 8px !important;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    box-sizing: border-box;
+    margin: 0;
+    width: 100%;
+}
+
+/* Override any potential reset styles from other CSS */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    border-radius: 8px !important;
+    -webkit-border-radius: 8px !important;
+    -moz-border-radius: 8px !important;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }

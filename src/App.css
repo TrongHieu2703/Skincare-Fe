@@ -1,12 +1,24 @@
 /* Căn chỉnh tổng thể */
 #root {
-  max-width: 1200px;
-  /* Adjusted for better layout on larger screens */
+  max-width: 100%; /* Allow full width for pages that need it */
   margin: 0 auto;
-  padding: 100px 1.5rem 1.5rem;
-  /* Added top padding to accommodate fixed navbar */
+  padding: 0;
   text-align: center;
+}
 
+/* Content wrapper */
+.content-wrapper {
+  width: 100%;
+  padding-top: 0;  
+  position: relative;
+  z-index: 2;
+}
+
+/* Container for most pages except those with custom containers */
+.container.mt-4 {
+  max-width: 1200px;
+  margin: 80px auto 0; /* Add top margin to account for navbar */
+  padding: 20px;
 }
 
 /* Navbar và Footer */
@@ -109,8 +121,12 @@ button:hover {
 
 /* Responsive */
 @media (max-width: 768px) {
+  body {
+    padding-top: 80px; /* Keep consistent with navbar height */
+  }
+  
   #root {
-    padding: 1rem;
+    padding: 0 1rem 1rem;
   }
 
   .carousel {
@@ -119,13 +135,11 @@ button:hover {
 
   .main-content {
     grid-template-columns: 1fr;
-    padding-top: 180px;
-    /* Tăng padding cho mobile view */
+    padding-top: 20px; /* Reduced since body handles navbar spacing */
   }
 
   .app-wrapper {
-    padding-top: 140px;
-    /* Tăng padding cho mobile view */
+    padding-top: 0;
   }
 }
 
@@ -134,11 +148,17 @@ body {
   padding: 0;
 }
 
+.app-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+}
+
 .app-wrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 120px;
+  padding-top: 0; /* Reset since body handles the padding */
   /* Điều chỉnh theo chiều cao của navbar */
 }
 
@@ -149,4 +169,7 @@ main {
 
 .container {
   padding: 20px;
+  position: relative;
+  z-index: 2; /* Higher than navbar */
+  margin-top: 0;
 }

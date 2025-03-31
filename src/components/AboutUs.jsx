@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "/src/styles/AboutUs.css";
+import "/src/styles/AboutUs.css"; // Import CSS tách riêng
 import { FaLeaf, FaHeart, FaSeedling, FaRecycle } from 'react-icons/fa';
 
 const AboutUs = () => {
@@ -12,7 +12,7 @@ const AboutUs = () => {
     };
 
     return (
-        <section className="about-us container my-5">
+        <section className="about-us container">
             <div className="about-header">
                 <h2 className="title">
                     <FaLeaf className="title-icon" />
@@ -23,7 +23,7 @@ const AboutUs = () => {
 
             <p className="description">
                 Chúng tôi cung cấp một dòng sản phẩm chăm sóc da <strong>"tự nhiên, sạch và không chứa hóa chất độc hại"</strong>,
-                giúp bảo vệ và nuôi dưỡng làn da một cách an toàn nhất. Sản phẩm được nghiên cứu bởi đội ngũ dược sĩ, 
+                giúp bảo vệ và nuôi dưỡng làn da một cách an toàn nhất. Sản phẩm được nghiên cứu bởi đội ngũ dược sĩ,
                 phù hợp với mọi loại da, bao gồm cả da nhạy cảm, phụ nữ mang thai và trẻ em.
             </p>
 
@@ -42,7 +42,11 @@ const AboutUs = () => {
                 </div>
 
                 <div className="col-lg-4 text-center mb-4">
-                    <img src="/src/assets/images/logo.png" alt="Sản phẩm chăm sóc da" className="about-logo pulse" />
+                    <img
+                        src="/src/assets/images/logo.png"
+                        alt="Sản phẩm chăm sóc da"
+                        className="about-logo pulse"
+                    />
                 </div>
 
                 <div className="col-lg-4 text-lg-start text-center mb-4">

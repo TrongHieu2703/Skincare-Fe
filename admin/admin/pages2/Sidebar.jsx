@@ -8,10 +8,10 @@ import {
   FaBox,
   FaClipboardList,
   FaUsers,
-  FaTags,
   FaFileAlt,
   FaUserCircle,
   FaSignOutAlt,
+  FaTicketAlt,
 } from 'react-icons/fa';
 
 const Sidebar = () => {
@@ -38,14 +38,14 @@ const Sidebar = () => {
           <FaUsers className={styles.icon} />
           <span>Quản lý khách hàng</span>
         </li>
-        <li className={styles.item} onClick={() => navigate('/admin/promotions')}>
-          <FaTags className={styles.icon} />
-          <span>Quản lý khuyến mãi</span>
+        <li className={styles.item} onClick={() => navigate('/admin/vouchers')}>
+          <FaTicketAlt className={styles.icon} />
+          <span>Quản lý voucher</span>
         </li>
-        <li className={styles.item} onClick={() => navigate('/admin/content')}>
+        {/* <li className={styles.item} onClick={() => navigate('/admin/content')}>
           <FaFileAlt className={styles.icon} />
           <span>Quản lý nội dung</span>
-        </li>
+        </li> */}
       </ul>
 
       <div className={styles.accountSection}>
