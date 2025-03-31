@@ -1,0 +1,691 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  overflow-x: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #2f4858;
+}
+
+/* Success notification */
+.successNotification {
+  background-color: rgba(46, 184, 92, 0.9);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Table wrapper to control overflow */
+.tableWrapper {
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+/* Table */
+.voucherTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-size: 14px;
+}
+
+.voucherTable thead {
+  background-color: #8cc5af;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.voucherTable th {
+  padding: 12px 8px;
+  text-align: center;
+  color: #2f4858;
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 2px solid #74b095;
+}
+
+.voucherTable td {
+  padding: 12px 8px;
+  text-align: center;
+  vertical-align: middle;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.voucherTable tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Column widths */
+.voucherTable th:nth-child(1), 
+.voucherTable td:nth-child(1) { width: 5%; } /* STT */
+
+.voucherTable th:nth-child(2), 
+.voucherTable td:nth-child(2) { width: 15%; } /* Tên */
+
+.voucherTable th:nth-child(3), 
+.voucherTable td:nth-child(3) { width: 10%; } /* Mã */
+
+.voucherTable th:nth-child(4), 
+.voucherTable td:nth-child(4) { width: 12%; } /* Loại */
+
+.voucherTable th:nth-child(5), 
+.voucherTable td:nth-child(5) { width: 10%; } /* Giá trị */
+
+.voucherTable th:nth-child(6), 
+.voucherTable td:nth-child(6) { width: 12%; } /* Giá trị đơn tối thiểu */
+
+.voucherTable th:nth-child(7), 
+.voucherTable td:nth-child(7) { width: 8%; } /* Số lượng */
+
+.voucherTable th:nth-child(8), 
+.voucherTable td:nth-child(8) { width: 10%; } /* Ngày bắt đầu */
+
+.voucherTable th:nth-child(9), 
+.voucherTable td:nth-child(9) { width: 10%; } /* Ngày hết hạn */
+
+.voucherTable th:nth-child(10), 
+.voucherTable td:nth-child(10) { width: 8%; } /* Trạng thái */
+
+.voucherTable th:last-child,
+.voucherTable td:last-child { 
+  width: 100px;
+  min-width: 100px;
+} /* Thao tác */
+
+/* Truncate long text */
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  display: block;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.filtersContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filterRow:first-child {
+  width: 100%;
+}
+
+.searchBar {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 40px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #bfbfbf;
+  font-size: 16px;
+}
+
+.filterSelect {
+  min-width: 140px !important;
+  width: 23% !important;
+  height: 40px;
+  flex: 1;
+}
+
+.filterSelect :global(.ant-select-selection-placeholder),
+.filterSelect :global(.ant-select-selection-item) {
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-weight: normal !important;
+  opacity: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.filterSelect :global(.ant-select-arrow) {
+  color: #8cc5af !important;
+}
+
+.dateRangePicker {
+  width: 23% !important;
+  min-width: 140px;
+  flex: 1;
+}
+
+/* Target the DatePicker component to reduce its internal padding */
+:global(.ant-picker-range) {
+  padding: 4px 11px !important;
+}
+
+:global(.ant-picker-input) {
+  width: 42% !important;
+}
+
+:global(.ant-picker-range-separator) {
+  padding: 0 4px !important;
+}
+
+.resetButton {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 40px;
+  padding: 0 16px;
+  background: #f5f5f5;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.resetButton:hover {
+  background: #e8e8e8;
+}
+
+.addButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.addButton {
+  background-color: #52c41a;
+  border-color: #52c41a;
+  color: white;
+  height: 40px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.addButton:hover {
+  background-color: #73d13d;
+  border-color: #73d13d;
+}
+
+/* Status badges */
+.statusActive {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #f6ffed;
+  color: #52c41a;
+  border-radius: 4px;
+  border: 1px solid #b7eb8f;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusExpired {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #fff2e8;
+  color: #fa541c;
+  border-radius: 4px;
+  border: 1px solid #ffbb96;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Add new class for pending vouchers */
+.statusPending {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border-radius: 4px;
+  border: 1px solid #91d5ff;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Table actions */
+.tableActions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 0 4px;
+}
+
+.actionButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.editButton {
+  background-color: #1890ff;
+  color: white;
+  border: none;
+}
+
+.editButton:hover {
+  background-color: #40a9ff;
+}
+
+.deleteButton {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+}
+
+.deleteButton:hover {
+  background-color: #ff7875;
+}
+
+/* Loading container */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  gap: 20px;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.pageInfo {
+  font-size: 14px;
+  color: #595959;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 1000;
+  padding: 40px 20px;
+  overflow-y: auto;
+}
+
+.modal {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  color: #262626;
+  font-size: 18px;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: #8c8c8c;
+  cursor: pointer;
+  transition: color 0.3s;
+  padding: 4px;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: #595959;
+}
+
+.voucherForm {
+  padding: 24px;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .filterRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filterSelect, 
+  .dateRangePicker {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .addButtonContainer {
+    justify-content: stretch;
+  }
+  
+  .addButton {
+    width: 100%;
+  }
+  
+  .modal {
+    margin: 0;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* No data message */
+.noData {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8c8c8c;
+  font-size: 16px;
+  background: #fafafa;
+  border-radius: 4px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.table {
+  width: 100%;
+  margin-top: 16px;
+}
+
+/* Form styling */
+.formContainer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.formItem {
+  margin-bottom: 24px;
+}
+
+.formLabel {
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+/* Date picker styling */
+:global(.ant-picker) {
+  width: 100%;
+}
+
+:global(.ant-picker-range) {
+  width: 100%;
+}
+
+/* Fix date picker issues */
+:global(.ant-picker-dropdown) {
+  z-index: 1060 !important;
+}
+
+:global(.ant-picker-panel-container) {
+  background-color: white;
+  box-shadow: 0 3px 6px -4px rgba(0,0,0,0.12), 0 6px 16px 0 rgba(0,0,0,0.08), 0 9px 28px 8px rgba(0,0,0,0.05);
+  border-radius: 4px;
+}
+
+:global(.ant-picker-header-view) {
+  font-weight: 500;
+}
+
+:global(.ant-picker-date-panel .ant-picker-content th) {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+:global(.ant-picker-cell) {
+  padding: 4px 0;
+}
+
+:global(.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner) {
+  background-color: #1890ff;
+  color: white;
+}
+
+:global(.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before) {
+  border-color: #1890ff;
+}
+
+/* Table cell styling */
+:global(.ant-table-cell) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Status tag styling */
+.statusTag {
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.active {
+  background-color: #52c41a;
+  color: white;
+}
+
+.inactive {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+/* Modal styling */
+:global(.ant-modal-content) {
+  border-radius: 8px;
+}
+
+:global(.ant-modal-header) {
+  border-radius: 8px 8px 0 0;
+}
+
+/* Input group styling */
+:global(.ant-input-group) {
+  display: flex;
+  align-items: center;
+}
+
+:global(.ant-input-group .ant-input) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+:global(.ant-input-group .ant-btn) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Filter and Selects */
+:global(.ant-select-selection-placeholder) {
+  color: rgba(0, 0, 0, 0.65) !important;
+  font-weight: normal !important;
+  opacity: 1 !important;
+}
+
+:global(.ant-select-dropdown) {
+  max-width: 300px !important;
+}
+
+.datePicker {
+  min-width: 220px;
+}
+
+:global(.ant-picker-input > input::placeholder) {
+  color: rgba(0, 0, 0, 0.85) !important;
+  opacity: 1 !important;
+}
+
+.datePickerSeparator {
+  padding: 0 8px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* Truncate names properly */
+.nameCell {
+  text-align: left !important;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: relative;
+}
+
+/* Voucher code styling */
+.codeInput {
+  color: #000 !important;
+  font-weight: normal !important;
+  background-color: #f9f9f9 !important;
+}
+
+:global(.ant-form-item-control-input) {
+  min-height: auto !important;
+}
+
+:global(.ant-form-item-control-input-content) {
+  height: 100% !important;
+}
+
+:global(.ant-input[readonly]) {
+  color: rgba(0, 0, 0, 0.85) !important;
+  cursor: default !important;
+}
+
+/* Form specific date picker styles */
+.formDatePicker {
+  width: 100% !important;
+}
+
+.formDatePicker :global(.ant-picker-input) {
+  height: 32px;
+}
+
+/* Override default datepicker styles to fix the years display */
+:global(.ant-picker-dropdown) {
+  z-index: 1060 !important;
+}
+
+:global(.ant-picker-panel-container) {
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 3px 6px -4px rgba(0,0,0,0.12), 0 6px 16px 0 rgba(0,0,0,0.08), 0 9px 28px 8px rgba(0,0,0,0.05);
+}
+
+:global(.ant-picker-header) {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 12px 8px;
+}
+
+:global(.ant-picker-header-view) {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 40px;
+  text-align: center;
+}

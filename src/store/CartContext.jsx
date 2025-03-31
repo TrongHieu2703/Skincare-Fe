@@ -222,12 +222,21 @@ export const CartProvider = ({ children }) => {
       if (err.type === "INSUFFICIENT_INVENTORY" ||
           (err.response?.data?.message && (
            err.response.data.message.includes("Không đủ số lượng") ||
-           err.response.data.message.includes("hết hàng")))) {
+           err.response.data.message.includes("hết hàng"))) ||
+          (err.response?.data?.details && (
+           err.response.data.details.includes("Không đủ số lượng") ||
+           err.response.data.details.includes("hết hàng")))
+      ) {
         // Rollback the optimistic update
         await loadCartItems();
         
         // Get the actual error message from the response if available
-        const errorMessage = err.message || err.response?.data?.message || "Không đủ số lượng trong kho";
+        // Ưu tiên dùng err.message nếu đã được xử lý ở cartApi,
+        // nếu không thì check details rồi mới đến message
+        const errorMessage = err.message || 
+                            err.response?.data?.details || 
+                            err.response?.data?.message || 
+                            "Không đủ số lượng trong kho";
         
         // Re-throw with custom error type for component handling
         throw {
@@ -247,7 +256,7 @@ export const CartProvider = ({ children }) => {
       
       // Rollback the optimistic update by reloading only in case of error
       await loadCartItems();
-      throw new Error(err.response?.data?.message || "Không thể cập nhật giỏ hàng. Vui lòng thử lại.");
+      throw new Error(err.response?.data?.details || err.response?.data?.message || "Không thể cập nhật giỏ hàng. Vui lòng thử lại.");
     }
   }, [isAuthenticated, loadCartItems, cartItems, cartData]);
 

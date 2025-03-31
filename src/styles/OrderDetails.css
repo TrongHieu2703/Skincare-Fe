@@ -678,3 +678,131 @@
     display: none;
   }
 }
+
+.order-items-header .action-col,
+.order-item-row .action-col {
+  flex: 1;
+  text-align: center;
+}
+
+.review-product-btn {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.review-product-btn:hover {
+  background-color: #f57c00;
+}
+
+.review-product-btn.reviewed {
+  background-color: #8bc34a;
+  cursor: default;
+}
+
+.review-product-btn:disabled {
+  background-color: #e0e0e0;
+  color: #9e9e9e;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .order-items-header .action-col {
+    display: none;
+  }
+  
+  .order-item-row .action-col {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+  }
+  
+  .order-item-row {
+    position: relative;
+    padding-bottom: 50px;
+  }
+}
+
+@media print {
+  .action-col,
+  .review-product-btn {
+    display: none !important;
+  }
+}
+
+/* Add styles for view review button */
+.review-product-btn.view-review {
+  background-color: #2196F3;
+}
+
+.review-product-btn.view-review:hover {
+  background-color: #0b7dda;
+}
+
+/* Review View Modal Styles */
+.review-view-modal {
+  max-width: 500px;
+}
+
+.review-view-modal h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.review-view-modal .review-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.review-view-modal .star {
+  font-size: 24px;
+  margin-right: 5px;
+}
+
+.review-view-modal .star.filled {
+  color: #f8ce0b;
+}
+
+.review-view-modal .star.empty {
+  color: #d1d1d1;
+}
+
+.review-view-modal .rating-text {
+  margin-left: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.review-view-modal .review-content {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #eee;
+}
+
+.review-view-modal .review-content p {
+  margin: 0;
+  line-height: 1.5;
+  color: #333;
+}
+
+.review-view-modal .review-date {
+  color: #777;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.review-view-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+}

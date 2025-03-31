@@ -10,6 +10,7 @@
   padding: 20px;
   overflow-x: auto; /* Allow horizontal scrolling if needed */
   max-width: 100%;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -45,6 +46,7 @@ h1 {
   margin-bottom: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
 }
 
 /* Table */
@@ -53,7 +55,6 @@ h1 {
   border-collapse: collapse;
   margin: 0;
   font-size: 14px;
-  min-width: 100%;
   table-layout: fixed;
 }
 
@@ -89,52 +90,77 @@ h1 {
 /* Fixed column widths */
 .productTable th:nth-child(1), 
 .productTable td:nth-child(1) {
-  width: 50px;
+  width: 40px;
+  min-width: 40px;
 }
 
 .productTable th:nth-child(2), 
 .productTable td:nth-child(2) {
   width: 80px;
+  min-width: 80px;
 }
 
 .productTable th:nth-child(3), 
 .productTable td:nth-child(3) {
   width: 140px;
+  min-width: 140px;
 }
 
 .productTable th:nth-child(4), 
 .productTable td:nth-child(4) {
-  width: 180px;
+  width: 140px;
+  min-width: 140px;
 }
 
 .productTable th:nth-child(5), 
 .productTable td:nth-child(5) {
-  width: 100px;
+  width: 80px;
+  min-width: 80px;
 }
 
 .productTable th:nth-child(6), 
 .productTable td:nth-child(6) {
-  width: 80px;
+  width: 50px;
+  min-width: 50px;
 }
 
 .productTable th:nth-child(7), 
 .productTable td:nth-child(7) {
-  width: 120px;
+  width: 50px;
+  min-width: 50px;
 }
 
 .productTable th:nth-child(8), 
 .productTable td:nth-child(8) {
-  width: 100px;
+  width: 90px;
+  min-width: 90px;
 }
 
 .productTable th:nth-child(9), 
 .productTable td:nth-child(9) {
   width: 80px;
+  min-width: 80px;
 }
 
 .productTable th:nth-child(10), 
 .productTable td:nth-child(10) {
-  width: 100px;
+  width: 80px;
+  min-width: 80px;
+}
+
+.productTable th:nth-child(11), 
+.productTable td:nth-child(11) {
+  width: 110px;
+  min-width: 110px;
+}
+
+/* Add this to ensure the action column has appropriate space */
+.productTable th:last-child,
+.productTable td:last-child {
+  width: 120px;
+  min-width: 120px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 /* Truncate long text */
@@ -195,34 +221,43 @@ h1 {
 .actionButtons {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
-.editButton {
+.editButton, .deleteButton, .reviewButton {
   background-color: #0d6efd;
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 6px 8px;
   cursor: pointer;
   transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
 }
 
 .editButton:hover {
   background-color: #0b5ed7;
 }
 
-.deleteButton {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.reviewButton {
+  background-color: #17a2b8;
 }
 
-.deleteButton:hover {
+.reviewButton:hover {
+  background-color: #138496;
+}
+
+.deleteButton {
+  background-color: #dc3545;
+}
+
+.deleteButton:hover:not(:disabled) {
   background-color: #c82333;
 }
 
@@ -464,13 +499,49 @@ h1 {
 }
 
 /* Responsiveness */
-@media (max-width: 992px) {
-  .productTable {
-    min-width: 100%;
+@media (max-width: 1400px) {
+  .productTable th:nth-child(4), 
+  .productTable td:nth-child(4) {
+    width: 120px;
+    min-width: 120px;
   }
   
-  .truncate {
-    max-width: 120px;
+  .description {
+    -webkit-line-clamp: 1;
+    max-height: 20px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .content {
+    padding: 20px 10px;
+  }
+  
+  .productTable th,
+  .productTable td {
+    padding: 8px 4px;
+  }
+  
+  .productImage {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .modalContent {
+    width: 95%;
+    padding: 16px;
+  }
+  
+  .productTable th:nth-child(3), 
+  .productTable td:nth-child(3) {
+    width: 120px;
+    min-width: 120px;
+  }
+  
+  .productTable th:nth-child(4), 
+  .productTable td:nth-child(4) {
+    width: 100px;
+    min-width: 100px;
   }
 }
 
@@ -483,4 +554,341 @@ h1 {
   .checkboxGroup {
     flex-direction: column;
   }
+}
+
+/* Add these styles at the end of the file */
+
+.inputWithWarning {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.zeroStockInput {
+  border-color: #ff4d4f !important;
+  background-color: rgba(255, 77, 79, 0.05) !important;
+}
+
+.stockWarning {
+  margin-top: 4px;
+  color: #ff4d4f;
+  font-size: 12px;
+}
+
+.stockError {
+  margin-top: 4px;
+  color: #ff4d4f;
+  font-size: 12px;
+}
+
+.availabilityContainer {
+  display: flex;
+  align-items: center;
+}
+
+.availabilityContainer input[type="checkbox"]:disabled + label {
+  color: #999;
+  cursor: not-allowed;
+}
+
+.stockCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.outOfStock {
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.outOfStockIcon {
+  margin-left: 4px;
+  font-size: 14px;
+}
+
+.availableStatus {
+  color: #52c41a;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.unavailableStatus {
+  color: #ff4d4f;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Review Modal Styles */
+.reviewModal {
+  max-width: 800px;
+}
+
+.reviewsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.reviewItem {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.reviewUser {
+  font-size: 16px;
+  text-align: left;
+}
+
+.reviewDate {
+  color: #666;
+  font-size: 14px;
+  text-align: right;
+}
+
+.reviewRating {
+  display: flex;
+  margin-bottom: 12px;
+  gap: 4px;
+  align-items: center;
+}
+
+.starFilled {
+  color: #ffc107;
+  font-size: 18px;
+}
+
+.starEmpty {
+  color: #e4e5e9;
+  font-size: 18px;
+}
+
+.reviewComment {
+  margin-bottom: 10px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  text-align: left;
+}
+
+.reviewOrderInfo {
+  color: #666;
+  font-size: 12px;
+  margin-top: 8px;
+  text-align: left;
+}
+
+.loadingReviews, .noReviews {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  color: #666;
+}
+
+/* Rating stars in product table */
+.ratingStars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.ratingText {
+  margin-left: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.closeButton {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: #5a6268;
+}
+
+/* Filter container (holds both rows) */
+.filterContainer {
+  margin-bottom: 25px;
+}
+
+/* Filter bar (first row) */
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 16px;
+  background-color: #f9fafb;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Search bar row (second row) */
+.searchBarRow {
+  display: flex;
+  gap: 10px;
+  padding: 16px;
+  background-color: #f9fafb;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #eee;
+}
+
+/* Search input wrapper with icon */
+.searchInputWrapper {
+  position: relative;
+  flex: 1;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.searchInput {
+  width: 100%;
+  height: 42px;
+  padding: 10px 15px 10px 40px; /* Add left padding for icon */
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #555;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.searchInput:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Reset Filters Button */
+.resetFilterBtn {
+  height: 42px;
+  padding: 0 15px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.resetFilterBtn:hover {
+  background-color: #40a9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(24, 144, 255, 0.2);
+}
+
+/* Filter select dropdowns */
+.filterSelect {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 15px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s;
+  height: 42px;
+}
+
+.filterSelect:hover {
+  border-color: #1890ff;
+}
+
+.filterSelect:focus {
+  border-color: #1890ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .filterSelect {
+    flex: 1 1 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filterBar {
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 8px;
+  }
+  
+  .searchBarRow {
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
+  .filterSelect,
+  .resetFilterBtn {
+    width: 100%;
+  }
+  
+  .actionsRow {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .filterInfo {
+    text-align: center;
+  }
+}
+
+/* Actions row */
+.actionsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filterInfo {
+  font-size: 14px;
+  color: #666;
+}
+
+/* No products message */
+.noProducts {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin: 20px 0;
+  border: 1px dashed #ddd;
 }

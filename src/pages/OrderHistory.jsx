@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getOrdersByUser } from "../api/orderApi";
 import { getProductById } from "../api/productApi";
+import { getReviewsByProductId } from "../api/reviewApi";
 import { useAuth } from "../auth/AuthProvider";
-import { FaShoppingBag, FaClock, FaSpinner, FaTruck, FaCheck, FaExclamationCircle, FaCalendarAlt, FaShoppingCart, FaFilter, FaSort, FaSearch } from "react-icons/fa";
+import { FaShoppingBag, FaClock, FaSpinner, FaTruck, FaCheck, FaExclamationCircle, FaCalendarAlt, FaShoppingCart, FaFilter, FaSort, FaSearch, FaCalendar, FaStar } from "react-icons/fa";
 import "/src/styles/OrderHistoryV2.css";
 import { formatProductImageUrl, handleImageError } from "../utils/imageUtils";
 
@@ -12,66 +13,145 @@ import { formatProductImageUrl, handleImageError } from "../utils/imageUtils";
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
+  const [paginatedOrders, setPaginatedOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [productDetails, setProductDetails] = useState({});
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
+  // Add date filter states
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [yearFilter, setYearFilter] = useState("");
+  const [monthFilter, setMonthFilter] = useState("");
+  // Track reviewed products
+  const [reviewedProducts, setReviewedProducts] = useState({});
+  
+  // Pagination states
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 5,
+    totalPages: 1,
+    totalItems: 0
+  });
+  
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading, user } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Only redirect if auth is not loading and user is not authenticated
+    if (!authLoading && !isAuthenticated) {
       navigate("/login", { state: { from: "/order-history" } });
       return;
     }
 
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        const ordersData = await getOrdersByUser();
-        console.log("Orders data received:", ordersData);
-        
-        if (Array.isArray(ordersData)) {
-          // Sort orders by updatedAt date, most recent first
-          const sortedOrders = [...ordersData].sort((a, b) => 
-            new Date(b.updatedAt) - new Date(a.updatedAt)
-          );
-          setOrders(sortedOrders);
-          setFilteredOrders(sortedOrders);
+    // Only fetch orders if authenticated and auth loading is complete
+    if (isAuthenticated && !authLoading) {
+      const fetchOrders = async () => {
+        try {
+          setLoading(true);
+          const ordersData = await getOrdersByUser();
+          console.log("Orders data received:", ordersData);
           
-          // Fetch product details for items with missing info
-          const productIds = new Set();
-          sortedOrders.forEach(order => {
-            if (order.orderItems) {
-              order.orderItems.forEach(item => {
-                if (item.productId && (!item.productPrice || item.productPrice === 0)) {
-                  productIds.add(item.productId);
-                }
-              });
+          if (Array.isArray(ordersData)) {
+            // Sort orders by updatedAt date, most recent first
+            const sortedOrders = [...ordersData].sort((a, b) => 
+              new Date(b.updatedAt) - new Date(a.updatedAt)
+            );
+            setOrders(sortedOrders);
+            
+            // Initialize pagination
+            const totalItems = sortedOrders.length;
+            const totalPages = Math.ceil(totalItems / pagination.pageSize);
+            setPagination(prev => ({
+              ...prev,
+              totalItems,
+              totalPages
+            }));
+            
+            // Fetch product details for items with missing info
+            const productIds = new Set();
+            sortedOrders.forEach(order => {
+              if (order.orderItems) {
+                order.orderItems.forEach(item => {
+                  if (item.productId && (!item.productPrice || item.productPrice === 0)) {
+                    productIds.add(item.productId);
+                  }
+                });
+              }
+            });
+            
+            fetchProductDetails(Array.from(productIds));
+            
+            // Check for reviewed products in delivered orders
+            const completedOrders = sortedOrders.filter(order => 
+              order.status && (order.status.toLowerCase() === 'completed' || order.status.toLowerCase() === 'delivered')
+            );
+            
+            if (completedOrders.length > 0) {
+              await checkReviewedProducts(completedOrders);
             }
-          });
-          
-          fetchProductDetails(Array.from(productIds));
-        } else {
-          console.error("Expected an array of orders but received:", ordersData);
-          setOrders([]);
-          setFilteredOrders([]);
+          } else {
+            console.error("Expected an array of orders but received:", ordersData);
+            setOrders([]);
+            setFilteredOrders([]);
+          }
+        } catch (err) {
+          console.error("Error fetching orders:", err);
+          setError(err.message || "Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.");
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-        setError(err.message || "Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.");
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchOrders();
-  }, [isAuthenticated, navigate]);
-  
-  // Apply filters and sorting
+      fetchOrders();
+    }
+  }, [isAuthenticated, navigate, authLoading, user]);
+
+  // Apply filters and pagination
   useEffect(() => {
+    if (orders.length === 0) return;
+    
+    applyFiltersAndPagination();
+  }, [orders, statusFilter, sortBy, searchTerm, startDate, endDate, pagination.currentPage, pagination.pageSize]);
+  
+  // Check which products have been reviewed by the user
+  const checkReviewedProducts = async (completedOrders) => {
+    if (!user || !user.id) return;
+    
+    try {
+      const reviewedMap = {};
+      
+      for (const order of completedOrders) {
+        if (order.orderItems && order.orderItems.length > 0) {
+          for (const item of order.orderItems) {
+            const productId = item.productId;
+            
+            if (productId) {
+              const reviews = await getReviewsByProductId(productId);
+              
+              if (reviews && reviews.data) {
+                // Check if this user has already reviewed this product for this specific order item
+                const hasReviewed = reviews.data.some(
+                  review => review.customerId === user.id && review.orderDetailId === item.id
+                );
+                
+                // Store the review status by order item ID
+                reviewedMap[item.id] = hasReviewed;
+              }
+            }
+          }
+        }
+      }
+      
+      setReviewedProducts(reviewedMap);
+    } catch (error) {
+      console.error("Error checking reviewed products:", error);
+    }
+  };
+  
+  const applyFiltersAndPagination = () => {
     let result = [...orders];
     
     // Apply status filter
@@ -97,13 +177,47 @@ const OrderHistory = () => {
       });
     }
     
+    // Apply date range filter - now supports filtering with only one date field
+    if (startDate || endDate) {
+      result = result.filter(order => {
+        const orderDate = new Date(order.updatedAt);
+        
+        // If only start date is provided, filter orders after that date
+        if (startDate && !endDate) {
+          const start = new Date(startDate);
+          start.setHours(0, 0, 0, 0);
+          return orderDate >= start;
+        }
+        
+        // If only end date is provided, filter orders before that date
+        if (!startDate && endDate) {
+          const end = new Date(endDate);
+          end.setHours(23, 59, 59, 999);
+          return orderDate <= end;
+        }
+        
+        // If both dates are provided, filter orders between those dates
+        if (startDate && endDate) {
+          const start = new Date(startDate);
+          start.setHours(0, 0, 0, 0);
+          
+          const end = new Date(endDate);
+          end.setHours(23, 59, 59, 999);
+          
+          return orderDate >= start && orderDate <= end;
+        }
+        
+        return true;
+      });
+    }
+    
     // Apply sorting
     switch (sortBy) {
       case "newest":
         result.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
         break;
       case "oldest":
-        result.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
+        result.sort((a, b) => new Date(a.updatedAt) - new Date(a.updatedAt));
         break;
       case "highest-price":
         result.sort((a, b) => b.totalAmount - a.totalAmount);
@@ -115,8 +229,25 @@ const OrderHistory = () => {
         break;
     }
     
+    // Save filtered orders
     setFilteredOrders(result);
-  }, [orders, statusFilter, sortBy, searchTerm]);
+    
+    // Update pagination details based on filtered results
+    const totalItems = result.length;
+    const totalPages = Math.ceil(totalItems / pagination.pageSize);
+    
+    setPagination(prev => ({
+      ...prev,
+      totalItems,
+      totalPages: totalPages || 1 // Ensure at least 1 page
+    }));
+    
+    // Apply pagination
+    const startIndex = (pagination.currentPage - 1) * pagination.pageSize;
+    const paginatedResult = result.slice(startIndex, startIndex + pagination.pageSize);
+    
+    setPaginatedOrders(paginatedResult);
+  };
   
   // Fetch product details for products with missing info
   const fetchProductDetails = async (productIds) => {
@@ -142,6 +273,56 @@ const OrderHistory = () => {
     }
     
     setProductDetails(details);
+  };
+
+  // Check if an order is delivered/completed and can have product reviews
+  const isOrderCompletedOrDelivered = (status) => {
+    if (!status) return false;
+    const statusLower = status.toLowerCase();
+    return statusLower === 'completed' || statusLower === 'delivered';
+  };
+  
+  // Check if a specific order item has been reviewed
+  const isProductReviewed = (itemId) => {
+    return reviewedProducts[itemId] === true;
+  };
+  
+  // Handle navigating to order details with a specific intent to review
+  const handleViewWithReviewIntent = (orderId, shouldReview = false) => {
+    if (orderId) {
+      navigate(`/order/${orderId}`, {
+        state: {
+          reviewIntent: shouldReview
+        }
+      });
+    } else {
+      console.error("Invalid orderId:", orderId);
+    }
+  };
+
+  // Generate year options
+  const getYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let i = currentYear; i >= currentYear - 3; i--) {
+      years.push(i);
+    }
+    return years;
+  };
+
+  // Get month name
+  const getMonthName = (monthNumber) => {
+    const months = [
+      "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+      "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+    ];
+    return months[monthNumber - 1];
+  };
+
+  // Reset all date/time filters
+  const resetDateFilters = () => {
+    setStartDate("");
+    setEndDate("");
   };
 
   const formatDate = (dateString) => {
@@ -186,7 +367,6 @@ const OrderHistory = () => {
   const getStatusLabel = (status) => {
     if (!status) return "Đang xử lý";
     switch (status.toLowerCase()) {
-      case "completed": 
       case "delivered": return "Đã giao hàng";
       case "shipped": return "Đang giao hàng";
       case "processing": return "Đang xử lý";
@@ -236,11 +416,128 @@ const OrderHistory = () => {
     // Safely extract product data with fallbacks
     return {
       id: item.productId || 0,
+      orderItemId: item.id,
       name: item.productName || (productDetail?.name) || `Sản phẩm #${item.productId}`,
       price: item.productPrice || (productDetail?.price) || 0,
       quantity: item.itemQuantity || 1,
-      image: imageSource
+      image: imageSource,
+      reviewed: isProductReviewed(item.id)
     };
+  };
+
+  // Update the reset function to reset all filters
+  const resetAllFilters = () => {
+    setStatusFilter("all");
+    setSortBy("newest");
+    setSearchTerm("");
+    setStartDate("");
+    setEndDate("");
+    
+    // Reset to first page
+    setPagination(prev => ({
+      ...prev,
+      currentPage: 1
+    }));
+  };
+  
+  // Handle page change for pagination
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages && newPage !== pagination.currentPage) {
+      setPagination(prev => ({
+        ...prev,
+        currentPage: newPage
+      }));
+    }
+  };
+  
+  // Handle page size change
+  const handlePageSizeChange = (e) => {
+    const newSize = parseInt(e.target.value, 10);
+    setPagination(prev => ({
+      ...prev,
+      pageSize: newSize,
+      currentPage: 1, // Reset to first page when changing page size
+      totalPages: Math.ceil(prev.totalItems / newSize)
+    }));
+  };
+  
+  // Pagination component
+  const Pagination = () => {
+    if (pagination.totalPages <= 1) return null;
+    
+    const maxPageButtons = 5; // Max number of page buttons to show
+    let startPage = Math.max(1, pagination.currentPage - Math.floor(maxPageButtons / 2));
+    let endPage = Math.min(pagination.totalPages, startPage + maxPageButtons - 1);
+    
+    // Adjust if we're near the end
+    if (endPage - startPage + 1 < maxPageButtons) {
+      startPage = Math.max(1, endPage - maxPageButtons + 1);
+    }
+    
+    const pageButtons = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageButtons.push(
+        <button
+          key={i}
+          className={`pagination-button ${i === pagination.currentPage ? 'active-page' : ''}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    
+    return (
+      <div className="pagination-container">
+        <div className="pagination-controls">
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange(1)}
+            disabled={pagination.currentPage === 1}
+          >
+            &laquo;
+          </button>
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange(pagination.currentPage - 1)}
+            disabled={pagination.currentPage === 1}
+          >
+            &lsaquo;
+          </button>
+          
+          {pageButtons}
+          
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange(pagination.currentPage + 1)}
+            disabled={pagination.currentPage === pagination.totalPages}
+          >
+            &rsaquo;
+          </button>
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange(pagination.totalPages)}
+            disabled={pagination.currentPage === pagination.totalPages}
+          >
+            &raquo;
+          </button>
+        </div>
+        
+        <div className="page-size-selector">
+          <span>Hiển thị:</span>
+          <select
+            value={pagination.pageSize}
+            onChange={handlePageSizeChange}
+            className="page-size-select"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+          </select>
+          <span>đơn hàng / trang</span>
+        </div>
+      </div>
+    );
   };
 
   // Loading state
@@ -348,12 +645,43 @@ const OrderHistory = () => {
                 <option value="lowest-price">Giá thấp nhất</option>
               </select>
             </div>
+            
+            <div className="date-range-filter">
+              <div className="date-filter-title">
+                <FaCalendar />
+                <span>Thời gian:</span>
+              </div>
+              <div className="date-inputs">
+                <input 
+                  type="date" 
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="date-input"
+                />
+                <span className="date-separator">đến</span>
+                <input 
+                  type="date" 
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="date-input"
+                />
+              </div>
+            </div>
+            
+            {(statusFilter !== "all" || sortBy !== "newest" || searchTerm || startDate || endDate) && (
+              <button 
+                className="reset-filters-button filter-button"
+                onClick={resetAllFilters}
+              >
+                Xóa bộ lọc
+              </button>
+            )}
           </div>
         </div>
 
         {/* Orders count indicator */}
         <div className="order-count">
-          Hiển thị {filteredOrders.length} / {orders.length} đơn hàng
+          Hiển thị {paginatedOrders.length} / {pagination.totalItems} đơn hàng
         </div>
 
         {/* Filtered orders warning */}
@@ -361,18 +689,14 @@ const OrderHistory = () => {
           <div className="no-matching-orders">
             <FaExclamationCircle />
             <p>Không tìm thấy đơn hàng nào phù hợp với bộ lọc. Vui lòng thử lại với điều kiện khác.</p>
-            <button onClick={() => {
-              setStatusFilter('all');
-              setSortBy('newest');
-              setSearchTerm('');
-            }} className="reset-filters-button">
-              Xóa bộ lọc
+            <button onClick={resetAllFilters} className="reset-filters-button">
+              Xóa tất cả bộ lọc
             </button>
           </div>
         )}
 
         <div className="orderv2-list">
-          {filteredOrders.map((order) => {
+          {paginatedOrders.map((order) => {
             // Safely extract data from order with fallbacks
             const totalAmount = order.totalAmount || 0;
             const items = order.orderItems || [];
@@ -381,6 +705,7 @@ const OrderHistory = () => {
             const orderDate = order.updatedAt || new Date();
             const status = order.status || "pending";
             const discount = order.discountPrice || 0;
+            const canReview = isOrderCompletedOrDelivered(status);
 
             return (
               <div key={order.id} className="orderv2-card">
@@ -415,6 +740,24 @@ const OrderHistory = () => {
                               loading="lazy"
                               data-product-id={product.id}
                             />
+                            {canReview && (
+                              <div className={`review-status ${product.reviewed ? 'reviewed' : ''}`}>
+                                {product.reviewed ? (
+                                  <FaStar className="star-icon" title="Đã đánh giá" />
+                                ) : (
+                                  <button 
+                                    className="need-review-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleViewWithReviewIntent(order.id, true);
+                                    }}
+                                    title="Đánh giá sản phẩm"
+                                  >
+                                    <FaStar className="star-icon" />
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </div>
                           <div className="product-details">
                             <p className="product-name">{product.name}</p>
@@ -469,6 +812,9 @@ const OrderHistory = () => {
             );
           })}
         </div>
+        
+        {/* Pagination */}
+        {filteredOrders.length > 0 && <Pagination />}
       </div>
     </div>
   );

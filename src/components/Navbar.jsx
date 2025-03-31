@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUserCircle, FaHistory, FaTrash, FaSpinner } from "react-icons/fa";
 import { searchProducts } from "../api/productApi";
 import { useCart } from "../store/CartContext";
 import { useAuth } from "../auth/AuthProvider";
-import { formatProductImageUrl } from "../utils/imageUtils";
+import { formatProductImageUrl, handleImageError } from "../utils/imageUtils";
+import { API_BASE_URL } from "../api/axiosClient";
 import "/src/styles/Navbar.css";
 
 const Navbar = () => {
@@ -24,7 +25,10 @@ const Navbar = () => {
     
     // Use cart context instead of local state
     const { cartItems, cartData, subtotal, formatPrice, removeCartItem } = useCart();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user: authUser } = useAuth();
+    
+    // Ref để theo dõi lần render đầu tiên
+    const firstRender = useRef(true);
 
     // Add scroll listener to change navbar style on scroll
     useEffect(() => {
@@ -47,55 +51,29 @@ const Navbar = () => {
         console.log("Navbar - cartCount:", cartItems.length);
     }, [cartItems]);
 
+    // Cập nhật user từ auth context khi có thay đổi
     useEffect(() => {
-        const loggedUser = localStorage.getItem("user");
-        const token = localStorage.getItem("token");
-
-        if (loggedUser && token) {
-            try {
-                const parsedUser = JSON.parse(loggedUser);
-                console.log("Navbar - User from localStorage:", parsedUser);
-                console.log("Navbar - Avatar URL:", parsedUser.avatar);
-                setUser(parsedUser);
-            } catch (error) {
-                console.error("Error parsing user data:", error);
-                localStorage.removeItem("user");
-                localStorage.removeItem("token");
-                setUser(null);
-            }
+        console.log("Auth user changed:", authUser);
+        if (authUser) {
+            setUser(authUser);
+            setAvatarError(false); // Reset avatar error when auth user changes
         } else {
             setUser(null);
         }
-    }, [location, isAuthenticated]);
+    }, [authUser]);
 
     // Thêm event listener để cập nhật khi profile được sửa
     useEffect(() => {
         const handleProfileUpdate = () => {
-            const loggedUser = localStorage.getItem("user");
-            const token = localStorage.getItem("token");
-
-            if (loggedUser && token) {
-                try {
-                    const parsedUser = JSON.parse(loggedUser);
-                    console.log("Navbar update after profile change - New avatar:", parsedUser.avatar);
-                    // Force re-render với một đối tượng mới
-                    setUser({...parsedUser});
-                    // Reset avatar error khi có cập nhật mới
-                    setAvatarError(false);
-                } catch (error) {
-                    console.error("Error parsing user data:", error);
-                }
-            }
+            console.log("Navbar detected profile update event");
+            setAvatarError(false); // Reset avatar error when profile is updated
         };
 
         // Lắng nghe custom event
         window.addEventListener('user-profile-updated', handleProfileUpdate);
-        // Vẫn giữ lại storage event để xử lý các thay đổi khác
-        window.addEventListener('storage', handleProfileUpdate);
         
         return () => {
             window.removeEventListener('user-profile-updated', handleProfileUpdate);
-            window.removeEventListener('storage', handleProfileUpdate);
         };
     }, []);
 
@@ -177,10 +155,12 @@ const Navbar = () => {
             if (searchTerm.trim()) {
                 setIsSearching(true);
                 try {
-                    console.log(`Searching for: ${searchTerm}`); // Log the search term
+                    console.log(`Searching for: "${searchTerm}"`);
                     const response = await searchProducts(searchTerm);
-                    console.log('Search response:', response); // Log the response
-                    const results = response.data; // Extract the 'data' field
+                    console.log('Processed search response:', response);
+                    
+                    // Use the new response format
+                    const results = response.data;
                     setSearchResults(Array.isArray(results) ? results : []);
                     setShowSearchResults(true);
                 } catch (error) {
@@ -224,9 +204,7 @@ const Navbar = () => {
         if (avatarPath.startsWith("/avatar-images/")) {
             // Thêm timestamp để tránh cache browser
             const timestamp = new Date().getTime();
-            // Sử dụng API_BASE_URL từ .env
-            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "https://localhost:7290";
-            return `${apiBaseUrl}${avatarPath}?t=${timestamp}`;
+            return `${API_BASE_URL}${avatarPath}?t=${timestamp}`;
         }
         
         // Nếu là ảnh Google Drive, sử dụng ảnh mặc định
@@ -295,9 +273,14 @@ const Navbar = () => {
                                         onClick={() => handleSearchResultClick(product.id)}
                                     >
                                         <img
-                                            src={product.image || '/placeholder.png'}
+                                            src={formatProductImageUrl(product.image)}
                                             alt={product.name}
                                             className="search-result-image"
+                                            onError={(e) => handleImageError(e, "/src/assets/images/aboutus.jpg")}
+                                            loading="lazy"
+                                            width="100"
+                                            height="100"
+                                            style={{ objectFit: 'cover' }}
                                         />
                                         <div className="search-result-info">
                                             <div className="search-result-name">{product.name}</div>
@@ -355,10 +338,11 @@ const Navbar = () => {
                                                         <img 
                                                             src={formatProductImageUrl(item.productImage)} 
                                                             alt={item.productName}
-                                                            onError={(e) => {
-                                                                e.target.onerror = null;
-                                                                e.target.src = "/src/assets/images/placeholder.png";
-                                                            }}
+                                                            onError={(e) => handleImageError(e, "/src/assets/images/aboutus.jpg")}
+                                                            loading="lazy"
+                                                            width="60"
+                                                            height="60"
+                                                            style={{ objectFit: 'cover' }}
                                                         />
                                                     </div>
                                                     <div className="item-details">
