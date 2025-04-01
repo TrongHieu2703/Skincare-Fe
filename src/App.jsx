@@ -107,7 +107,7 @@ const AppContent = memo(function AppContent() {
         </div>
       </div>
 
-      <Footer />
+      {!isAdminPage && !isStaffPage && <Footer />}
     </div>
   );
 });
