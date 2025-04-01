@@ -52,7 +52,7 @@ const OrderDetails = () => {
 
           const orderData = await getOrderDetail(orderIdToFetch);
           setOrder(orderData);
-          
+
           // Check for any existing reviews for this order's products
           if (orderData && orderData.items && orderData.items.length > 0) {
             await fetchProductReviews(orderData.items);
@@ -74,23 +74,23 @@ const OrderDetails = () => {
     if (!user || !user.id) {
       return;
     }
-    
+
     try {
       // Tạo mảng mới để lưu trữ kết quả
       const reviewedProductIds = [];
       const reviewsData = {};
-      
+
       // Check each order item directly with API endpoint
       for (const item of orderItems) {
         const orderItemId = Number(item.id);
-        
+
         try {
           const reviewCheck = await checkReviewExistsByOrderItem(orderItemId);
-          
+
           if (reviewCheck.exists && reviewCheck.review) {
             // Add to list of reviewed products (as Number for consistency)
             reviewedProductIds.push(orderItemId);
-            
+
             // Store review data with string key (for consistent object access)
             const reviewKey = String(orderItemId);
             reviewsData[reviewKey] = reviewCheck.review;
@@ -99,7 +99,7 @@ const OrderDetails = () => {
           console.error(`Error checking review for order item ${orderItemId}:`, error);
         }
       }
-      
+
       // Directly update state (both at once to maintain consistency)
       setReviewedProducts(reviewedProductIds);
       setUserReviews(reviewsData);
@@ -107,11 +107,11 @@ const OrderDetails = () => {
       console.error("Error checking product reviews:", error);
     }
   };
-  
+
   // Sử dụng một useEffect riêng để đảm bảo khi token thay đổi, fetch lại review
   useEffect(() => {
     const token = localStorage.getItem('token');
-    
+
     // Nếu đã có token và đã có order data, refetch reviews
     if (token && order && order.items && order.items.length > 0) {
       fetchProductReviews(order.items);
@@ -161,7 +161,7 @@ const OrderDetails = () => {
       if (!token) {
         return;
       }
-      
+
       // Use fetch API directly to bypass any potential issues with axiosClient
       const response = await fetch(`https://localhost:7290/api/Review/order-item/${orderItemId}`, {
         method: 'GET',
@@ -170,13 +170,13 @@ const OrderDetails = () => {
           'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         return;
       }
-      
+
       const data = await response.json();
-      
+
       if (data.exists && data.data) {
         // Update state directly
         setReviewedProducts(prevItems => {
@@ -185,7 +185,7 @@ const OrderDetails = () => {
           }
           return prevItems;
         });
-        
+
         setUserReviews(prev => {
           const key = String(orderItemId);
           if (!(key in prev)) {
@@ -193,7 +193,7 @@ const OrderDetails = () => {
           }
           return prev;
         });
-        
+
         return true;
       } else {
         return false;
@@ -203,7 +203,7 @@ const OrderDetails = () => {
       return false;
     }
   };
-  
+
   // Effect để force check các order items sau khi component mount hoàn toàn
   useEffect(() => {
     // Chỉ chạy khi đã có order data và order.items
@@ -215,7 +215,7 @@ const OrderDetails = () => {
           await forceCheckOrderItem(item.id);
         }
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [order, isAuthenticated, authLoading]);
@@ -281,24 +281,24 @@ const OrderDetails = () => {
   const navigateToHome = () => {
     navigate('/');
   };
-  
+
   const navigateToProductDetails = (productId) => {
     navigate(`/product/${productId}`);
   };
-  
+
   const handleReviewProduct = (item) => {
     setSelectedProduct(item);
     setIsReviewModalOpen(true);
   };
-  
+
   const handleViewReview = (item) => {
     // Convert to number for consistent lookup
     const numericItemId = Number(item.id);
-    
+
     // Look up review using string key for object access
     const stringKey = String(numericItemId);
     const reviewData = userReviews[stringKey];
-    
+
     if (reviewData) {
       setSelectedProduct(item);
       setSelectedReview(reviewData);
@@ -307,13 +307,13 @@ const OrderDetails = () => {
       console.error(`No review data found for item ${numericItemId}`);
     }
   };
-  
+
   const handleReviewSubmitted = (reviewData) => {
     // Make sure we have the proper data
     if (reviewData && selectedProduct) {
       // Convert to number to ensure consistent types
       const itemId = Number(selectedProduct.id);
-      
+
       // Add the reviewed product to the list if not already there
       setReviewedProducts(prev => {
         if (prev.includes(itemId)) {
@@ -321,13 +321,13 @@ const OrderDetails = () => {
         }
         return [...prev, itemId];
       });
-      
+
       // Also add the review data to userReviews
       setUserReviews(prev => ({
         ...prev,
         [itemId]: reviewData
       }));
-      
+
       // Refresh the review data for all products to ensure our state is updated
       if (order && order.items) {
         setTimeout(() => {
@@ -336,29 +336,29 @@ const OrderDetails = () => {
       }
     }
   };
-  
+
   const isOrderDeliveredOrCompleted = () => {
     if (!order || !order.status) return false;
     const status = order.status.toLowerCase();
     return status === 'completed' || status === 'delivered';
   };
-  
+
   const canReviewProduct = (item) => {
     // Only allow reviews for delivered/completed orders and products not already reviewed
     return isOrderDeliveredOrCompleted() && !reviewedProducts.includes(item.id);
   };
-  
+
   const isProductReviewed = (itemId) => {
     // Convert to number for consistent comparison
     const numericItemId = Number(itemId);
-    
+
     // Kiểm tra trong reviewedProducts array
     const isReviewed = reviewedProducts.includes(numericItemId);
-    
+
     // Kiểm tra cả trong userReviews object (backup check)
     const stringKey = String(numericItemId);
     const hasReviewData = stringKey in userReviews;
-    
+
     // Return true nếu có trong reviewedProducts array hoặc trong userReviews object
     return isReviewed || hasReviewData;
   };
@@ -500,7 +500,7 @@ const OrderDetails = () => {
                   const product = getProductInfo(item.productId);
                   const productImage = item.productImage || 'placeholder.jpg';
                   const imageUrl = formatProductImageUrl(productImage);
-                  
+
                   // Kiểm tra review status cho mỗi item
                   const itemId = Number(item.id);
                   const hasBeenReviewed = isProductReviewed(itemId);
@@ -508,8 +508,8 @@ const OrderDetails = () => {
                   return (
                     <div className="order-item-row" key={index}>
                       <div className="item-col product-col">
-                        <div 
-                          className="product-info" 
+                        <div
+                          className="product-info"
                           onClick={() => navigateToProductDetails(item.productId)}
                           style={{ cursor: 'pointer' }}
                         >
@@ -539,14 +539,14 @@ const OrderDetails = () => {
                       {isOrderDeliveredOrCompleted() && (
                         <div className="item-col action-col">
                           {hasBeenReviewed ? (
-                            <button 
+                            <button
                               className="review-product-btn view-review"
                               onClick={() => handleViewReview(item)}
                             >
                               Xem đánh giá
                             </button>
                           ) : (
-                            <button 
+                            <button
                               className="review-product-btn"
                               onClick={() => handleReviewProduct(item)}
                             >
@@ -591,7 +591,11 @@ const OrderDetails = () => {
                 )}
                 <div className="summary-row total">
                   <span>Tổng thanh toán:</span>
-                  <span>{formatPrice(order.totalAmount || (order.totalPrice + 30000))}</span>
+                  <span>
+                    {formatPrice(
+                      (order.totalPrice || 0) + 30000 - (order.discountPrice || 0)
+                    )}
+                  </span>
                 </div>
 
                 {order.voucher && (
@@ -609,10 +613,11 @@ const OrderDetails = () => {
                 )}
               </div>
             </div>
+
           </div>
         </div>
       </div>
-      
+
       {/* Review Modal */}
       {selectedProduct && (
         <ReviewModal
@@ -625,7 +630,7 @@ const OrderDetails = () => {
           onReviewSubmitted={handleReviewSubmitted}
         />
       )}
-      
+
       {/* View Review Modal */}
       {selectedReview && (
         <ViewReviewModal
