@@ -10,8 +10,6 @@ export const getAllVouchers = async () => {
         console.log("Fetching vouchers from API:", VOUCHER_API_URL);
         const response = await axiosClient.get(VOUCHER_API_URL);
         console.log("Raw voucher response:", response);
-<<<<<<< Updated upstream
-=======
         
         // Check for shipping vouchers in the response
         if (response && response.data && response.data.data) {
@@ -21,7 +19,6 @@ export const getAllVouchers = async () => {
             console.log("Shipping vouchers in getAllVouchers response:", shippingVouchers);
         }
         
->>>>>>> Stashed changes
         return response;  // Return the full response to handle in the component
     } catch (error) {
         console.error('Error fetching vouchers:', error);
@@ -99,8 +96,6 @@ export const deleteVoucher = async (voucherId) => {
     }
 };
 
-<<<<<<< Updated upstream
-=======
 // Add a helper function to parse voucher data consistently
 const parseVoucherData = (response) => {
   let vouchers = [];
@@ -126,7 +121,6 @@ const parseVoucherData = (response) => {
   return vouchers;
 };
 
->>>>>>> Stashed changes
 /**
  * Lấy voucher có sẵn (Customer)
  */
@@ -134,10 +128,6 @@ export const getAvailableVouchers = async () => {
     try {
         console.log("Fetching available vouchers from API:", VOUCHER_API_URL + "/available");
         const response = await axiosClient.get(`${VOUCHER_API_URL}/available`);
-<<<<<<< Updated upstream
-        console.log("Available vouchers response:", response);
-        return response;
-=======
         console.log("Available vouchers raw response:", response);
         
         // Parse voucher data consistently
@@ -158,7 +148,6 @@ export const getAvailableVouchers = async () => {
                 data: vouchers 
             } 
         };
->>>>>>> Stashed changes
     } catch (error) {
         console.error('Error fetching available vouchers:', error);
         
@@ -170,31 +159,6 @@ export const getAvailableVouchers = async () => {
                 const allVouchersResponse = await axiosClient.get(VOUCHER_API_URL);
                 console.log("Fallback vouchers response:", allVouchersResponse);
                 
-<<<<<<< Updated upstream
-                if (allVouchersResponse && allVouchersResponse.data) {
-                    const vouchersData = Array.isArray(allVouchersResponse.data) 
-                      ? allVouchersResponse.data 
-                      : (allVouchersResponse.data.data || []);
-                    
-                    // Client-side filtering of available vouchers
-                    const now = new Date();
-                    const availableVouchers = vouchersData.filter(v => {
-                        const expiredAt = new Date(v.expiredAt);
-                        const startedAt = new Date(v.startedAt);
-                        return (expiredAt > now) && 
-                               (startedAt <= now) && 
-                               (v.isInfinity || v.quantity > 0);
-                    });
-                    
-                    console.log("Client-side filtered vouchers:", availableVouchers);
-                    return { 
-                        data: { 
-                            message: "Fetched available vouchers with client-side filtering", 
-                            data: availableVouchers 
-                        } 
-                    };
-                }
-=======
                 const allVouchers = parseVoucherData(allVouchersResponse);
                 
                 // Client-side filtering of available vouchers
@@ -246,7 +210,6 @@ export const getAvailableVouchers = async () => {
                         data: availableVouchers 
                     } 
                 };
->>>>>>> Stashed changes
             } catch (fallbackError) {
                 console.error('Error in fallback voucher fetch:', fallbackError);
             }

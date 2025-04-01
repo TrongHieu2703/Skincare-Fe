@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styles from "./VoucherManager.module.css";
 import Sidebar from "./Sidebar";
-<<<<<<< Updated upstream
-import { FaEdit, FaTrash, FaPlus, FaTicketAlt, FaSearch, FaFilter, FaRedo, FaSort } from "react-icons/fa";
-=======
 import { FaEdit, FaTrash, FaPlus, FaTicketAlt, FaSearch, FaFilter, FaRedo, FaSort, FaCalendar } from "react-icons/fa";
->>>>>>> Stashed changes
 import { message, Button, Form, Input, Select, DatePicker, InputNumber, Checkbox, Spin, Tooltip } from "antd";
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
@@ -48,12 +44,8 @@ const VoucherManager = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [voucherTypeFilter, setVoucherTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-<<<<<<< Updated upstream
-  const [dateRangeFilter, setDateRangeFilter] = useState(null);
-=======
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
->>>>>>> Stashed changes
   const [sortOption, setSortOption] = useState("dateDesc");
 
   // Success notification
@@ -63,13 +55,10 @@ const VoucherManager = () => {
   // Add state for delete confirmation modal
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, voucherId: null, voucherName: '' });
 
-<<<<<<< Updated upstream
-=======
   // Add these lines at the beginning of the component
   const [formStartDate, setFormStartDate] = useState("");
   const [formEndDate, setFormEndDate] = useState("");
 
->>>>>>> Stashed changes
   // Voucher types mapping
   const voucherTypes = {
     "percentage": "Giảm theo phần trăm",
@@ -113,11 +102,7 @@ const VoucherManager = () => {
     } else {
       fetchVouchers();
     }
-<<<<<<< Updated upstream
-  }, [searchKeyword, voucherTypeFilter, statusFilter, dateRangeFilter, sortOption, isAuthenticated, authLoading]);
-=======
   }, [searchKeyword, voucherTypeFilter, statusFilter, startDate, endDate, sortOption, isAuthenticated, authLoading]);
->>>>>>> Stashed changes
 
   // Fetch vouchers
   const fetchVouchers = async () => {
@@ -188,11 +173,7 @@ const VoucherManager = () => {
     }
     
     // Return original list if no filters are applied
-<<<<<<< Updated upstream
-    if (!searchKeyword && !voucherTypeFilter && !statusFilter && !dateRangeFilter && !sortOption) {
-=======
     if (!searchKeyword && !voucherTypeFilter && !statusFilter && !startDate && !endDate && !sortOption) {
->>>>>>> Stashed changes
       return voucherList;
     }
 
@@ -214,20 +195,9 @@ const VoucherManager = () => {
       } else if (voucherTypeFilter === "fixed") {
         filtered = filtered.filter(voucher => voucher.isPercent === false && voucher.value > 0);
       } else if (voucherTypeFilter === "shipping") {
-<<<<<<< Updated upstream
-        // Assuming shipping vouchers have a special flag or value
-        // For now, let's consider it as a fixed voucher with a specific flag or pattern
-        filtered = filtered.filter(voucher => 
-          voucher.isPercent === false && 
-          (voucher.name && (
-            voucher.name.toLowerCase().includes("ship") || 
-            voucher.name.toLowerCase().includes("vận chuyển")
-          ))
-=======
         // Shipping vouchers have isPercent=false and value=0
         filtered = filtered.filter(voucher => 
           voucher.isPercent === false && voucher.value === 0
->>>>>>> Stashed changes
         );
       }
     }
@@ -252,15 +222,6 @@ const VoucherManager = () => {
     }
 
     // Date range filter
-<<<<<<< Updated upstream
-    if (dateRangeFilter && dateRangeFilter.length === 2) {
-      const startDate = dateRangeFilter[0].startOf('day').toDate();
-      const endDate = dateRangeFilter[1].endOf('day').toDate();
-      
-      filtered = filtered.filter(voucher => {
-        const voucherStartDate = new Date(voucher.startedAt);
-        return voucherStartDate >= startDate && voucherStartDate <= endDate;
-=======
     if (startDate || endDate) {
       filtered = filtered.filter(voucher => {
         const voucherStartDate = new Date(voucher.startedAt);
@@ -290,7 +251,6 @@ const VoucherManager = () => {
         }
         
         return true;
->>>>>>> Stashed changes
       });
     }
 
@@ -319,17 +279,11 @@ const VoucherManager = () => {
     try {
       // Check token validity before submitting
       if (!checkTokenExpiration()) {
-<<<<<<< Updated upstream
-        return; // No need to show a message here as checkTokenExpiration will handle it
-=======
         return;
->>>>>>> Stashed changes
       }
       
       setSubmitting(true);
       
-<<<<<<< Updated upstream
-=======
       // Get dates from form values instead of state
       const formStartDate = values.startDate;
       const formEndDate = values.endDate;
@@ -366,29 +320,18 @@ const VoucherManager = () => {
         endDateObj.setHours(23, 59, 59, 999);
       }
       
->>>>>>> Stashed changes
       // Prepare data for API
       const voucherData = {
         name: values.name,
         code: values.code,
         isPercent: values.voucherType === "percentage",
         minOrderValue: values.minOrderValue || 0,
-<<<<<<< Updated upstream
-        // For shipping vouchers, set a fixed value
-        value: values.voucherType === "shipping" ? 0 : values.value,
-        maxDiscountValue: values.voucherType === "percentage" ? values.maxDiscountValue : null,
-        startedAt: values.dateRange[0].toISOString(),
-        expiredAt: values.isInfinity ? null : values.dateRange[1].toISOString(),
-        isInfinity: values.isInfinity || false,
-        quantity: values.quantity,
-=======
         value: values.voucherType === "shipping" ? 0 : values.value,
         maxDiscountValue: values.voucherType === "percentage" ? values.maxDiscountValue : null,
         startedAt: startDateObj.toISOString(),
         expiredAt: values.isInfinity ? null : endDateObj.toISOString(),
         isInfinity: values.isInfinity || false,
         quantity: values.quantity || 1,
->>>>>>> Stashed changes
         pointCost: values.pointCost || 0
       };
 
@@ -441,11 +384,7 @@ const VoucherManager = () => {
     try {
       // Check token validity
       if (!checkTokenExpiration()) {
-<<<<<<< Updated upstream
-        return; // No need to show a message here as checkTokenExpiration will handle it
-=======
         return;
->>>>>>> Stashed changes
       }
       
       setLoading(true);
@@ -454,21 +393,6 @@ const VoucherManager = () => {
       if (response && response.data && response.data.data) {
         const voucher = response.data.data;
         
-<<<<<<< Updated upstream
-        // Determine voucher type
-        let voucherType = "fixed";
-        if (voucher.isPercent) {
-          voucherType = "percentage";
-        } else if (voucher.value === 0 || 
-                  (voucher.name && (
-                    voucher.name.toLowerCase().includes("ship") || 
-                    voucher.name.toLowerCase().includes("vận chuyển"))
-                  )) {
-          voucherType = "shipping";
-        }
-        
-        // Set form values with proper date handling using dayjs
-=======
         // Parse dates properly to prevent timezone shifts
         // Extract the YYYY-MM-DD part directly from the API date string
         // This preserves the exact date without timezone adjustments
@@ -501,58 +425,30 @@ const VoucherManager = () => {
         form.resetFields();
         
         // Set form values
->>>>>>> Stashed changes
         form.setFieldsValue({
           voucherId: voucher.voucherId,
           name: voucher.name,
           code: voucher.code,
           voucherType: voucherType,
-<<<<<<< Updated upstream
-          minOrderValue: voucher.minOrderValue,
-          value: voucher.value,
-          maxDiscountValue: voucher.maxDiscountValue,
-          dateRange: [
-            dayjs(voucher.startedAt),
-            voucher.isInfinity ? null : dayjs(voucher.expiredAt)
-          ],
-          isInfinity: voucher.isInfinity,
-=======
           value: voucher.value,
           minOrderValue: voucher.minOrderValue,
           maxDiscountValue: voucher.maxDiscountValue,
           isInfinity: voucher.isInfinity,
           startDate: startDateStr, // Add to form values
           endDate: endDateStr, // Add to form values
->>>>>>> Stashed changes
           quantity: voucher.quantity,
           pointCost: voucher.pointCost
         });
         
-<<<<<<< Updated upstream
-        // Enable edit mode AFTER setting form values to prevent code generation
-        setEditMode(true);
-        setShowForm(true);
-      } else {
-=======
         setShowForm(true);
         setEditMode(true);
       } else {
         console.error("Invalid response format:", response);
->>>>>>> Stashed changes
         message.error("Không thể tải thông tin voucher");
       }
     } catch (error) {
       console.error("Error fetching voucher details:", error);
-<<<<<<< Updated upstream
-      if (error.response && error.response.status === 401) {
-        message.error("Bạn không có quyền thực hiện thao tác này!");
-        navigate('/login');
-      } else {
-        message.error("Không thể tải thông tin voucher");
-      }
-=======
       message.error("Có lỗi xảy ra khi tải thông tin voucher");
->>>>>>> Stashed changes
     } finally {
       setLoading(false);
     }
@@ -612,59 +508,6 @@ const VoucherManager = () => {
     return `SALE${randomNum}${timestamp}`;
   };
 
-<<<<<<< Updated upstream
-  // Handle form date range changes with validation
-  const handleFormDateRangeChange = (dates) => {
-    if (dates && dates[0] && !dates[1]) {
-      // If only start date is selected, set end date to 30 days later
-      const endDate = dayjs(dates[0]).add(30, 'day');
-      form.setFieldsValue({
-        dateRange: [dates[0], endDate]
-      });
-    }
-  };
-
-  // Handle date picker open for the form
-  const handleFormDatePickerOpen = (open) => {
-    if (open) {
-      // Reset to current year view when opened
-      const isInfinity = form.getFieldValue('isInfinity');
-      const currentDateRange = form.getFieldValue('dateRange');
-      
-      if (!currentDateRange || !currentDateRange[0]) {
-        // If no date range is set, provide default values
-        form.setFieldsValue({
-          dateRange: [dayjs(), isInfinity ? null : dayjs().add(30, 'day')]
-        });
-      }
-    }
-  };
-
-  // Handle date range changes for filtering
-  const handleFilterDateChange = (dates) => {
-    setDateRangeFilter(dates);
-    if (dates && dates[0] && !dates[1]) {
-      // If only start date is selected, set end date to 30 days later
-      setDateRangeFilter([dates[0], dayjs(dates[0]).add(30, 'day')]);
-    }
-  };
-
-  const handleShowAddForm = () => {
-    form.resetFields();
-    
-    // Generate voucher code
-    const newCode = generateVoucherCode();
-    
-    // Set initial values with generated code and default date range (today to 30 days later)
-    setTimeout(() => {
-      form.setFieldsValue({
-        code: newCode,
-        dateRange: [dayjs(), dayjs().add(30, 'day')]
-      });
-    }, 100);
-    
-    setShowForm(true);
-=======
   // Update the handleShowAddForm function to set dates in the form state as well
   const handleShowAddForm = () => {
     // Generate voucher code
@@ -695,7 +538,6 @@ const VoucherManager = () => {
     
     setShowForm(true);
     setEditMode(false);
->>>>>>> Stashed changes
   };
 
   // Handle pagination change
@@ -703,44 +545,19 @@ const VoucherManager = () => {
     setPagination(prev => ({ ...prev, currentPage: page }));
   };
 
-<<<<<<< Updated upstream
-  // Handle reset filters
-=======
   // Update handleResetFilters to clear the individual date states
->>>>>>> Stashed changes
   const handleResetFilters = () => {
     setSearchKeyword("");
     setVoucherTypeFilter("");
     setStatusFilter("");
-<<<<<<< Updated upstream
-    setDateRangeFilter(null);
-=======
     setStartDate("");
     setEndDate("");
->>>>>>> Stashed changes
     setSortOption("dateDesc");
     setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
   // Check if a voucher is active
   const isVoucherActive = (voucher) => {
-<<<<<<< Updated upstream
-    const now = new Date();
-    const isStarted = new Date(voucher.startedAt) <= now;
-    const isNotExpired = voucher.isInfinity || !voucher.expiredAt || new Date(voucher.expiredAt) > now;
-    const hasQuantity = voucher.quantity > 0;
-    return isStarted && isNotExpired && hasQuantity;
-  };
-
-  // Add a new function to determine voucher status with more granularity
-  const getVoucherStatus = (voucher) => {
-    const now = new Date();
-    const startDate = new Date(voucher.startedAt);
-    const hasQuantity = voucher.quantity > 0;
-    
-    // Check if the voucher has a valid expiry date
-    const expiredAt = voucher.expiredAt ? new Date(voucher.expiredAt) : null;
-=======
     // Get today's date at 00:00:00
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -786,7 +603,6 @@ const VoucherManager = () => {
       expiredAt = new Date(voucher.expiredAt);
       expiredAt.setHours(0, 0, 0, 0);
     }
->>>>>>> Stashed changes
     
     // If the voucher has no quantity left
     if (!hasQuantity) {
@@ -797,11 +613,7 @@ const VoucherManager = () => {
     }
     
     // If the start date is in the future, it's pending
-<<<<<<< Updated upstream
-    if (startDate > now) {
-=======
     if (startDate > today) {
->>>>>>> Stashed changes
       return {
         status: "pending",
         label: "Chưa kích hoạt"
@@ -809,37 +621,23 @@ const VoucherManager = () => {
     }
     
     // If the voucher is infinity or has no expiry date, and has started
-<<<<<<< Updated upstream
-    if ((voucher.isInfinity || !expiredAt) && startDate <= now) {
-=======
     if ((voucher.isInfinity || !expiredAt) && startDate <= today) {
->>>>>>> Stashed changes
       return {
         status: "active",
         label: "Còn hạn"
       };
     }
     
-<<<<<<< Updated upstream
-    // If the expiry date has passed
-    if (expiredAt && expiredAt <= now) {
-=======
     // If the expiry date has passed (comparing date parts only)
     if (expiredAt && expiredAt < today) {
->>>>>>> Stashed changes
       return {
         status: "expired",
         label: "Hết hạn"
       };
     }
     
-<<<<<<< Updated upstream
-    // If the voucher has started and hasn't expired yet
-    if (startDate <= now && (!expiredAt || expiredAt > now)) {
-=======
     // If the voucher has started and hasn't expired yet (comparing date parts)
     if (startDate <= today && (!expiredAt || expiredAt >= today)) {
->>>>>>> Stashed changes
       return {
         status: "active",
         label: "Còn hạn"
@@ -857,15 +655,7 @@ const VoucherManager = () => {
   const formatVoucherValue = (voucher) => {
     if (voucher.isPercent) {
       return `${voucher.value}%`;
-<<<<<<< Updated upstream
-    } else if (voucher.value === 0 || 
-              (voucher.name && (
-                voucher.name.toLowerCase().includes("ship") || 
-                voucher.name.toLowerCase().includes("vận chuyển")
-              ))) {
-=======
     } else if (voucher.value === 0) {
->>>>>>> Stashed changes
       return "Miễn phí vận chuyển";
     } else {
       return `${voucher.value.toLocaleString()} VND`;
@@ -876,15 +666,7 @@ const VoucherManager = () => {
   const getVoucherTypeLabel = (voucher) => {
     if (voucher.isPercent) {
       return voucherTypes.percentage;
-<<<<<<< Updated upstream
-    } else if (voucher.value === 0 || 
-              (voucher.name && (
-                voucher.name.toLowerCase().includes("ship") || 
-                voucher.name.toLowerCase().includes("vận chuyển")
-              ))) {
-=======
     } else if (voucher.value === 0) {
->>>>>>> Stashed changes
       return voucherTypes.shipping;
     } else {
       return voucherTypes.fixed;
@@ -959,8 +741,6 @@ const VoucherManager = () => {
     return <div className={styles.loadingContainer}><Spin size="large" /><p>Kiểm tra quyền truy cập...</p></div>;
   }
 
-<<<<<<< Updated upstream
-=======
   // Add back the filter date handlers below the form date handlers
   // Handle date changes for filtering
   const handleStartDateChange = (e) => {
@@ -975,7 +755,6 @@ const VoucherManager = () => {
     setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
->>>>>>> Stashed changes
   return (
     <div className={styles.container}>
       <Sidebar />
@@ -1042,17 +821,6 @@ const VoucherManager = () => {
                 <Option value="valueDesc">Giá trị (Cao-Thấp)</Option>
               </Select>
               
-<<<<<<< Updated upstream
-              <RangePicker
-                className={styles.dateRangePicker}
-                format="YYYY-MM-DD"
-                placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
-                value={dateRangeFilter}
-                onChange={handleFilterDateChange}
-                allowClear
-                inputReadOnly
-              />
-=======
               <div className={styles.dateFilterWrapper}>
                 <FaCalendar className={styles.calendarIcon} />
                 <input
@@ -1071,7 +839,6 @@ const VoucherManager = () => {
                   placeholder="Ngày kết thúc"
                 />
               </div>
->>>>>>> Stashed changes
             </div>
             
             {/* Row 2: Search bar and Reset button */}
@@ -1369,79 +1136,6 @@ const VoucherManager = () => {
                 
                 {/* Date range */}
                 <Form.Item
-<<<<<<< Updated upstream
-                  noStyle
-                  shouldUpdate={(prevValues, currentValues) => 
-                    prevValues.isInfinity !== currentValues.isInfinity
-                  }
-                >
-                  {({ getFieldValue }) => {
-                    const isInfinity = getFieldValue('isInfinity');
-                    
-                    return (
-                      <Form.Item
-                        label="Thời gian hiệu lực"
-                        name="dateRange"
-                        rules={[
-                          {
-                            required: true,
-                            message: 'Vui lòng chọn thời gian hiệu lực!',
-                          },
-                          ({ getFieldValue }) => ({
-                            validator(_, value) {
-                              if (!value || !value[0]) {
-                                return Promise.reject(new Error('Vui lòng chọn ngày bắt đầu!'));
-                              }
-                              if (!isInfinity && !value[1]) {
-                                return Promise.reject(new Error('Vui lòng chọn ngày kết thúc!'));
-                              }
-                              if (!isInfinity && value[1] && value[1].isBefore(value[0])) {
-                                return Promise.reject(new Error('Ngày kết thúc phải sau ngày bắt đầu!'));
-                              }
-                              return Promise.resolve();
-                            },
-                          }),
-                        ]}
-                      >
-                        <RangePicker
-                          className={styles.formDatePicker}
-                          format="YYYY-MM-DD"
-                          placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
-                          onCalendarChange={handleFormDateRangeChange}
-                          onOpenChange={handleFormDatePickerOpen}
-                          inputReadOnly
-                          allowClear={false}
-                          disabled={[false, isInfinity]}
-                        />
-                      </Form.Item>
-                    );
-                  }}
-                </Form.Item>
-                
-                {/* Is infinity checkbox */}
-                <Form.Item
-                  name="isInfinity"
-                  valuePropName="checked"
-                >
-                  <Checkbox onChange={(e) => {
-                    if (e.target.checked) {
-                      const dateRange = form.getFieldValue('dateRange');
-                      form.setFieldsValue({ 
-                        dateRange: dateRange ? [dateRange[0], null] : [dayjs(), null] 
-                      });
-                    } else {
-                      // When unchecked, set an end date if there isn't one
-                      const dateRange = form.getFieldValue('dateRange');
-                      if (dateRange && dateRange[0] && !dateRange[1]) {
-                        form.setFieldsValue({
-                          dateRange: [dateRange[0], dayjs(dateRange[0]).add(30, 'day')]
-                        });
-                      }
-                    }
-                  }}>
-                    Không có ngày hết hạn
-                  </Checkbox>
-=======
                   label="Thời gian hiệu lực"
                   required
                 >
@@ -1526,7 +1220,6 @@ const VoucherManager = () => {
                       </Checkbox>
                     </Form.Item>
                   </div>
->>>>>>> Stashed changes
                 </Form.Item>
                 
                 {/* Quantity */}

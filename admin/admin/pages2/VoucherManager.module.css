@@ -208,25 +208,6 @@ h1 {
   color: #8cc5af !important;
 }
 
-<<<<<<< Updated upstream
-.dateRangePicker {
-  width: 23% !important;
-  min-width: 140px;
-  flex: 1;
-}
-
-/* Target the DatePicker component to reduce its internal padding */
-:global(.ant-picker-range) {
-  padding: 4px 11px !important;
-}
-
-:global(.ant-picker-input) {
-  width: 42% !important;
-}
-
-:global(.ant-picker-range-separator) {
-  padding: 0 4px !important;
-=======
 .dateFilterWrapper {
   display: flex;
   align-items: center;
@@ -262,7 +243,6 @@ h1 {
   color: #666;
   margin: 0 4px;
   white-space: nowrap;
->>>>>>> Stashed changes
 }
 
 .resetButton {
@@ -484,11 +464,7 @@ h1 {
   }
   
   .filterSelect, 
-<<<<<<< Updated upstream
-  .dateRangePicker {
-=======
   .dateFilterWrapper {
->>>>>>> Stashed changes
     width: 100%;
   }
 }
@@ -730,8 +706,6 @@ h1 {
   color: rgba(0, 0, 0, 0.85);
   line-height: 40px;
   text-align: center;
-<<<<<<< Updated upstream
-=======
 }
 
 /* Form date inputs styling */
@@ -783,5 +757,4 @@ h1 {
 /* Make sure checkboxes align properly */
 .infinityCheckbox :global(.ant-form-item-control-input) {
   min-height: auto !important;
->>>>>>> Stashed changes
 }
