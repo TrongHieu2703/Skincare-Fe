@@ -1,7 +1,7 @@
 /* Global Reset & Base Styling */
 .profile-container {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
+    background-color: #ffffff;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -35,12 +35,12 @@
     left: 0;
     right: 0;
     height: 100px;
-    background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
 }
 
 /* Content Wrapper */
 .profile-content {
-    background-color: white;
+    background-color: rgb(235, 247, 235);
     padding: 40px;
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -65,8 +65,15 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .profile-left h2 {
@@ -258,9 +265,21 @@
 }
 
 @keyframes errorShake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-5px); }
-    40%, 80% { transform: translateX(5px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-5px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(5px);
+    }
 }
 
 .error-message::before {
@@ -271,8 +290,13 @@
 
 /* Animations */
 @keyframes slideDown {
-    from { transform: translateY(-100%); }
-    to { transform: translateY(0); }
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
 }
 
 /* Responsive */
@@ -282,20 +306,21 @@
         padding: 30px;
         margin: 15px;
     }
-    
-    .profile-left, .profile-right {
+
+    .profile-left,
+    .profile-right {
         flex: none;
         width: 100%;
         padding: 0;
     }
-    
+
     .profile-right {
         margin-top: 20px;
         border-left: none;
         border-top: 1px solid #eee;
         padding-top: 20px;
     }
-    
+
     .profile-image-container {
         width: 120px;
         height: 120px;
@@ -307,7 +332,7 @@
         padding: 0 15px;
         margin-top: 20px;
     }
-    
+
     .profile-form,
     .profile-section {
         padding: 30px 20px;
@@ -318,7 +343,7 @@
         width: 150px;
         height: 150px;
     }
-    
+
     .save-btn {
         width: 100%;
     }
@@ -331,16 +356,16 @@
         display: block;
         transform: none;
     }
-    
+
     .migrate-photo-button {
         margin-top: 10px;
     }
-    
+
     .change-photo-button:hover,
     .migrate-photo-button:hover {
         transform: translateY(-2px);
     }
-    
+
     .cover-photo {
         height: 200px;
     }

@@ -1,175 +1,74 @@
-/* Căn chỉnh tổng thể */
+/* Đảm bảo trang luôn full màn hình */
+html,
+body,
 #root {
-  max-width: 100%; /* Allow full width for pages that need it */
-  margin: 0 auto;
-  padding: 0;
-  text-align: center;
-}
-
-/* Content wrapper */
-.content-wrapper {
-  width: 100%;
-  padding-top: 0;  
-  position: relative;
-  z-index: 2;
-}
-
-/* Container for most pages except those with custom containers */
-.container.mt-4 {
-  max-width: 1200px;
-  margin: 80px auto 0; /* Add top margin to account for navbar */
-  padding: 20px;
-}
-
-/* Navbar và Footer */
-.navbar,
-.footer {
-  width: 100%;
-  padding: 15px 30px;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Carousel */
-.carousel {
-  width: 100%;
-  max-height: 500px;
-  /* Giữ tỷ lệ hợp lý */
-  overflow: hidden;
-  border-radius: 10px;
-  margin-bottom: 30px;
-}
-
-/* Cấu trúc Grid cho các phần Cart và FeaturedNews */
-.main-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  /* Adjusted for better responsiveness */
-
-  gap: 20px;
-  padding: 20px;
-  padding-top: 10px;
-  /* Điều chỉnh theo chiều cao của navbar (2 hàng) */
-  flex: 1;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  position: relative;
-  z-index: 1;
-  /* Đảm bảo content nằm dưới navbar */
-}
-
-/* Card sản phẩm */
-.card {
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-/* Form Login & Register */
-.form-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  background: #fff;
-}
-
-.form-container h2 {
-  margin-bottom: 20px;
-}
-
-.input-group {
-  margin-bottom: 15px;
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button {
-  background-color: #007B55;
-  color: white;
-  font-size: 1.1rem;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #005f40;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  body {
-    padding-top: 80px; /* Keep consistent with navbar height */
-  }
-  
-  #root {
-    padding: 0 1rem 1rem;
-  }
-
-  .carousel {
-    max-height: 300px;
-  }
-
-  .main-content {
-    grid-template-columns: 1fr;
-    padding-top: 20px; /* Reduced since body handles navbar spacing */
-  }
-
-  .app-wrapper {
-    padding-top: 0;
-  }
-}
-
-body {
+  height: 100%;
   margin: 0;
   padding: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #ffffff;
+  /* Set a white background color for the entire page */
 }
 
+/* Container chính để giữ bố cục */
 .app-container {
-  position: relative;
-  min-height: 100vh;
-  width: 100%;
-}
-
-.app-wrapper {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 0; /* Reset since body handles the padding */
-  /* Điều chỉnh theo chiều cao của navbar */
+  min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  /* Tránh cuộn ngang */
 }
 
-main {
+/* Nội dung mở rộng full màn hình */
+.content {
   flex: 1;
-  padding-top: 76px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  /* White background for the content section */
 }
 
-.container {
-  padding: 20px;
-  position: relative;
-  z-index: 2; /* Higher than navbar */
-  margin-top: 0;
+/* Footer */
+.footer {
+  background: linear-gradient(to right, #5d9773, #7bc0a1);
+  /* Gradient background */
+  color: white;
+  padding: 20px 0;
+  /* Add padding to the top and bottom */
+  text-align: center;
+  /* Center the text horizontally */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  /* Center content horizontally */
+  align-items: center;
+  /* Center content vertically */
+  flex-direction: column;
+  /* Stack content vertically */
+}
+
+/* Footer extra content */
+.footer-extra {
+  display: flex;
+  justify-content: center;
+  /* Center items horizontally within footer-extra */
+  align-items: center;
+  /* Center items vertically */
+  flex-direction: column;
+  /* Stack the content vertically */
+  padding: 10px;
+}
+
+/* Styles for the certification and brand motto */
+.certification,
+.brand-motto {
+  font-size: 14px;
+}
+
+/* Style for the Bo Cong Thuong logo */
+.bo-cong-thuong {
+  width: 40px;
 }

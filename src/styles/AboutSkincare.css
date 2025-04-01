@@ -1,23 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
-body {
-    font-family: 'Montserrat', sans-serif;
-    background-color: white;
-    color: #216942;
-}
 
 /* Header */
-header {
-    margin-top: 1500px;
-    text-align: center;
-    padding: 30px;
-    font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
-    font-weight: 600;
-    color: #216942;
-    animation: fadeInDown 0.8s ease-out;
-    margin-bottom: 30px;
-}
 
 /* Banner */
 .banner {
