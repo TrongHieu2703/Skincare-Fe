@@ -54,7 +54,8 @@
   flex: 1;
 }
 
-.product-name {
+/* Product name in product details page */
+.product-details-main .product-name {
   font-size: 1.8rem;
   font-weight: bold;
   margin: 0;
@@ -74,7 +75,8 @@
   color: #666;
 }
 
-.product-price {
+/* Product price for product details page (large main price) */
+.product-details-main .product-price {
   font-size: 1.5rem;
   font-weight: bold;
   color: #2e7d32;
@@ -389,7 +391,13 @@
   flex-direction: column;
 }
 
+<<<<<<< Updated upstream
 .product-name {
+=======
+/* Product name in order details page */
+.order-item-row .product-details .product-name {
+  font-size: 0.9rem !important;
+>>>>>>> Stashed changes
   font-weight: 500;
   color: #333;
   margin-bottom: 5px;
@@ -805,4 +813,42 @@
 .review-view-modal .modal-actions {
   display: flex;
   justify-content: flex-end;
+<<<<<<< Updated upstream
+=======
+}
+
+/* Order History page product name */
+.order-history-page .product-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* Make product price more specific in order items */
+.order-item-row .price-col,
+.order-item-row .total-col {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+/* Fix the product image styling to be more specific */
+.order-item-row .product-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  margin-right: 15px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-item-row .product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+>>>>>>> Stashed changes
 }

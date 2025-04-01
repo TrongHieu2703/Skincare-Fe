@@ -325,7 +325,10 @@ const ProductList = () => {
           {/* Rating Filter */}
           <select value={ratingFilter} onChange={handleFilterChange(setRatingFilter)}>
             <option value="">Tất cả đánh giá</option>
+<<<<<<< Updated upstream
             <option value="0-1">Đánh giá 0-1 sao</option>
+=======
+>>>>>>> Stashed changes
             <option value="1-2">Đánh giá 1-2 sao</option>
             <option value="2-3">Đánh giá 2-3 sao</option>
             <option value="3-4">Đánh giá 3-4 sao</option>
