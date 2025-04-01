@@ -1,6 +1,6 @@
 /* Tổng thể section */
 .about-us {
-    margin-top: -1000px;
+    margin-top: 10px;
     padding: 60px 0;
     color: #333;
     background-color: white;
@@ -8,7 +8,7 @@
 
 /* Tiêu đề chính */
 .about-header {
-    margin-top: -1500px;
+    margin-top: 10px;
     text-align: center;
     margin-bottom: 40px;
 }
@@ -70,7 +70,7 @@
 
 /* Card thông tin */
 .about-card {
-    background-color: #f6fef8;
+    background-color: #ffffff;
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 24px;
@@ -80,7 +80,7 @@
 }
 
 .about-card:hover {
-    background-color: #eafaf0;
+    background-color: #ffffff;
     transform: translateY(-4px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }

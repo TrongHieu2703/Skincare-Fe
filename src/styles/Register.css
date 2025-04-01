@@ -5,7 +5,7 @@ html {
   width: 100%;
   height: 100%;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f7fa;
+  background-color: #ffffff;
 }
 
 .register-container {
@@ -44,8 +44,15 @@ html {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .register-form h2 {
@@ -151,10 +158,10 @@ input[type="tel"]:focus {
   box-shadow: 0 0 0 3px rgba(33, 105, 66, 0.1);
 }
 
-input[type="text"]:focus + .input-icon,
-input[type="email"]:focus + .input-icon,
-input[type="password"]:focus + .input-icon,
-input[type="tel"]:focus + .input-icon {
+input[type="text"]:focus+.input-icon,
+input[type="email"]:focus+.input-icon,
+input[type="password"]:focus+.input-icon,
+input[type="tel"]:focus+.input-icon {
   opacity: 1;
   color: #216942;
 }
@@ -224,9 +231,21 @@ input[type="tel"]:focus + .input-icon {
 }
 
 @keyframes errorShake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-5px); }
-  40%, 80% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-5px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(5px);
+  }
 }
 
 .error-message::before {
@@ -270,20 +289,21 @@ input[type="tel"]:focus + .input-icon {
     padding: 30px;
     margin: 15px;
   }
-  
-  .register-left, .register-right {
+
+  .register-left,
+  .register-right {
     flex: none;
     width: 100%;
     padding: 0;
   }
-  
+
   .register-right {
     margin-top: 20px;
     border-left: none;
     border-top: 1px solid #eee;
     padding-top: 20px;
   }
-  
+
   .avatar-preview {
     width: 120px;
     height: 120px;
