@@ -629,42 +629,26 @@
 }
 
 .voucher-selection {
-  display: flex;
-  gap: 10px;
   margin-bottom: 10px;
+  width: 100%;
 }
 
 .voucher-select {
-  flex: 1;
-  padding: 10px;
+  width: 100%;
+  padding: 12px;
   border: 2px solid #e8f5e9;
   border-radius: 8px;
   font-size: 0.95rem;
   transition: all 0.3s ease;
   background-color: #ffffff;
   color: #333333;
+  cursor: pointer;
 }
 
 .voucher-select:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
   outline: none;
-}
-
-.apply-voucher-button {
-  padding: 10px 15px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.apply-voucher-button:hover {
-  background-color: #45a049;
-  transform: translateY(-2px);
 }
 
 .voucher-error {
@@ -709,6 +693,13 @@
   margin-left: 5px;
 }
 
+.free-shipping-text {
+  color: #4caf50;
+  font-weight: 600;
+  display: inline-block;
+  animation: pulse 1.5s infinite;
+}
+
 .applied-voucher strong {
   color: #2e7d32;
   font-weight: 600;
@@ -717,4 +708,28 @@
 .price-row.discount {
   color: #2e7d32;
   font-weight: 500;
+}
+
+/* Free shipping style */
+.original-shipping {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 0.85rem;
+  margin-right: 5px;
+}
+
+.free-shipping {
+  color: #4caf50;
+  font-weight: 600;
+  background-color: #e8f5e9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
 }

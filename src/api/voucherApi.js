@@ -10,6 +10,15 @@ export const getAllVouchers = async () => {
         console.log("Fetching vouchers from API:", VOUCHER_API_URL);
         const response = await axiosClient.get(VOUCHER_API_URL);
         console.log("Raw voucher response:", response);
+        
+        // Check for shipping vouchers in the response
+        if (response && response.data && response.data.data) {
+            const shippingVouchers = response.data.data.filter(v => 
+                !v.isPercent && v.value === 0
+            );
+            console.log("Shipping vouchers in getAllVouchers response:", shippingVouchers);
+        }
+        
         return response;  // Return the full response to handle in the component
     } catch (error) {
         console.error('Error fetching vouchers:', error);
@@ -87,6 +96,31 @@ export const deleteVoucher = async (voucherId) => {
     }
 };
 
+// Add a helper function to parse voucher data consistently
+const parseVoucherData = (response) => {
+  let vouchers = [];
+  
+  if (response && response.data) {
+    // Handle nested data structure
+    if (response.data.data && Array.isArray(response.data.data)) {
+      vouchers = response.data.data;
+    } 
+    // Handle direct array
+    else if (Array.isArray(response.data)) {
+      vouchers = response.data;
+    }
+  }
+  
+  // Log what we found for debugging
+  console.log("Parsed vouchers:", vouchers);
+  
+  // Log shipping vouchers specifically
+  const shippingVouchers = vouchers.filter(v => !v.isPercent && v.value === 0);
+  console.log("Shipping vouchers:", shippingVouchers);
+  
+  return vouchers;
+};
+
 /**
  * Lấy voucher có sẵn (Customer)
  */
@@ -94,8 +128,26 @@ export const getAvailableVouchers = async () => {
     try {
         console.log("Fetching available vouchers from API:", VOUCHER_API_URL + "/available");
         const response = await axiosClient.get(`${VOUCHER_API_URL}/available`);
-        console.log("Available vouchers response:", response);
-        return response;
+        console.log("Available vouchers raw response:", response);
+        
+        // Parse voucher data consistently
+        const vouchers = parseVoucherData(response);
+        
+        // Log details of each voucher
+        console.log("Detailed voucher information:");
+        vouchers.forEach(v => {
+            console.log(`Voucher ID: ${v.voucherId}, Name: ${v.name}, Code: ${v.code}, ` + 
+                `isPercent: ${v.isPercent}, value: ${v.value}, ` +
+                `Is shipping voucher: ${!v.isPercent && v.value === 0}`);
+        });
+        
+        // Prepare the response in a consistent format
+        return { 
+            data: { 
+                message: "Fetched available vouchers successfully", 
+                data: vouchers 
+            } 
+        };
     } catch (error) {
         console.error('Error fetching available vouchers:', error);
         
@@ -107,29 +159,57 @@ export const getAvailableVouchers = async () => {
                 const allVouchersResponse = await axiosClient.get(VOUCHER_API_URL);
                 console.log("Fallback vouchers response:", allVouchersResponse);
                 
-                if (allVouchersResponse && allVouchersResponse.data) {
-                    const vouchersData = Array.isArray(allVouchersResponse.data) 
-                      ? allVouchersResponse.data 
-                      : (allVouchersResponse.data.data || []);
+                const allVouchers = parseVoucherData(allVouchersResponse);
+                
+                // Client-side filtering of available vouchers
+                const now = new Date();
+                now.setHours(0, 0, 0, 0); // Set to start of day
+                
+                const availableVouchers = allVouchers.filter(v => {
+                    // Get the start date, set to beginning of day
+                    const startedAt = new Date(v.startedAt);
+                    startedAt.setHours(0, 0, 0, 0);
                     
-                    // Client-side filtering of available vouchers
-                    const now = new Date();
-                    const availableVouchers = vouchersData.filter(v => {
-                        const expiredAt = new Date(v.expiredAt);
-                        const startedAt = new Date(v.startedAt);
-                        return (expiredAt > now) && 
-                               (startedAt <= now) && 
-                               (v.isInfinity || v.quantity > 0);
-                    });
+                    // Get the expiry date, set to beginning of day for date comparison only
+                    const expiredAt = v.expiredAt ? new Date(v.expiredAt) : null;
+                    if (expiredAt) {
+                        expiredAt.setHours(0, 0, 0, 0);
+                    }
                     
-                    console.log("Client-side filtered vouchers:", availableVouchers);
-                    return { 
-                        data: { 
-                            message: "Fetched available vouchers with client-side filtering", 
-                            data: availableVouchers 
-                        } 
-                    };
-                }
+                    // Compare only the date parts
+                    // A voucher is available if:
+                    // 1. It has started (start date <= today)
+                    // 2. It hasn't expired (expiry date >= today or isInfinity=true)
+                    // 3. It has available quantity (quantity > 0 or isInfinity=true)
+                    const hasStarted = startedAt <= now;
+                    const hasNotExpired = v.isInfinity || !expiredAt || expiredAt >= now;
+                    const hasQuantity = v.isInfinity || v.quantity > 0;
+                    
+                    return hasStarted && hasNotExpired && hasQuantity;
+                });
+                
+                console.log("Client-side filtered vouchers:", availableVouchers);
+                
+                // Log shipping vouchers specifically for debugging
+                const shippingVouchers = availableVouchers.filter(v => 
+                    !v.isPercent && v.value === 0
+                );
+                console.log("Shipping vouchers found:", shippingVouchers);
+                
+                // Log details of each voucher for debugging
+                console.log("Detailed available voucher information:");
+                availableVouchers.forEach(v => {
+                    console.log(`Voucher ID: ${v.voucherId}, Name: ${v.name}, Code: ${v.code}, ` + 
+                        `isPercent: ${v.isPercent}, value: ${v.value}, ` +
+                        `Is shipping voucher: ${!v.isPercent && v.value === 0}`);
+                });
+                
+                return { 
+                    data: { 
+                        message: "Fetched available vouchers with client-side filtering", 
+                        data: availableVouchers 
+                    } 
+                };
             } catch (fallbackError) {
                 console.error('Error in fallback voucher fetch:', fallbackError);
             }

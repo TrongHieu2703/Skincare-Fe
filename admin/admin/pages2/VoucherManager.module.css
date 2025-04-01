@@ -208,23 +208,41 @@ h1 {
   color: #8cc5af !important;
 }
 
-.dateRangePicker {
+.dateFilterWrapper {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0 12px;
+  gap: 8px;
   width: 23% !important;
-  min-width: 140px;
+  min-width: 280px;
   flex: 1;
+  height: 40px;
 }
 
-/* Target the DatePicker component to reduce its internal padding */
-:global(.ant-picker-range) {
-  padding: 4px 11px !important;
+.calendarIcon {
+  color: #8cc5af;
 }
 
-:global(.ant-picker-input) {
-  width: 42% !important;
+.dateInput {
+  border: none;
+  padding: 8px 0;
+  color: #333;
+  font-size: 14px;
+  width: 42%;
+  outline: none;
 }
 
-:global(.ant-picker-range-separator) {
-  padding: 0 4px !important;
+.dateInput:focus {
+  outline: none;
+}
+
+.dateSeparator {
+  color: #666;
+  margin: 0 4px;
+  white-space: nowrap;
 }
 
 .resetButton {
@@ -446,7 +464,7 @@ h1 {
   }
   
   .filterSelect, 
-  .dateRangePicker {
+  .dateFilterWrapper {
     width: 100%;
   }
 }
@@ -688,4 +706,55 @@ h1 {
   color: rgba(0, 0, 0, 0.85);
   line-height: 40px;
   text-align: center;
+}
+
+/* Form date inputs styling */
+.dateInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formDateInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  height: 40px;
+  font-size: 14px;
+  color: #333;
+}
+
+.formDateInput:focus {
+  outline: none;
+  border-color: #8cc5af;
+  box-shadow: 0 0 0 2px rgba(140, 197, 175, 0.2);
+}
+
+.formDateInput:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.formLabel {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+.infinityCheckbox {
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Make sure checkboxes align properly */
+.infinityCheckbox :global(.ant-form-item-control-input) {
+  min-height: auto !important;
 }

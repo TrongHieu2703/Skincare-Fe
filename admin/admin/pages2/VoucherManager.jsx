@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styles from "./VoucherManager.module.css";
 import Sidebar from "./Sidebar";
-import { FaEdit, FaTrash, FaPlus, FaTicketAlt, FaSearch, FaFilter, FaRedo, FaSort } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaTicketAlt, FaSearch, FaFilter, FaRedo, FaSort, FaCalendar } from "react-icons/fa";
 import { message, Button, Form, Input, Select, DatePicker, InputNumber, Checkbox, Spin, Tooltip } from "antd";
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +44,8 @@ const VoucherManager = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [voucherTypeFilter, setVoucherTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [dateRangeFilter, setDateRangeFilter] = useState(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [sortOption, setSortOption] = useState("dateDesc");
 
   // Success notification
@@ -53,6 +54,10 @@ const VoucherManager = () => {
 
   // Add state for delete confirmation modal
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, voucherId: null, voucherName: '' });
+
+  // Add these lines at the beginning of the component
+  const [formStartDate, setFormStartDate] = useState("");
+  const [formEndDate, setFormEndDate] = useState("");
 
   // Voucher types mapping
   const voucherTypes = {
@@ -97,7 +102,7 @@ const VoucherManager = () => {
     } else {
       fetchVouchers();
     }
-  }, [searchKeyword, voucherTypeFilter, statusFilter, dateRangeFilter, sortOption, isAuthenticated, authLoading]);
+  }, [searchKeyword, voucherTypeFilter, statusFilter, startDate, endDate, sortOption, isAuthenticated, authLoading]);
 
   // Fetch vouchers
   const fetchVouchers = async () => {
@@ -168,7 +173,7 @@ const VoucherManager = () => {
     }
     
     // Return original list if no filters are applied
-    if (!searchKeyword && !voucherTypeFilter && !statusFilter && !dateRangeFilter && !sortOption) {
+    if (!searchKeyword && !voucherTypeFilter && !statusFilter && !startDate && !endDate && !sortOption) {
       return voucherList;
     }
 
@@ -190,14 +195,9 @@ const VoucherManager = () => {
       } else if (voucherTypeFilter === "fixed") {
         filtered = filtered.filter(voucher => voucher.isPercent === false && voucher.value > 0);
       } else if (voucherTypeFilter === "shipping") {
-        // Assuming shipping vouchers have a special flag or value
-        // For now, let's consider it as a fixed voucher with a specific flag or pattern
+        // Shipping vouchers have isPercent=false and value=0
         filtered = filtered.filter(voucher => 
-          voucher.isPercent === false && 
-          (voucher.name && (
-            voucher.name.toLowerCase().includes("ship") || 
-            voucher.name.toLowerCase().includes("vận chuyển")
-          ))
+          voucher.isPercent === false && voucher.value === 0
         );
       }
     }
@@ -222,13 +222,35 @@ const VoucherManager = () => {
     }
 
     // Date range filter
-    if (dateRangeFilter && dateRangeFilter.length === 2) {
-      const startDate = dateRangeFilter[0].startOf('day').toDate();
-      const endDate = dateRangeFilter[1].endOf('day').toDate();
-      
+    if (startDate || endDate) {
       filtered = filtered.filter(voucher => {
         const voucherStartDate = new Date(voucher.startedAt);
-        return voucherStartDate >= startDate && voucherStartDate <= endDate;
+        voucherStartDate.setHours(0, 0, 0, 0);
+        
+        // Apply start date filter if it exists
+        if (startDate && !endDate) {
+          const filterStartDate = new Date(startDate);
+          filterStartDate.setHours(0, 0, 0, 0);
+          return voucherStartDate >= filterStartDate;
+        }
+        
+        // Apply end date filter if it exists
+        if (endDate && !startDate) {
+          const filterEndDate = new Date(endDate);
+          filterEndDate.setHours(0, 0, 0, 0);
+          return voucherStartDate <= filterEndDate;
+        }
+        
+        // Apply both filters if both exist
+        if (startDate && endDate) {
+          const filterStartDate = new Date(startDate);
+          const filterEndDate = new Date(endDate);
+          filterStartDate.setHours(0, 0, 0, 0);
+          filterEndDate.setHours(0, 0, 0, 0);
+          return voucherStartDate >= filterStartDate && voucherStartDate <= filterEndDate;
+        }
+        
+        return true;
       });
     }
 
@@ -257,10 +279,46 @@ const VoucherManager = () => {
     try {
       // Check token validity before submitting
       if (!checkTokenExpiration()) {
-        return; // No need to show a message here as checkTokenExpiration will handle it
+        return;
       }
       
       setSubmitting(true);
+      
+      // Get dates from form values instead of state
+      const formStartDate = values.startDate;
+      const formEndDate = values.endDate;
+      
+      // Validate dates
+      if (!formStartDate) {
+        message.error("Vui lòng chọn ngày bắt đầu");
+        setSubmitting(false);
+        return;
+      }
+      
+      if (!values.isInfinity && !formEndDate) {
+        message.error("Vui lòng chọn ngày kết thúc hoặc chọn 'Không giới hạn thời gian'");
+        setSubmitting(false);
+        return;
+      }
+      
+      // Validate end date is after start date
+      if (!values.isInfinity && formEndDate && new Date(formEndDate) <= new Date(formStartDate)) {
+        message.error("Ngày kết thúc phải sau ngày bắt đầu");
+        setSubmitting(false);
+        return;
+      }
+      
+      // Format dates correctly to avoid timezone issues
+      const startDateObj = new Date(formStartDate);
+      // Set hours to noon (12:00) to avoid timezone boundary issues
+      startDateObj.setHours(12, 0, 0, 0);
+      
+      let endDateObj = null;
+      if (!values.isInfinity && formEndDate) {
+        endDateObj = new Date(formEndDate);
+        // Set to end of day in local time to include the full day
+        endDateObj.setHours(23, 59, 59, 999);
+      }
       
       // Prepare data for API
       const voucherData = {
@@ -268,13 +326,12 @@ const VoucherManager = () => {
         code: values.code,
         isPercent: values.voucherType === "percentage",
         minOrderValue: values.minOrderValue || 0,
-        // For shipping vouchers, set a fixed value
         value: values.voucherType === "shipping" ? 0 : values.value,
         maxDiscountValue: values.voucherType === "percentage" ? values.maxDiscountValue : null,
-        startedAt: values.dateRange[0].toISOString(),
-        expiredAt: values.isInfinity ? null : values.dateRange[1].toISOString(),
+        startedAt: startDateObj.toISOString(),
+        expiredAt: values.isInfinity ? null : endDateObj.toISOString(),
         isInfinity: values.isInfinity || false,
-        quantity: values.quantity,
+        quantity: values.quantity || 1,
         pointCost: values.pointCost || 0
       };
 
@@ -327,7 +384,7 @@ const VoucherManager = () => {
     try {
       // Check token validity
       if (!checkTokenExpiration()) {
-        return; // No need to show a message here as checkTokenExpiration will handle it
+        return;
       }
       
       setLoading(true);
@@ -336,50 +393,62 @@ const VoucherManager = () => {
       if (response && response.data && response.data.data) {
         const voucher = response.data.data;
         
-        // Determine voucher type
+        // Parse dates properly to prevent timezone shifts
+        // Extract the YYYY-MM-DD part directly from the API date string
+        // This preserves the exact date without timezone adjustments
+        const startDateStr = voucher.startedAt.substring(0, 10);
+        
+        let endDateStr = "";
+        if (!voucher.isInfinity && voucher.expiredAt) {
+          endDateStr = voucher.expiredAt.substring(0, 10);
+        }
+        
+        console.log("API date:", voucher.startedAt, "Formatted date:", startDateStr);
+        
+        // Store dates in local state
+        setFormStartDate(startDateStr);
+        setFormEndDate(endDateStr);
+        
+        // Determine voucher type - SIMPLIFIED LOGIC BASED ONLY ON PROPERTIES
         let voucherType = "fixed";
         if (voucher.isPercent) {
           voucherType = "percentage";
-        } else if (voucher.value === 0 || 
-                  (voucher.name && (
-                    voucher.name.toLowerCase().includes("ship") || 
-                    voucher.name.toLowerCase().includes("vận chuyển"))
-                  )) {
+        } else if (voucher.value === 0) {
+          // Shipping vouchers have isPercent=false and value=0
           voucherType = "shipping";
         }
         
-        // Set form values with proper date handling using dayjs
+        // Log detected voucher type
+        console.log("Detected voucher type:", voucherType, "for voucher:", voucher);
+        
+        // Reset form before setting new values to clear previous state
+        form.resetFields();
+        
+        // Set form values
         form.setFieldsValue({
           voucherId: voucher.voucherId,
           name: voucher.name,
           code: voucher.code,
           voucherType: voucherType,
-          minOrderValue: voucher.minOrderValue,
           value: voucher.value,
+          minOrderValue: voucher.minOrderValue,
           maxDiscountValue: voucher.maxDiscountValue,
-          dateRange: [
-            dayjs(voucher.startedAt),
-            voucher.isInfinity ? null : dayjs(voucher.expiredAt)
-          ],
           isInfinity: voucher.isInfinity,
+          startDate: startDateStr, // Add to form values
+          endDate: endDateStr, // Add to form values
           quantity: voucher.quantity,
           pointCost: voucher.pointCost
         });
         
-        // Enable edit mode AFTER setting form values to prevent code generation
-        setEditMode(true);
         setShowForm(true);
+        setEditMode(true);
       } else {
+        console.error("Invalid response format:", response);
         message.error("Không thể tải thông tin voucher");
       }
     } catch (error) {
       console.error("Error fetching voucher details:", error);
-      if (error.response && error.response.status === 401) {
-        message.error("Bạn không có quyền thực hiện thao tác này!");
-        navigate('/login');
-      } else {
-        message.error("Không thể tải thông tin voucher");
-      }
+      message.error("Có lỗi xảy ra khi tải thông tin voucher");
     } finally {
       setLoading(false);
     }
@@ -439,57 +508,36 @@ const VoucherManager = () => {
     return `SALE${randomNum}${timestamp}`;
   };
 
-  // Handle form date range changes with validation
-  const handleFormDateRangeChange = (dates) => {
-    if (dates && dates[0] && !dates[1]) {
-      // If only start date is selected, set end date to 30 days later
-      const endDate = dayjs(dates[0]).add(30, 'day');
-      form.setFieldsValue({
-        dateRange: [dates[0], endDate]
-      });
-    }
-  };
-
-  // Handle date picker open for the form
-  const handleFormDatePickerOpen = (open) => {
-    if (open) {
-      // Reset to current year view when opened
-      const isInfinity = form.getFieldValue('isInfinity');
-      const currentDateRange = form.getFieldValue('dateRange');
-      
-      if (!currentDateRange || !currentDateRange[0]) {
-        // If no date range is set, provide default values
-        form.setFieldsValue({
-          dateRange: [dayjs(), isInfinity ? null : dayjs().add(30, 'day')]
-        });
-      }
-    }
-  };
-
-  // Handle date range changes for filtering
-  const handleFilterDateChange = (dates) => {
-    setDateRangeFilter(dates);
-    if (dates && dates[0] && !dates[1]) {
-      // If only start date is selected, set end date to 30 days later
-      setDateRangeFilter([dates[0], dayjs(dates[0]).add(30, 'day')]);
-    }
-  };
-
+  // Update the handleShowAddForm function to set dates in the form state as well
   const handleShowAddForm = () => {
-    form.resetFields();
-    
     // Generate voucher code
     const newCode = generateVoucherCode();
     
-    // Set initial values with generated code and default date range (today to 30 days later)
-    setTimeout(() => {
-      form.setFieldsValue({
-        code: newCode,
-        dateRange: [dayjs(), dayjs().add(30, 'day')]
-      });
-    }, 100);
+    // Set today and 30 days later as default dates using YYYY-MM-DD format
+    const today = new Date();
+    const thirtyDaysLater = new Date();
+    thirtyDaysLater.setDate(today.getDate() + 30);
+    
+    const todayStr = today.toISOString().split('T')[0];
+    const thirtyDaysLaterStr = thirtyDaysLater.toISOString().split('T')[0];
+    
+    // Set dates in local state
+    setFormStartDate(todayStr);
+    setFormEndDate(thirtyDaysLaterStr);
+    
+    // Reset form fields including the hidden dates
+    form.resetFields();
+    
+    // Set initial form values
+    form.setFieldsValue({
+      code: newCode,
+      isInfinity: false,
+      startDate: todayStr, // Add to form values
+      endDate: thirtyDaysLaterStr // Add to form values
+    });
     
     setShowForm(true);
+    setEditMode(false);
   };
 
   // Handle pagination change
@@ -497,33 +545,64 @@ const VoucherManager = () => {
     setPagination(prev => ({ ...prev, currentPage: page }));
   };
 
-  // Handle reset filters
+  // Update handleResetFilters to clear the individual date states
   const handleResetFilters = () => {
     setSearchKeyword("");
     setVoucherTypeFilter("");
     setStatusFilter("");
-    setDateRangeFilter(null);
+    setStartDate("");
+    setEndDate("");
     setSortOption("dateDesc");
     setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
   // Check if a voucher is active
   const isVoucherActive = (voucher) => {
-    const now = new Date();
-    const isStarted = new Date(voucher.startedAt) <= now;
-    const isNotExpired = voucher.isInfinity || !voucher.expiredAt || new Date(voucher.expiredAt) > now;
+    // Get today's date at 00:00:00
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Get start date at 00:00:00
+    const startDate = new Date(voucher.startedAt);
+    startDate.setHours(0, 0, 0, 0);
+    
+    // Check if voucher has started
+    const isStarted = startDate <= today;
+    
+    // Check if voucher has expired
+    let isNotExpired = voucher.isInfinity;
+    if (!isNotExpired && voucher.expiredAt) {
+      const expiredDate = new Date(voucher.expiredAt);
+      expiredDate.setHours(0, 0, 0, 0);
+      // Consider the voucher valid throughout its expiry date
+      isNotExpired = expiredDate >= today;
+    }
+    
+    // Check quantity
     const hasQuantity = voucher.quantity > 0;
+    
     return isStarted && isNotExpired && hasQuantity;
   };
 
-  // Add a new function to determine voucher status with more granularity
+  // Fix the getVoucherStatus function to properly handle expiry times
   const getVoucherStatus = (voucher) => {
-    const now = new Date();
+    // Get today's date at 00:00:00
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Get start date at 00:00:00
     const startDate = new Date(voucher.startedAt);
+    startDate.setHours(0, 0, 0, 0);
+    
+    // Check quantity
     const hasQuantity = voucher.quantity > 0;
     
-    // Check if the voucher has a valid expiry date
-    const expiredAt = voucher.expiredAt ? new Date(voucher.expiredAt) : null;
+    // Check expiry date - compare only the date part
+    let expiredAt = null;
+    if (voucher.expiredAt) {
+      expiredAt = new Date(voucher.expiredAt);
+      expiredAt.setHours(0, 0, 0, 0);
+    }
     
     // If the voucher has no quantity left
     if (!hasQuantity) {
@@ -534,7 +613,7 @@ const VoucherManager = () => {
     }
     
     // If the start date is in the future, it's pending
-    if (startDate > now) {
+    if (startDate > today) {
       return {
         status: "pending",
         label: "Chưa kích hoạt"
@@ -542,23 +621,23 @@ const VoucherManager = () => {
     }
     
     // If the voucher is infinity or has no expiry date, and has started
-    if ((voucher.isInfinity || !expiredAt) && startDate <= now) {
+    if ((voucher.isInfinity || !expiredAt) && startDate <= today) {
       return {
         status: "active",
         label: "Còn hạn"
       };
     }
     
-    // If the expiry date has passed
-    if (expiredAt && expiredAt <= now) {
+    // If the expiry date has passed (comparing date parts only)
+    if (expiredAt && expiredAt < today) {
       return {
         status: "expired",
         label: "Hết hạn"
       };
     }
     
-    // If the voucher has started and hasn't expired yet
-    if (startDate <= now && (!expiredAt || expiredAt > now)) {
+    // If the voucher has started and hasn't expired yet (comparing date parts)
+    if (startDate <= today && (!expiredAt || expiredAt >= today)) {
       return {
         status: "active",
         label: "Còn hạn"
@@ -576,11 +655,7 @@ const VoucherManager = () => {
   const formatVoucherValue = (voucher) => {
     if (voucher.isPercent) {
       return `${voucher.value}%`;
-    } else if (voucher.value === 0 || 
-              (voucher.name && (
-                voucher.name.toLowerCase().includes("ship") || 
-                voucher.name.toLowerCase().includes("vận chuyển")
-              ))) {
+    } else if (voucher.value === 0) {
       return "Miễn phí vận chuyển";
     } else {
       return `${voucher.value.toLocaleString()} VND`;
@@ -591,11 +666,7 @@ const VoucherManager = () => {
   const getVoucherTypeLabel = (voucher) => {
     if (voucher.isPercent) {
       return voucherTypes.percentage;
-    } else if (voucher.value === 0 || 
-              (voucher.name && (
-                voucher.name.toLowerCase().includes("ship") || 
-                voucher.name.toLowerCase().includes("vận chuyển")
-              ))) {
+    } else if (voucher.value === 0) {
       return voucherTypes.shipping;
     } else {
       return voucherTypes.fixed;
@@ -670,6 +741,20 @@ const VoucherManager = () => {
     return <div className={styles.loadingContainer}><Spin size="large" /><p>Kiểm tra quyền truy cập...</p></div>;
   }
 
+  // Add back the filter date handlers below the form date handlers
+  // Handle date changes for filtering
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
+    // Reset to page 1 when filter changes
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
+  };
+
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value);
+    // Reset to page 1 when filter changes
+    setPagination(prev => ({ ...prev, currentPage: 1 }));
+  };
+
   return (
     <div className={styles.container}>
       <Sidebar />
@@ -736,15 +821,24 @@ const VoucherManager = () => {
                 <Option value="valueDesc">Giá trị (Cao-Thấp)</Option>
               </Select>
               
-              <RangePicker
-                className={styles.dateRangePicker}
-                format="YYYY-MM-DD"
-                placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
-                value={dateRangeFilter}
-                onChange={handleFilterDateChange}
-                allowClear
-                inputReadOnly
-              />
+              <div className={styles.dateFilterWrapper}>
+                <FaCalendar className={styles.calendarIcon} />
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={handleStartDateChange}
+                  className={styles.dateInput}
+                  placeholder="Ngày bắt đầu"
+                />
+                <span className={styles.dateSeparator}>đến</span>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={handleEndDateChange}
+                  className={styles.dateInput}
+                  placeholder="Ngày kết thúc"
+                />
+              </div>
             </div>
             
             {/* Row 2: Search bar and Reset button */}
@@ -1042,77 +1136,90 @@ const VoucherManager = () => {
                 
                 {/* Date range */}
                 <Form.Item
-                  noStyle
-                  shouldUpdate={(prevValues, currentValues) => 
-                    prevValues.isInfinity !== currentValues.isInfinity
-                  }
+                  label="Thời gian hiệu lực"
+                  required
                 >
-                  {({ getFieldValue }) => {
-                    const isInfinity = getFieldValue('isInfinity');
+                  {/* Hidden form items to store date values */}
+                  <Form.Item name="startDate" hidden>
+                    <Input />
+                  </Form.Item>
+                  
+                  <Form.Item name="endDate" hidden>
+                    <Input />
+                  </Form.Item>
+                  
+                  <div className={styles.dateInputGroup}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Ngày bắt đầu:</label>
+                      <input
+                        type="date"
+                        value={formStartDate}
+                        onChange={(e) => {
+                          const newDate = e.target.value;
+                          setFormStartDate(newDate);
+                          form.setFieldsValue({ startDate: newDate });
+                          
+                          // If we have an end date and it's now before the new start date, adjust it
+                          if (formEndDate && new Date(formEndDate) < new Date(newDate)) {
+                            // Set end date to start date + 1 day
+                            const nextDay = new Date(newDate);
+                            nextDay.setDate(nextDay.getDate() + 1);
+                            const nextDayStr = nextDay.toISOString().split('T')[0];
+                            setFormEndDate(nextDayStr);
+                            form.setFieldsValue({ endDate: nextDayStr });
+                          }
+                        }}
+                        className={styles.formDateInput}
+                        required
+                      />
+                    </div>
                     
-                    return (
-                      <Form.Item
-                        label="Thời gian hiệu lực"
-                        name="dateRange"
-                        rules={[
-                          {
-                            required: true,
-                            message: 'Vui lòng chọn thời gian hiệu lực!',
-                          },
-                          ({ getFieldValue }) => ({
-                            validator(_, value) {
-                              if (!value || !value[0]) {
-                                return Promise.reject(new Error('Vui lòng chọn ngày bắt đầu!'));
-                              }
-                              if (!isInfinity && !value[1]) {
-                                return Promise.reject(new Error('Vui lòng chọn ngày kết thúc!'));
-                              }
-                              if (!isInfinity && value[1] && value[1].isBefore(value[0])) {
-                                return Promise.reject(new Error('Ngày kết thúc phải sau ngày bắt đầu!'));
-                              }
-                              return Promise.resolve();
-                            },
-                          }),
-                        ]}
-                      >
-                        <RangePicker
-                          className={styles.formDatePicker}
-                          format="YYYY-MM-DD"
-                          placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
-                          onCalendarChange={handleFormDateRangeChange}
-                          onOpenChange={handleFormDatePickerOpen}
-                          inputReadOnly
-                          allowClear={false}
-                          disabled={[false, isInfinity]}
-                        />
-                      </Form.Item>
-                    );
-                  }}
-                </Form.Item>
-                
-                {/* Is infinity checkbox */}
-                <Form.Item
-                  name="isInfinity"
-                  valuePropName="checked"
-                >
-                  <Checkbox onChange={(e) => {
-                    if (e.target.checked) {
-                      const dateRange = form.getFieldValue('dateRange');
-                      form.setFieldsValue({ 
-                        dateRange: dateRange ? [dateRange[0], null] : [dayjs(), null] 
-                      });
-                    } else {
-                      // When unchecked, set an end date if there isn't one
-                      const dateRange = form.getFieldValue('dateRange');
-                      if (dateRange && dateRange[0] && !dateRange[1]) {
-                        form.setFieldsValue({
-                          dateRange: [dateRange[0], dayjs(dateRange[0]).add(30, 'day')]
-                        });
-                      }
-                    }
-                  }}>
-                    Không có ngày hết hạn
-                  </Checkbox>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Ngày kết thúc:</label>
+                      <input
+                        type="date"
+                        value={formEndDate}
+                        onChange={(e) => {
+                          const newDate = e.target.value;
+                          
+                          // Only allow end dates that are after the start date
+                          if (formStartDate && new Date(newDate) <= new Date(formStartDate)) {
+                            message.error("Ngày kết thúc phải sau ngày bắt đầu");
+                            return;
+                          }
+                          
+                          setFormEndDate(newDate);
+                          form.setFieldsValue({ endDate: newDate });
+                        }}
+                        className={styles.formDateInput}
+                        disabled={form.getFieldValue('isInfinity')}
+                        required={!form.getFieldValue('isInfinity')}
+                      />
+                    </div>
+                    
+                    <Form.Item 
+                      name="isInfinity" 
+                      valuePropName="checked"
+                      className={styles.infinityCheckbox}
+                    >
+                      <Checkbox onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormEndDate('');
+                          form.setFieldsValue({ endDate: null });
+                        } else if (formStartDate) {
+                          // If unchecking infinity and we have a start date, set end date to start date + 30 days
+                          const startDate = new Date(formStartDate);
+                          const endDate = new Date(startDate);
+                          endDate.setDate(startDate.getDate() + 30);
+                          const endDateStr = endDate.toISOString().split('T')[0];
+                          setFormEndDate(endDateStr);
+                          form.setFieldsValue({ endDate: endDateStr });
+                        }
+                      }}>
+                        Không giới hạn thời gian
+                      </Checkbox>
+                    </Form.Item>
+                  </div>
                 </Form.Item>
                 
                 {/* Quantity */}
