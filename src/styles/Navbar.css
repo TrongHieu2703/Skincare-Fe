@@ -334,8 +334,10 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    min-width: 100%; /* Ensure minimum width */
-    min-height: 100%; /* Ensure minimum height */
+    min-width: 100%;
+    /* Ensure minimum width */
+    min-height: 100%;
+    /* Ensure minimum height */
 }
 
 .cart-popup-item .item-details {
@@ -377,9 +379,11 @@
     gap: 4px;
     align-items: center;
     justify-content: center;
-    z-index: 5; /* Ensure buttons are above the clickable area */
+    z-index: 5;
+    /* Ensure buttons are above the clickable area */
     margin-left: 8px;
-    min-width: 40px; /* Ensure minimum width for the action area */
+    min-width: 40px;
+    /* Ensure minimum width for the action area */
 }
 
 .cart-popup-item .action-btn {
@@ -393,7 +397,8 @@
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 12px;
-    position: relative; /* Ensure the button stays on top */
+    position: relative;
+    /* Ensure the button stays on top */
     z-index: 10;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -608,9 +613,12 @@
     object-fit: cover;
     border-radius: 20px;
     margin-right: 1rem;
-    min-width: 100px; /* Ensure minimum width */
-    min-height: 100px; /* Ensure minimum height */
-    background-color: #f9f9f9; /* Light background for loading state */
+    min-width: 100px;
+    /* Ensure minimum width */
+    min-height: 100px;
+    /* Ensure minimum height */
+    background-color: #f9f9f9;
+    /* Light background for loading state */
 }
 
 .search-result-info {
@@ -677,4 +685,30 @@
     padding: 5px;
     background-color: #f5f5f5;
     border: 1px solid #eaeaea;
+}
+
+.trash-icon {
+    color: white;
+    /* Đổi màu thành trắng */
+    font-size: 18px;
+    /* Điều chỉnh kích thước */
+    transition: color 0.3s ease;
+    /* Hiệu ứng chuyển màu */
+}
+
+.action-btn.remove {
+    background-color: red;
+    /* Màu nền nút xóa */
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.action-btn.remove:hover .trash-icon {
+    color: #ffcccb;
+    /* Màu nhạt hơn khi hover */
 }

@@ -42,7 +42,6 @@ const HomePage = () => {
 
             {/* AboutUs Component */}
             <AboutUs />
-            <Footer />
 
         </div>
     );

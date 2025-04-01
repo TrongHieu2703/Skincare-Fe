@@ -138,7 +138,6 @@ const Blog = () => {
                     </div>
                 </aside>
             </div>
-            <Footer />
         </div>
     );
 };

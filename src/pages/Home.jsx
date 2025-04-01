@@ -11,7 +11,6 @@ function Home() {
             <Carousel />
             <FeaturedNews />
             <AboutUs />
-            <Footer />
         </div>
     )
 }
