@@ -161,12 +161,6 @@ const Checkout = () => {
       try {
         const response = await getAvailableVouchers();
         
-<<<<<<< Updated upstream
-        if (response && response.data && Array.isArray(response.data.data)) {
-          setVouchers(response.data.data);
-        } else if (response && Array.isArray(response.data)) {
-          setVouchers(response.data);
-=======
         console.log("Raw voucher response:", response);
         
         if (response && response.data && Array.isArray(response.data.data)) {
@@ -191,7 +185,6 @@ const Checkout = () => {
           console.log("Shipping vouchers found:", shippingVouchers);
           
           setVouchers(vouchersData);
->>>>>>> Stashed changes
         } else {
           console.error("Unexpected voucher response format:", response);
           setVouchers([]);
@@ -410,57 +403,6 @@ const Checkout = () => {
     return Promise.resolve(true);
   };
 
-<<<<<<< Updated upstream
-  // Cập nhật hàm handleVoucherChange để xử lý khi người dùng chọn voucher
-  const handleVoucherChange = (e) => {
-    const voucherId = e.target.value;
-    
-    // Reset messages and discount
-    setVoucherErrorMessage('');
-    setSuccessMessage('');
-    
-    if (!voucherId) {
-      setSelectedVoucher(null);
-      setDiscount(0);
-      return;
-    }
-    
-    if (!Array.isArray(vouchers)) {
-      console.error("vouchers is not an array:", vouchers);
-      setVoucherErrorMessage('Có lỗi khi chọn voucher, vui lòng thử lại sau');
-      return;
-    }
-    
-    const voucher = vouchers.find(v => v.voucherId.toString() === voucherId);
-    if (voucher) {
-      console.log("Selected voucher:", voucher);
-      setSelectedVoucher(voucher);
-    } else {
-      console.error(`No voucher found with ID ${voucherId}`);
-      setSelectedVoucher(null);
-      setDiscount(0);
-    }
-  };
-
-  // Cập nhật hàm xử lý áp dụng voucher
-  const handleApplyVoucher = () => {
-    if (!selectedVoucher) {
-      setVoucherErrorMessage('Vui lòng chọn voucher trước khi áp dụng');
-      return;
-    }
-
-    // Check if voucher has all required properties
-    if (!selectedVoucher.minOrderValue || selectedVoucher.value === undefined) {
-      console.error("Selected voucher has missing properties:", selectedVoucher);
-      setVoucherErrorMessage('Voucher không hợp lệ, vui lòng chọn voucher khác');
-      return;
-    }
-
-    // Kiểm tra điều kiện áp dụng voucher (minOrderValue)
-    if (subtotal < selectedVoucher.minOrderValue) {
-      setVoucherErrorMessage(
-        `Đơn hàng tối thiểu phải từ ${formatVND(selectedVoucher.minOrderValue)} để áp dụng voucher này`
-=======
   // Helper function to determine if a voucher is a shipping voucher
   const isShippingVoucher = (voucher) => {
     if (!voucher) return false;
@@ -491,19 +433,12 @@ const Checkout = () => {
     if (subtotal < voucherToApply.minOrderValue) {
       setVoucherErrorMessage(
         `Đơn hàng tối thiểu phải từ ${formatVND(voucherToApply.minOrderValue)} để áp dụng voucher này`
->>>>>>> Stashed changes
       );
       return;
     }
 
     // Check if voucher has expired (just in case it wasn't filtered out properly)
     const now = new Date();
-<<<<<<< Updated upstream
-    const expiryDate = new Date(selectedVoucher.expiredAt);
-    if (expiryDate < now) {
-      setVoucherErrorMessage(
-        `Voucher "${selectedVoucher.code}" đã hết hạn từ ${expiryDate.toLocaleDateString('vi-VN')}. Vui lòng chọn voucher khác.`
-=======
     now.setHours(0, 0, 0, 0); // Set to start of day - compare dates only
 
     const expiryDate = new Date(voucherToApply.expiredAt);
@@ -527,7 +462,6 @@ const Checkout = () => {
     if (startDate > now) {
       setVoucherErrorMessage(
         `Voucher "${voucherToApply.code}" sẽ có hiệu lực từ ${startDate.toLocaleDateString('vi-VN')}. Vui lòng chọn voucher khác.`
->>>>>>> Stashed changes
       );
       setSelectedVoucher(null);
       // Refresh available vouchers list
@@ -536,15 +470,9 @@ const Checkout = () => {
     }
 
     // Check if voucher has been fully redeemed (quantity <= 0 and not infinite)
-<<<<<<< Updated upstream
-    if (!selectedVoucher.isInfinity && selectedVoucher.quantity <= 0) {
-      setVoucherErrorMessage(
-        `Voucher "${selectedVoucher.code}" đã hết lượt sử dụng. Vui lòng chọn voucher khác.`
-=======
     if (!voucherToApply.isInfinity && voucherToApply.quantity <= 0) {
       setVoucherErrorMessage(
         `Voucher "${voucherToApply.code}" đã hết lượt sử dụng. Vui lòng chọn voucher khác.`
->>>>>>> Stashed changes
       );
       setSelectedVoucher(null);
       // Refresh available vouchers list
@@ -555,29 +483,6 @@ const Checkout = () => {
     try {
       // Tính toán giá trị giảm giá dựa theo loại voucher
       let discountAmount = 0;
-<<<<<<< Updated upstream
-      
-      if (selectedVoucher.isPercent) {
-        // Tính giảm giá phần trăm
-        discountAmount = (subtotal * selectedVoucher.value) / 100;
-        
-        // Áp dụng giới hạn maxDiscountValue nếu có
-        if (selectedVoucher.maxDiscountValue > 0 && discountAmount > selectedVoucher.maxDiscountValue) {
-          discountAmount = selectedVoucher.maxDiscountValue;
-        }
-      } else {
-        // Giảm giá cố định
-        discountAmount = selectedVoucher.value;
-        
-        // Xử lý voucher free ship
-        if (selectedVoucher.code === "FREESHIP") {
-          discountAmount = Math.min(shippingFee, selectedVoucher.value);
-        }
-      }
-
-      // Đảm bảo giảm giá không vượt quá tổng tiền
-      discountAmount = Math.min(discountAmount, subtotal);
-=======
       let isShippingDiscount = isShippingVoucher(voucherToApply);
       
       if (voucherToApply.isPercent) {
@@ -600,24 +505,17 @@ const Checkout = () => {
       if (!isShippingDiscount) {
         discountAmount = Math.min(discountAmount, subtotal);
       }
->>>>>>> Stashed changes
       
       // Cập nhật state discount
       setDiscount(discountAmount);
       
       // Hiển thị thông báo thành công
       setSuccessMessage(
-<<<<<<< Updated upstream
-        `Áp dụng voucher "${selectedVoucher.name}" thành công! Giảm ${
-          selectedVoucher.isPercent ? selectedVoucher.value + '%' : formatVND(discountAmount)
-        }`
-=======
         isShippingDiscount
           ? `Áp dụng voucher "${voucherToApply.name}" thành công! Miễn phí vận chuyển ${formatVND(discountAmount)}`
           : `Áp dụng voucher "${voucherToApply.name}" thành công! Giảm ${
               voucherToApply.isPercent ? voucherToApply.value + '%' : formatVND(discountAmount)
             }`
->>>>>>> Stashed changes
       );
       
       // Tự động xóa thông báo thành công sau 3 giây
@@ -941,17 +839,6 @@ const Checkout = () => {
                     <option value="" disabled>Không có voucher nào khả dụng</option>
                   )}
                 </select>
-<<<<<<< Updated upstream
-                <button 
-                  type="button" 
-                  className="apply-voucher-button"
-                  onClick={handleApplyVoucher}
-                  disabled={!selectedVoucher}
-                >
-                  Áp Dụng
-                </button>
-=======
->>>>>>> Stashed changes
               </div>
               
               {voucherErrorMessage && (
@@ -961,9 +848,6 @@ const Checkout = () => {
               {selectedVoucher && discount > 0 && (
                 <div className="applied-voucher">
                   <span>Voucher đã áp dụng: </span>
-<<<<<<< Updated upstream
-                  <strong>{selectedVoucher.code}</strong> - Giảm {formatVND(discount)}
-=======
                   <strong>{selectedVoucher.code}</strong> - 
                   {selectedVoucher.code === "FREESHIP" 
                     ? <span className="free-shipping-text">Miễn phí vận chuyển</span>
@@ -971,7 +855,6 @@ const Checkout = () => {
                         ? `Giảm ${selectedVoucher.value}%` 
                         : `Giảm ${formatVND(discount)}`)
                   }
->>>>>>> Stashed changes
                   {!selectedVoucher.isInfinity && selectedVoucher.quantity > 0 && 
                     <span className="voucher-remaining"> (Còn {selectedVoucher.quantity} lượt sử dụng)</span>
                   }
