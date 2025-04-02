@@ -77,7 +77,7 @@ const ManagerOrder = () => {
   // Apply filters and sorting
   useEffect(() => {
     if (orders.length === 0) return;
-    
+
     applyFiltersAndSort();
   }, [orders, statusFilter, paymentFilter, sortOption, searchKeyword, startDate, endDate]);
 
@@ -87,17 +87,17 @@ const ManagerOrder = () => {
       const res = await getAllOrders();
       const ordersData = res.data || [];
       setOrders(ordersData);
-      
+
       // Initialize filteredOrders and pagination
       const totalItems = ordersData.length;
       const totalPages = Math.ceil(totalItems / pagination.pageSize);
-      
+
       setPagination(prev => ({
         ...prev,
         totalItems,
         totalPages
       }));
-      
+
       applyFiltersAndSort(ordersData);
     } catch (err) {
       console.error('Lỗi khi tải đơn hàng:', err);
@@ -109,75 +109,75 @@ const ManagerOrder = () => {
 
   const applyFiltersAndSort = (data = orders) => {
     let result = [...data];
-    
+
     // Apply status filter
     if (statusFilter) {
-      result = result.filter(order => 
+      result = result.filter(order =>
         order.status && order.status.toLowerCase() === statusFilter.toLowerCase()
       );
     }
-    
+
     // Apply payment filter
     if (paymentFilter) {
-      result = result.filter(order => 
+      result = result.filter(order =>
         paymentFilter === 'paid' ? order.isPrepaid : !order.isPrepaid
       );
     }
-    
+
     // Apply search filter
     if (searchKeyword.trim()) {
       const term = searchKeyword.toLowerCase().trim();
       result = result.filter(order => {
         // Search by order ID
         if (order.id.toString().includes(term)) return true;
-        
+
         // Search by customer info
         if (order.customerInfo) {
           if (order.customerInfo.username && order.customerInfo.username.toLowerCase().includes(term)) return true;
           if (order.customerInfo.email && order.customerInfo.email.toLowerCase().includes(term)) return true;
           if (order.customerInfo.phoneNumber && order.customerInfo.phoneNumber.includes(term)) return true;
         }
-        
+
         return false;
       });
     }
-    
+
     // Apply date range filter
     if (startDate || endDate) {
       result = result.filter(order => {
         if (!order.updatedAt) return false;
-        
+
         const orderDate = new Date(order.updatedAt);
-        
+
         // If only start date is provided, filter orders after that date
         if (startDate && !endDate) {
           const start = new Date(startDate);
           start.setHours(0, 0, 0, 0);
           return orderDate >= start;
         }
-        
+
         // If only end date is provided, filter orders before that date
         if (!startDate && endDate) {
           const end = new Date(endDate);
           end.setHours(23, 59, 59, 999);
           return orderDate <= end;
         }
-        
+
         // If both dates are provided, filter orders between those dates
         if (startDate && endDate) {
           const start = new Date(startDate);
           start.setHours(0, 0, 0, 0);
-          
+
           const end = new Date(endDate);
           end.setHours(23, 59, 59, 999);
-          
+
           return orderDate >= start && orderDate <= end;
         }
-        
+
         return true;
       });
     }
-    
+
     // Apply sorting
     switch (sortOption) {
       case "newest":
@@ -197,21 +197,21 @@ const ManagerOrder = () => {
         result.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
         break;
     }
-    
+
     // Apply pagination
     const startIndex = (pagination.currentPage - 1) * pagination.pageSize;
     const paginatedOrders = result.slice(startIndex, startIndex + pagination.pageSize);
-    
+
     // Update the total pages based on filtered results
     const totalItems = result.length;
     const totalPages = Math.ceil(totalItems / pagination.pageSize);
-    
+
     setPagination(prev => ({
       ...prev,
       totalItems,
       totalPages
     }));
-    
+
     setFilteredOrders(paginatedOrders);
   };
 
@@ -219,12 +219,12 @@ const ManagerOrder = () => {
     try {
       await deleteOrder(orderId);
       Swal.fire('Đã xóa!', 'Đơn hàng đã được xóa.', 'success');
-      
+
       // Refresh the order list after deletion
       fetchOrders();
     } catch (err) {
       console.error('Lỗi khi xóa đơn hàng:', err);
-      
+
       // Specific error handling based on response
       const errorMessage = err.response?.data?.message || 'Xóa thất bại!';
       Swal.fire('Lỗi', errorMessage, 'error');
@@ -239,7 +239,7 @@ const ManagerOrder = () => {
       orderNumber: orderNumber || orderId
     });
   };
-  
+
   // Add function to close delete confirmation modal
   const closeDeleteModal = () => {
     setDeleteModal({
@@ -248,7 +248,7 @@ const ManagerOrder = () => {
       orderNumber: null
     });
   };
-  
+
   // Add function to handle delete confirmation
   const confirmDeleteOrder = async () => {
     if (deleteModal.orderId) {
@@ -262,15 +262,15 @@ const ManagerOrder = () => {
       // Fetch order by ID directly
       const response = await getOrderById(orderId);
       const orderData = response.data;
-      
+
       console.log("Fetched order data:", orderData);
-      
+
       // Set current order with detailed information
       setCurrentOrder(orderData);
-      
+
       // Get payment method from latest transaction if available
       const paymentMethod = orderData.paymentInfo?.paymentMethod || 'Cash';
-      
+
       // Initialize the update form with current values
       setUpdateForm({
         status: orderData.status || 'Pending',
@@ -278,7 +278,7 @@ const ManagerOrder = () => {
         totalAmount: orderData.totalAmount || 0,
         paymentMethod: paymentMethod,
       });
-      
+
       setShowUpdateModal(true);
     } catch (err) {
       console.error('Lỗi khi tải chi tiết đơn hàng:', err);
@@ -315,29 +315,29 @@ const ManagerOrder = () => {
       const statusChanged = currentOrder.status !== updateForm.status;
       const paymentChanged = currentOrder.isPrepaid !== updateForm.isPrepaid;
       const amountChanged = currentOrder.totalAmount !== parseFloat(updateForm.totalAmount);
-      
+
       // Only include fields that actually changed
       const updateDto = {};
-      
+
       // Only include status if it changed
       if (statusChanged) {
         updateDto.status = updateForm.status;
       }
-      
+
       // Always include payment status
       updateDto.isPrepaid = updateForm.isPrepaid;
-      
+
       // Only include amount if it changed
       if (amountChanged) {
         updateDto.totalAmount = parseFloat(updateForm.totalAmount);
       }
-      
+
       // Special case: if marking as Delivered, ensure payment is made
       if (updateForm.status === 'Delivered' && !updateForm.isPrepaid) {
         Swal.fire('Lỗi', 'Đơn hàng phải được thanh toán trước khi chuyển sang trạng thái Delivered', 'error');
         return;
       }
-      
+
       // Include updateTransactionStatus flag to update existing transactions instead of creating new ones
       updateDto.updateTransactionStatus = true;
 
@@ -346,7 +346,7 @@ const ManagerOrder = () => {
       // Call API to update order
       const result = await updateOrder(currentOrder.id, updateDto);
       console.log('Update result:', result);
-      
+
       // Refresh orders list to show updated data
       await fetchOrders();
 
@@ -355,7 +355,7 @@ const ManagerOrder = () => {
       Swal.fire('Thành công', 'Cập nhật đơn hàng thành công', 'success');
     } catch (err) {
       console.error('Lỗi khi cập nhật đơn hàng:', err);
-      
+
       // More specific error handling
       if (err.response?.data?.message?.includes("Cannot change status")) {
         Swal.fire('Lỗi', 'Không thể thay đổi trạng thái đơn hàng', 'error');
@@ -388,7 +388,7 @@ const ManagerOrder = () => {
     const date = new Date(dateString);
     return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
   };
-  
+
   // Handle page change for pagination
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages && newPage !== pagination.currentPage) {
@@ -398,7 +398,7 @@ const ManagerOrder = () => {
       }));
     }
   };
-  
+
   // Handle page size change
   const handlePageSizeChange = (e) => {
     const newSize = parseInt(e.target.value, 10);
@@ -409,7 +409,7 @@ const ManagerOrder = () => {
       totalPages: Math.ceil(prev.totalItems / newSize)
     }));
   };
-  
+
   // Reset all filters
   const handleResetFilters = () => {
     setStatusFilter("");
@@ -418,25 +418,25 @@ const ManagerOrder = () => {
     setSearchKeyword("");
     setStartDate("");
     setEndDate("");
-    
+
     // Reset pagination
     setPagination(prev => ({
       ...prev,
       currentPage: 1
     }));
   };
-  
+
   // Pagination component
   const Pagination = () => {
     const maxPageButtons = 5; // Max number of page buttons to show
     let startPage = Math.max(1, pagination.currentPage - Math.floor(maxPageButtons / 2));
     let endPage = Math.min(pagination.totalPages, startPage + maxPageButtons - 1);
-    
+
     // Adjust if we're near the end
     if (endPage - startPage + 1 < maxPageButtons) {
       startPage = Math.max(1, endPage - maxPageButtons + 1);
     }
-    
+
     const pageButtons = [];
     for (let i = startPage; i <= endPage; i++) {
       pageButtons.push(
@@ -449,7 +449,7 @@ const ManagerOrder = () => {
         </button>
       );
     }
-    
+
     return (
       <div className={styles.paginationContainer}>
         <div className={styles.paginationControls}>
@@ -467,9 +467,9 @@ const ManagerOrder = () => {
           >
             &lsaquo;
           </button>
-          
+
           {pageButtons}
-          
+
           <button
             className={styles.pageButton}
             onClick={() => handlePageChange(pagination.currentPage + 1)}
@@ -485,7 +485,7 @@ const ManagerOrder = () => {
             &raquo;
           </button>
         </div>
-        
+
         <div className={styles.pageSizeSelector}>
           <span>Hiển thị:</span>
           <select
@@ -509,15 +509,15 @@ const ManagerOrder = () => {
       <Sidebar />
       <div className={styles.content}>
         <h1>Quản lý đơn hàng</h1>
-        
+
         {/* Add Filter/Search Container */}
         <div className={styles.filterContainer}>
           {/* Filters Bar */}
           <div className={styles.filterBar}>
             {/* Status Filter */}
-            <select 
-              value={statusFilter} 
-              onChange={(e) => setStatusFilter(e.target.value)} 
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
               className={styles.filterSelect}
             >
               <option value="">Tất cả trạng thái</option>
@@ -528,22 +528,22 @@ const ManagerOrder = () => {
               <option value="delivered">Đã giao hàng</option>
               <option value="cancelled">Đã hủy</option>
             </select>
-            
+
             {/* Payment Filter */}
-            <select 
-              value={paymentFilter} 
-              onChange={(e) => setPaymentFilter(e.target.value)} 
+            <select
+              value={paymentFilter}
+              onChange={(e) => setPaymentFilter(e.target.value)}
               className={styles.filterSelect}
             >
               <option value="">Tất cả thanh toán</option>
               <option value="paid">Đã thanh toán</option>
               <option value="unpaid">Chưa thanh toán</option>
             </select>
-            
+
             {/* Sort Options */}
-            <select 
-              value={sortOption} 
-              onChange={(e) => setSortOption(e.target.value)} 
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
               className={styles.filterSelect}
             >
               <option value="newest">Mới nhất</option>
@@ -552,7 +552,7 @@ const ManagerOrder = () => {
               <option value="lowest-price">Giá thấp nhất</option>
             </select>
           </div>
-          
+
           {/* Search and Date Filter Bar */}
           <div className={styles.searchBarRow}>
             {/* Search Input */}
@@ -566,7 +566,7 @@ const ManagerOrder = () => {
                 className={styles.searchInput}
               />
             </div>
-            
+
             {/* Date Range Filter */}
             <div className={styles.dateFilterWrapper}>
               <FaCalendar className={styles.calendarIcon} />
@@ -584,11 +584,11 @@ const ManagerOrder = () => {
                 className={styles.dateInput}
               />
             </div>
-            
+
             {/* Reset Filters Button - only show if there are active filters */}
             {(statusFilter || paymentFilter || sortOption || searchKeyword || startDate || endDate) && (
-              <button 
-                className={styles.resetFilterBtn} 
+              <button
+                className={styles.resetFilterBtn}
                 onClick={handleResetFilters}
               >
                 Xóa bộ lọc
@@ -596,12 +596,12 @@ const ManagerOrder = () => {
             )}
           </div>
         </div>
-        
+
         {/* Order count indicator */}
         <div className={styles.orderCount}>
           Hiển thị {filteredOrders.length} / {pagination.totalItems} đơn hàng
         </div>
-        
+
         <div className={styles.tableWrapper}>
           {loading ? (
             <div className={styles.loadingIndicator}>
@@ -641,19 +641,13 @@ const ManagerOrder = () => {
                     <td>{order.isPrepaid ? 'Đã thanh toán' : 'Chưa thanh toán'}</td>
                     <td>{formatDate(order.updatedAt)}</td>
                     <td className={styles.actionButtons}>
-                      <button 
+                      <button
                         className={styles.editButton}
                         onClick={() => handleUpdate(order.id)}
                       >
                         <FaEdit />
                       </button>
-                      <button 
-                        className={styles.deleteButton}
-                        onClick={() => showDeleteConfirmation(order.id, order.orderNumber)}
-                        disabled={['Delivered', 'Processing', 'Shipped'].includes(order.status)}
-                      >
-                        <FaTrash />
-                      </button>
+
                     </td>
                   </tr>
                 ))}
@@ -670,7 +664,7 @@ const ManagerOrder = () => {
           <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
               <h2 className={styles.modalTitle}>Cập nhật đơn hàng #{currentOrder?.id}</h2>
-              
+
               {loading ? (
                 <div className="text-center py-4">
                   <div className="spinner-border text-primary" role="status">
@@ -682,9 +676,9 @@ const ManagerOrder = () => {
                 <form onSubmit={handleSubmitUpdate}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Trạng thái đơn hàng</label>
-                    <select 
+                    <select
                       className={styles.textInput}
-                      name="status" 
+                      name="status"
                       value={updateForm.status}
                       onChange={handleInputChange}
                     >
@@ -700,7 +694,7 @@ const ManagerOrder = () => {
 
                   <div className={styles.formGroup}>
                     <div className={styles.checkboxItem}>
-                      <input 
+                      <input
                         type="checkbox"
                         id="isPrepaid"
                         name="isPrepaid"
@@ -713,9 +707,9 @@ const ManagerOrder = () => {
 
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Tổng tiền</label>
-                    <input 
+                    <input
                       className={styles.textInput}
-                      type="number" 
+                      type="number"
                       name="totalAmount"
                       value={updateForm.totalAmount}
                       onChange={handleInputChange}
