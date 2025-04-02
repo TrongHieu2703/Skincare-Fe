@@ -29,22 +29,22 @@ const Login = () => {
     setLoading(true);
     try {
       console.log("Attempting login with:", formData.email);
-       
+
       // Gọi API lấy userData + token
       const result = await loginUser({
         email: formData.email,
         password: formData.password
       });
-      
+
       console.log("Login result:", result);
-      
+
       if (result && result.userData && result.token) {
         // Thêm log để debug
         console.log("Login successful, userData:", result.userData);
-        
+
         // Dùng hàm login của AuthContext để lưu user + token
         login(result.userData, result.token);
-       
+
         setMessage("Đăng nhập thành công!");
         setShowToast(true);
 
@@ -125,10 +125,7 @@ const Login = () => {
               <span className="separator-text">hoặc</span>
             </div>
 
-            <button type="button" className="google-button">
-              <img src={googleIcon} alt="Google" className="google-icon" />
-              Đăng nhập với Google
-            </button>
+
 
             <div className="register-link">
               Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
