@@ -114,7 +114,7 @@ const Login = () => {
               <label>
                 <input type="checkbox" /> Ghi nhớ đăng nhập
               </label>
-              <a href="#">Quên mật khẩu?</a>
+
             </div>
 
             <button type="submit" className="login-button" disabled={loading}>
