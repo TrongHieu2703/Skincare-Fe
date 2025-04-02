@@ -170,13 +170,13 @@ const CustomerManager = () => {
                   <td className={styles.td}>{acc.role}</td>
                   <td className={styles.td}>
                     <div className={styles.actionButtons}>
-                      <button
-                        onClick={() => setEditAccount(acc)}
-                        className={`${styles.button} ${styles.update}`}
-                      >
-                        <Pencil size={16} /> Sửa
-                      </button>
 
+                      <button
+                        onClick={() => showDeleteConfirmation(acc)}
+                        className={`${styles.button} ${styles.delete}`}
+                      >
+                        <Trash2 size={16} /> Xóa
+                      </button>
                     </div>
                   </td>
                 </tr>
