@@ -35,7 +35,7 @@ const Register = () => {
             ...prev,
             [name]: value
         }));
-        
+
         // Clear error when user types
         if (formErrors[name]) {
             setFormErrors(prev => ({
@@ -43,7 +43,7 @@ const Register = () => {
                 [name]: ''
             }));
         }
-        
+
         // Real-time validation for confirm password
         if (name === 'confirmPassword' || (name === 'password' && formData.confirmPassword)) {
             if (name === 'password' && value !== formData.confirmPassword) {
@@ -150,7 +150,7 @@ const Register = () => {
             address: '',
             serverError: ''
         };
-        
+
         // Username validation
         if (!formData.username.trim()) {
             errors.username = 'Vui lòng nhập tên người dùng';
@@ -159,7 +159,7 @@ const Register = () => {
             errors.username = 'Tên người dùng phải có ít nhất 3 ký tự';
             valid = false;
         }
-        
+
         // Email validation
         if (!formData.email.trim()) {
             errors.email = 'Vui lòng nhập email';
@@ -168,7 +168,7 @@ const Register = () => {
             errors.email = 'Email không hợp lệ';
             valid = false;
         }
-        
+
         // Password validation
         if (!formData.password) {
             errors.password = 'Vui lòng nhập mật khẩu';
@@ -177,7 +177,7 @@ const Register = () => {
             errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
             valid = false;
         }
-        
+
         // Confirm password
         if (!formData.confirmPassword) {
             errors.confirmPassword = 'Vui lòng xác nhận mật khẩu';
@@ -186,19 +186,19 @@ const Register = () => {
             errors.confirmPassword = 'Mật khẩu xác nhận không khớp';
             valid = false;
         }
-        
+
         // Phone validation - accepts Vietnamese phone format
         if (formData.phoneNumber && !/^(0|\+84)(\d{9,10})$/.test(formData.phoneNumber)) {
             errors.phoneNumber = 'Số điện thoại không hợp lệ';
             valid = false;
         }
-        
+
         // Address validation
         if (!formData.address.trim()) {
             errors.address = 'Vui lòng nhập địa chỉ';
             valid = false;
         }
-        
+
         setFormErrors(errors);
         return valid;
     };
@@ -219,12 +219,12 @@ const Register = () => {
             navigate('/login');
         } catch (error) {
             console.error("Registration error:", error);
-            
+
             // Handle specific error codes from backend by setting inline errors
             if (error && error.errorCode) {
                 const errors = { ...formErrors };
-                
-                switch(error.errorCode) {
+
+                switch (error.errorCode) {
                     case "DUPLICATE_EMAIL":
                         errors.email = `Email ${formData.email} đã được sử dụng bởi tài khoản khác`;
                         break;
@@ -235,7 +235,7 @@ const Register = () => {
                         // Generic server error - display at the bottom of the form
                         errors.serverError = error.message || "Đăng ký thất bại. Vui lòng thử lại.";
                 }
-                
+
                 setFormErrors(errors);
             } else {
                 // Generic error, set a server error message
@@ -282,7 +282,6 @@ const Register = () => {
                 <div className="register-right">
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <FaUser className="input-icon" />
                             <input
                                 type="text"
                                 name="username"
@@ -296,7 +295,6 @@ const Register = () => {
                         </div>
 
                         <div className="form-group">
-                            <FaEnvelope className="input-icon" />
                             <input
                                 type="email"
                                 name="email"
@@ -310,7 +308,6 @@ const Register = () => {
                         </div>
 
                         <div className="form-group">
-                            <FaLock className="input-icon" />
                             <input
                                 type="password"
                                 name="password"
@@ -324,7 +321,6 @@ const Register = () => {
                         </div>
 
                         <div className="form-group">
-                            <FaLock className="input-icon" />
                             <input
                                 type="password"
                                 name="confirmPassword"
@@ -338,7 +334,6 @@ const Register = () => {
                         </div>
 
                         <div className="form-group">
-                            <FaPhone className="input-icon" />
                             <input
                                 type="tel"
                                 name="phoneNumber"
@@ -352,7 +347,6 @@ const Register = () => {
                         </div>
 
                         <div className="form-group">
-                            <FaMapMarkerAlt className="input-icon" />
                             <input
                                 type="text"
                                 name="address"
@@ -372,7 +366,7 @@ const Register = () => {
                         >
                             {loading ? 'Đang đăng ký...' : 'Đăng ký'}
                         </button>
-                        
+
                         {formErrors.serverError && (
                             <div className="server-error-message">{formErrors.serverError}</div>
                         )}
