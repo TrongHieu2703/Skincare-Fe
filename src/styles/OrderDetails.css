@@ -3,7 +3,8 @@
 .product-details-container {
   max-width: 1200px;
   margin: 100px auto;
-  padding-top: 100px; /* Giảm xuống từ 200px */
+  padding-top: 100px;
+  /* Giảm xuống từ 200px */
 }
 
 /* Product Details Main */
@@ -342,7 +343,9 @@
   flex: 3;
 }
 
-.quantity-col, .price-col, .total-col {
+.quantity-col,
+.price-col,
+.total-col {
   flex: 1;
   text-align: center;
 }
@@ -391,13 +394,9 @@
   flex-direction: column;
 }
 
-<<<<<<< Updated upstream
-.product-name {
-=======
 /* Product name in order details page */
 .order-item-row .product-details .product-name {
-  font-size: 0.9rem !important;
->>>>>>> Stashed changes
+  font-size: 0.85rem !important;
   font-weight: 500;
   color: #333;
   margin-bottom: 5px;
@@ -561,6 +560,7 @@
     opacity: 0;
     transform: translate(-50%, -20px);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, 0);
@@ -568,7 +568,8 @@
 }
 
 /* Loading and Error States */
-.loading-container, .error-container {
+.loading-container,
+.error-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -589,8 +590,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-container h2 {
@@ -614,42 +620,42 @@
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .order-summary-section {
     flex-direction: column;
   }
-  
+
   .order-actions {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .order-summary {
     width: 100%;
   }
-  
+
   .product-image {
     width: 50px;
     height: 50px;
   }
-  
+
   .item-col.quantity-col,
   .item-col.price-col {
     display: none;
   }
-  
+
   .order-items-header .product-col {
     flex: 2;
   }
-  
+
   .order-items-header .total-col {
     flex: 1;
   }
-  
+
   .order-item-row .product-col {
     flex: 2;
   }
-  
+
   .order-item-row .total-col {
     flex: 1;
   }
@@ -659,7 +665,7 @@
   .order-details-container {
     padding: 15px;
   }
-  
+
   .info-card {
     padding: 15px;
   }
@@ -671,17 +677,17 @@
     padding: 0;
     background-color: white;
   }
-  
+
   .order-details-container {
     box-shadow: none;
     padding: 0;
   }
-  
+
   .order-actions,
   .navbar {
     display: none !important;
   }
-  
+
   .payment-success-banner {
     display: none;
   }
@@ -724,13 +730,13 @@
   .order-items-header .action-col {
     display: none;
   }
-  
+
   .order-item-row .action-col {
     position: absolute;
     right: 15px;
     bottom: 15px;
   }
-  
+
   .order-item-row {
     position: relative;
     padding-bottom: 50px;
@@ -738,6 +744,7 @@
 }
 
 @media print {
+
   .action-col,
   .review-product-btn {
     display: none !important;
@@ -813,42 +820,4 @@
 .review-view-modal .modal-actions {
   display: flex;
   justify-content: flex-end;
-<<<<<<< Updated upstream
-=======
-}
-
-/* Order History page product name */
-.order-history-page .product-name {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 5px;
-}
-
-/* Make product price more specific in order items */
-.order-item-row .price-col,
-.order-item-row .total-col {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #2e7d32;
-}
-
-/* Fix the product image styling to be more specific */
-.order-item-row .product-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 4px;
-  margin-right: 15px;
-  overflow: hidden;
-  background-color: #f9f9f9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.order-item-row .product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
->>>>>>> Stashed changes
 }

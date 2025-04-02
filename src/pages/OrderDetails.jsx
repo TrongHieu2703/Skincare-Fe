@@ -221,15 +221,18 @@ const OrderDetails = () => {
   }, [order, isAuthenticated, authLoading]);
 
   const formatDate = (dateString) => {
-    const options = {
+    return new Date(dateString).toLocaleString('vi-VN', {
+      timeZone: 'Asia/Ho_Chi_Minh',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    };
-    return new Date(dateString).toLocaleDateString('vi-VN', options);
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false // Hiển thị 24h thay vì AM/PM
+    });
   };
+
 
   const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
