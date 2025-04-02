@@ -358,9 +358,21 @@ const Register = () => {
                             />
                             {formErrors.address && <div className="error-message">{formErrors.address}</div>}
                         </div>
+
+
+                        <button
+                            type="submit"
+                            className="register-button"
+                            disabled={loading}
+                        >
+                            {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+                        </button>
+
+                        {formErrors.serverError && (
+                            <div className="server-error-message">{formErrors.serverError}</div>
+                        )}
                     </form>
                 </div>
-
             </div>
         </div>
     );
