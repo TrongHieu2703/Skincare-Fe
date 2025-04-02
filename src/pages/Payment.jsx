@@ -20,7 +20,7 @@ export default function PaymentPage() {
 
     const handlePayment = () => {
         setLoading(true);
-        
+
         // Giả lập xử lý thanh toán
         setTimeout(() => {
             setPaymentSuccess(true);
@@ -68,8 +68,8 @@ export default function PaymentPage() {
                             </div>
                             <div className="payment-method">
                                 <label>Payment Method</label>
-                                <select 
-                                    value={selectedPaymentMethod} 
+                                <select
+                                    value={selectedPaymentMethod}
                                     onChange={(e) => setSelectedPaymentMethod(e.target.value)}
                                 >
                                     <option value="Credit">Credit Card</option>
@@ -90,8 +90,8 @@ export default function PaymentPage() {
                                 </div>
                             )}
 
-                            <button 
-                                className="payment-button" 
+                            <button
+                                className="payment-button"
                                 onClick={handlePayment}
                                 disabled={loading}
                             >
