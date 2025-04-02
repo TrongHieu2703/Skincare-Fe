@@ -17,7 +17,7 @@ const CustomerManager = () => {
     status: 'active',
     role: 'customer'
   });
-  
+
   // Add state for delete confirmation modal
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
@@ -44,7 +44,7 @@ const CustomerManager = () => {
       alert(error.message || "Lỗi khi xóa");
     }
   };
-  
+
   // Add function to show delete confirmation modal
   const showDeleteConfirmation = (account) => {
     setDeleteModal({
@@ -53,7 +53,7 @@ const CustomerManager = () => {
       accountName: account.username
     });
   };
-  
+
   // Add function to close delete confirmation modal
   const closeDeleteModal = () => {
     setDeleteModal({
@@ -62,7 +62,7 @@ const CustomerManager = () => {
       accountName: ''
     });
   };
-  
+
   // Add function to handle delete confirmation
   const confirmDeleteAccount = async () => {
     if (deleteModal.accountId) {
@@ -170,12 +170,7 @@ const CustomerManager = () => {
                   <td className={styles.td}>{acc.role}</td>
                   <td className={styles.td}>
                     <div className={styles.actionButtons}>
-                      <button
-                        onClick={() => setEditAccount(acc)}
-                        className={`${styles.button} ${styles.update}`}
-                      >
-                        <Pencil size={16} /> Sửa
-                      </button>
+
                       <button
                         onClick={() => showDeleteConfirmation(acc)}
                         className={`${styles.button} ${styles.delete}`}
@@ -197,61 +192,7 @@ const CustomerManager = () => {
           </table>
         </div>
 
-        {/* Form tạo tài khoản mới */}
-        <div className={styles.newAccountForm}>
-          <h2 className={styles.formHeader}>Tạo tài khoản mới</h2>
-          <input
-            type="text"
-            placeholder="Tên đăng nhập"
-            value={newAccount.username}
-            onChange={e => handleNewAccountChange('username', e.target.value)}
-            className={styles.input}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={newAccount.email}
-            onChange={e => handleNewAccountChange('email', e.target.value)}
-            className={styles.input}
-          />
-          <input
-            type="text"
-            placeholder="Địa chỉ"
-            value={newAccount.address}
-            onChange={e => handleNewAccountChange('address', e.target.value)}
-            className={styles.input}
-          />
-          <input
-            type="text"
-            placeholder="Số điện thoại"
-            value={newAccount.phoneNumber}
-            onChange={e => handleNewAccountChange('phoneNumber', e.target.value)}
-            className={styles.input}
-          />
-          <select
-            value={newAccount.status}
-            onChange={e => handleNewAccountChange('status', e.target.value)}
-            className={styles.select}
-          >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-          <select
-            value={newAccount.role}
-            onChange={e => handleNewAccountChange('role', e.target.value)}
-            className={styles.select}
-          >
-            <option value="customer">Customer</option>
-            <option value="admin">Admin</option>
-            <option value="admin">Staff</option>
-          </select>
-          <button
-            onClick={handleCreateAccount}
-            className={`${styles.button} ${styles.create}`}
-          >
-            Tạo tài khoản
-          </button>
-        </div>
+
 
         {/* Add delete confirmation modal */}
         <ConfirmationModal
